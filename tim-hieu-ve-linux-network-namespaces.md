@@ -5,7 +5,10 @@ Việc thêm và xử lý trên hệ thống của bạn có thể được kế
 <ul> - Network namespace đã sử dụng trong các dự án đa dạng như Openstack, Docker và Minimet. 
 Để tìm hiểu sâu về những dự án này, bạn phải làm quen với namespaces và biết được cách chúng làm việc. </ul>
 
-**Làm việc với network namespaces**
+####a. Làm việc với network namespaces
+<ul> Khi bắt đầu với Linux, bạn sẽ có một namespace trên hệ thống, mọi tiến trình khởi tạo sẽ kế thừa namespace này như cha của nó. Vì vậy, tất cả các tiền trình thừa kế network namespace sử dụng bởi init (PID 1)  </ul>
+
+<img src="http://i0.wp.com/abregman.com/wp-content/uploads/2016/09/namespace_level1.jpg">
 
 ##2. Chuẩn bị môi trường LAB
 <ul> - Thực hiện lab trên môi trường máy ảo chạy Ubuntu server 14.04 64bit </ul>
