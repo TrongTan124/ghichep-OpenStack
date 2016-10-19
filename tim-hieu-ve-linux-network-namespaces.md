@@ -10,6 +10,19 @@ Việc thêm và xử lý trên hệ thống của bạn có thể được kế
 
 <img src="http://i0.wp.com/abregman.com/wp-content/uploads/2016/09/namespace_level1.jpg">
 
+####b. Liệt kê các namespace
+<ul> Cách làm việc với namespace là sử dụng lệnh: *ip netns* </ul>
+<ul> Để liệt kê tất cả các network namespace trên hệ thống của bạn, sử dụng lệnh "ip netns" hoặc "ip netns list" </ul>
+```
+# ip netns
+```
+<ul> Nếu bạn chưa thêm bất kỳ namespace nào, output sẽ trống. Namespace mặc định thì không được tính vào output của lệnh "ip netns list" </ul>
+
+####c. Thêm namespace
+<ul> Để thêm một namespace, sử dụng lệnh "ip netns add <name>" </ul>
+
+Ví dụ:
+
 ##2. Chuẩn bị môi trường LAB
 <ul> - Thực hiện lab trên môi trường máy ảo chạy Ubuntu server 14.04 64bit </ul>
 <ul> NOTE: nên thực hiện clone và snapshot máy ảo để thuận tiện trong quá trình thử nghiệm </ul>
