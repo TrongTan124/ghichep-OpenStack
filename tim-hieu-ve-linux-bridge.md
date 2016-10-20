@@ -2,7 +2,6 @@
 <ul> Một bridge là cách thức phân chia thành 2 hoặc nhiều hơn các phần mạng (network segment) riêng biệt trong phạm vi một logical network (ví dụ một IP-subnet)</ul>
 <ul> Một bridge thường được đặt giữa 2 nhóm riêng biệt của máy tính, nơi chúng trao đổi với nhau nhưng không trao đổi với nhóm khác. </ul>
 <ul> Công việc của bridge là xem xét đích của các data packet tại một thời điểm và lựa chọn có cho packet đi tới side khác của Ethernet. Dẫn tới network sẽ nhanh hơn, đơn giản hơn với ít miền đụng độ </ul>
-<ul>  </ul>
 <ul> Luật bridge quyết định việc gửi hay xóa dữ liệu không dựa vào loại protocol (IP, IPX, NetBEUI), nhưng xem xét duy nhất địa chỉ MAC của mỗi NIC </ul>
 **Note**: Quan trọng để hiểu bridge không phải là router hay firewall. Nói ngắn gọn, một bridge xử lý như một switch (Layer 2 switch), làm trong suốt các thành phần mạng (không chính xác tuyệt đối nhưng gần đúng).
 <ul> Thêm nữa, bạn có thể khắc phục hardware không tương thích với một bridge, không cần sự cho phép address-range của IP-net hay subnet. </ul>
@@ -25,13 +24,21 @@ Có một số quy tắc bạn không được phép phá vỡ (nếu không th�
 
 ##3. Chuẩn bị bridge
 ###a. Lấy files
-Nếu version kernel của bạn lớn hơn 2.3.47 thì bạn không cần lấy bridge patches. Bridging là một phần chính của các version đó 
+Nếu version kernel của bạn lớn hơn 2.3.47 thì bạn không cần lấy bridge patches. Bridging là một phần chính của các version đó. 
 Lấy bridge kernel patches từ [link](http://www.math.leidenuniv.nl/~buytenh/bridge/)
 ###b. Cài đặt các gói cần thiết
 ```
 # apt-get install bridge-utils
 ```
-view command:
+
+##4. Cài đặt bridge
+<ul> Chắc chắn rằng tất cả các network card đều làm việc ổn và có thể truy nhập. </ul>
+<ul> Gõ **ifconfig** để xem sơ đồ phần cứng của network interface.</ul>
+<ul> Sau khi đã check những bước trên, gõ **modprobe -v bridge** </ul>
+<ul> Bạn có thể kiểm tra đã thành công chưa bằng cách in ra **cat /proc/modules | grep bridge** </ul>
+<ul> Nếu bridge-utilities đã được cài đúng và kernel, bridge-module đều OK, thực hiện gõ **brctl** để nhìn bảng tóm tắt lệnh </ul>
+<ul>  </ul>
+
 ```
 root@ubuntu:~# brctl
 Usage: brctl [commands]
@@ -54,7 +61,10 @@ commands:
         stp             <bridge> {on|off}       turn stp on/off
 ```
 
-
+**Tạo và xóa một Instace** với lệnh **addbr, delbr**
+```
+root@ubuntu:~# brctl addbr br0
+```
 
 ## Tham khảo
 [http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html](http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html)
