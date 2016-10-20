@@ -1,9 +1,11 @@
 ﻿##1. Linux bridge là gì?
 <ul> Một bridge là cách thức phân chia thành 2 hoặc nhiều hơn các phần mạng (network segment) riêng biệt trong phạm vi một logical network (ví dụ một IP-subnet)</ul>
 <ul> Một bridge thường được đặt giữa 2 nhóm riêng biệt của máy tính, nơi chúng trao đổi với nhau nhưng không trao đổi với nhóm khác. </ul>
-<ul> Công việc của bridge là xem xét đích của các data packet tại một thời điểm và lựa chọn có cho packet đi tới side khác của Ethernet. Dẫn tới network sẽ nhanh hơn, đơn giản hơn với ít miền đụng độ </ul>
+<ul> Công việc của bridge là xem xét đích của các data packet tại một thời điểm và lựa chọn có cho packet đi tới side khác của Ethernet. 
+Dẫn tới network sẽ nhanh hơn, đơn giản hơn với ít miền đụng độ </ul>
 <ul> Luật bridge quyết định việc gửi hay xóa dữ liệu không dựa vào loại protocol (IP, IPX, NetBEUI), nhưng xem xét duy nhất địa chỉ MAC của mỗi NIC </ul>
-**Note**: Quan trọng để hiểu bridge không phải là router hay firewall. Nói ngắn gọn, một bridge xử lý như một switch (Layer 2 switch), làm trong suốt các thành phần mạng (không chính xác tuyệt đối nhưng gần đúng).
+**Note**: Quan trọng để hiểu bridge không phải là router hay firewall. Nói ngắn gọn, một bridge xử lý như một switch (Layer 2 switch), 
+làm trong suốt các thành phần mạng (không chính xác tuyệt đối nhưng gần đúng).
 <ul> Thêm nữa, bạn có thể khắc phục hardware không tương thích với một bridge, không cần sự cho phép address-range của IP-net hay subnet. </ul>
 ví dụ: nó có thể bridge giữa kết nối vật lý khác nhau như 10 Base T và 100 Base TX
 
@@ -12,8 +14,8 @@ ví dụ: nó có thể bridge giữa kết nối vật lý khác nhau như 10 B
 <ul> Multiple Bridge Instances: cho phép bạn chạy được nhiều hơn một bridge trên máy và điều khiển một cái tách biệt nhau. </ul>
 <ul> Fire-walling: Có một phần của luật bridging cho phép bạn sử dụng IP chain trên interface vào một bridge </ul>
 
-##2. Quy tắc trên Bridging
-Có một số quy tắc bạn không được phép phá vỡ (nếu không thì bridge của bạn sẽ hỏng)
+##2. Các quy tắc trên Bridging
+Có một số quy tắc bạn không được phép phá vỡ
 <ul> 
 <li> Một port chỉ có thể là một thành phần của một bridge  </li>
 <li> Một bridge không biết gì về route </li>
@@ -22,16 +24,12 @@ Có một số quy tắc bạn không được phép phá vỡ (nếu không th�
 <li> Ngay khi một port (ví dụ một NIC) được gán cho một bridge, bạn sẽ không thể trực tiếp điều khiển nó </li>
  </ul>
 
-##3. Chuẩn bị bridge
-###a. Lấy files
-Nếu version kernel của bạn lớn hơn 2.3.47 thì bạn không cần lấy bridge patches. Bridging là một phần chính của các version đó. 
-Lấy bridge kernel patches từ [link](http://www.math.leidenuniv.nl/~buytenh/bridge/)
-###b. Cài đặt các gói cần thiết
+##3. Cài đặt bridge
 ```
 # apt-get install bridge-utils
 ```
 
-##4. Cài đặt bridge
+##4. Cấu hình bridge
 <ul> Chắc chắn rằng tất cả các network card đều làm việc ổn và có thể truy nhập. </ul>
 <ul> Gõ **ifconfig** để xem sơ đồ phần cứng của network interface.</ul>
 <ul> Sau khi đã check những bước trên, gõ **modprobe -v bridge** </ul>
@@ -66,7 +64,91 @@ commands:
 root@ubuntu:~# brctl addbr br0
 ```
 
-## Tham khảo
-[http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html](http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html)
+##5. Cấu hình STP cho bridge
 
+##6. Cấu hình bonding cho bridge
+Nếu một Host có nhiều network interface, mà gần gom gộp thành một đường bonded để tận dụng băng thông.
+<img src="http://s0.cyberciti.org/uploads/faq/2016/07/bridge-bond-welcome.jpg">
+Fig.01: Sample setup – KVM bridge with Bonding on Ubuntu LTS Server
+
+<ul> Cài đặt thêm ifenslace cho Ubuntu </ul>
+```
+root@ubuntu:~# apt-get install ifenslave
+```
+<ul> Backup lại file /etc/network/interfaces </ul>
+```
+root@ubuntu:~# cp /etc/network/interfaces /etc/network/interfaces.bk
+```
+<ul> Sửa file */etc/network/interfaces* </ul>
+```
+root@ubuntu:~# vim /etc/network/interfaces
+```
+<ul> Đầu tiên tạo interface *bond0* mà không cấu hình địa chỉ IP và thêm eth1, eth2, eth3 như sau: </ul>
+```
+auto bond0
+iface bond0 inet manual
+bond-miimon 100
+bond-lacp-rate 1
+post-up ifenslave bond0 eth1 eth2 eth3
+pre-down ifenslave -d bond0 eth1 eth2 eth3
+bond-slaves none
+bond-mode 4
+bond-lacp-rate fast
+bond-miimon 100
+bond-downdelay 0
+bond-updelay 0
+bond-xmit_hash_policy 1
+```
+<ul>  </ul>
+<ul> Tiếp theo sửa/cập nhật eth0, eth1, eth2 không có địa chỉ IP, có bond master là bond0 </ul>
+```
+auto eth1
+iface eth1 inet manual
+bond-master bond0
+
+auto eth2
+iface eth2 inet manual
+bond-master bond0
+
+auto eth3
+iface eth3 inet manual
+bond-master bond0
+```
+<ul> Cuối cùng, tạo bridge br0 và gán một địa chỉ IP </ul>
+```
+auto br0
+iface br0 inet static
+address 172.16.69.70
+netmask 255.255.255.0
+broadcast 172.16.69.255
+gateway 172.16.69.1
+bridge_ports bond0
+bridge_stp off
+bridge_fd 9
+bridge_hello 2
+bridge_maxage 12
+```
+<ul> Lưu và đóng file, khởi động lại network interface </ul>
+```
+# ifdown -a && ifup -a
+```
+
+<ul> Kiểm tra lại: </ul>
+```
+# brctl show
+```
+Sample output
+```
+root@ubuntu:~# brctl show
+bridge name	bridge id		STP enabled	interfaces
+br0		8000.000c29a4c502	no		bond0
+```
+<ul> Xem trạng thái của bond0 và các thông tin khác </ul>
+```
+# cat /proc/net/bonding/bond0
+```
+
+## Tham khảo
+<ul> [http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html](http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html) </ul>
+<ul> [http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/](http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/) </ul>
 
