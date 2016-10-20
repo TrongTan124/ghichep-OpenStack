@@ -67,9 +67,12 @@ root@ubuntu:~# brctl addbr br0
 ##5. Cấu hình STP cho bridge
 
 ##6. Cấu hình bonding cho bridge
-Nếu một Host có nhiều network interface, mà gần gom gộp thành một đường bonded để tận dụng băng thông.
+Nếu một Host có nhiều network interface, mà gần gom gộp thành một đường bonded để tận dụng băng thông hoặc cấu hình để 02 đường chạy active-backup.
 <img src="http://s0.cyberciti.org/uploads/faq/2016/07/bridge-bond-welcome.jpg">
 Fig.01: Sample setup – KVM bridge with Bonding on Ubuntu LTS Server
+
+#### Mô hình dưới là dựng thử nghiệm bonding active-backup
+*do mô hình active-active (gom gộp băng thông) cần cấu hình 02 đầu kết nối: cấu hình trên server và cấu hình trên switch vật lý thật*
 
 <ul> Cài đặt thêm ifenslace cho Ubuntu </ul>
 ```
@@ -87,17 +90,17 @@ root@ubuntu:~# vim /etc/network/interfaces
 ```
 auto bond0
 iface bond0 inet manual
+mtu 1500
 bond-miimon 100
-bond-lacp-rate 1
-post-up ifenslave bond0 eth1 eth2 eth3
-pre-down ifenslave -d bond0 eth1 eth2 eth3
 bond-slaves none
-bond-mode 4
-bond-lacp-rate fast
-bond-miimon 100
-bond-downdelay 0
-bond-updelay 0
-bond-xmit_hash_policy 1
+bond-mode 1
+bond-downdelay 200
+bond-updelay 200
+#bond-lacp-rate 1
+#bond-lacp-rate fast
+#post-up ifenslave bond0 eth1 eth2 eth3
+#pre-down ifenslave -d bond0 eth1 eth2 eth3
+#bond-xmit_hash_policy 1
 ```
 <ul>  </ul>
 <ul> Tiếp theo sửa/cập nhật eth0, eth1, eth2 không có địa chỉ IP, có bond master là bond0 </ul>
