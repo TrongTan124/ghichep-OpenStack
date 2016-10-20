@@ -69,10 +69,10 @@ root@ubuntu:~# brctl addbr br0
 ##6. Cấu hình bonding cho bridge
 Nếu một Host có nhiều network interface, mà gần gom gộp thành một đường bonded để tận dụng băng thông hoặc cấu hình để 02 đường chạy active-backup.
 <img src="http://s0.cyberciti.org/uploads/faq/2016/07/bridge-bond-welcome.jpg">
-Fig.01: Sample setup – KVM bridge with Bonding on Ubuntu LTS Server
+<ul> Fig.01: Sample setup – KVM bridge with Bonding on Ubuntu LTS Server </ul>
 
 #### Mô hình dưới là dựng thử nghiệm bonding active-backup
-*do mô hình active-active (gom gộp băng thông) cần cấu hình 02 đầu kết nối: cấu hình trên server và cấu hình trên switch vật lý thật*
+*Do mô hình active-active (gom gộp băng thông) cần cấu hình 02 đầu kết nối: cấu hình trên server và cấu hình trên switch vật lý thật*
 
 <ul> Cài đặt thêm ifenslace cho Ubuntu </ul>
 ```
@@ -152,6 +152,6 @@ br0		8000.000c29a4c502	no		bond0
 ```
 
 ## Tham khảo
-<ul> [http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html](http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html) </ul>
-<ul> [http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/](http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/) </ul>
+<ul> http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html</ul>
+<ul> http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/</ul>
 
