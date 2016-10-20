@@ -28,9 +28,9 @@ Có một số quy tắc bạn không được phép phá vỡ (nếu không th�
 Nếu version kernel của bạn lớn hơn 2.3.47 thì bạn không cần lấy bridge patches. Bridging là một phần chính của các version đó 
 Lấy bridge kernel patches từ [link](http://www.math.leidenuniv.nl/~buytenh/bridge/)
 ###b. Cài đặt các gói cần thiết
-`
+```
 # apt-get install bridge-utils
-`
+```
 view command:
 ```
 root@ubuntu:~# brctl
