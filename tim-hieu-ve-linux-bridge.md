@@ -66,10 +66,46 @@ root@ubuntu:~# brctl addbr br0
 
 ##5. Cấu hình STP cho bridge
 
-##6. Cấu hình bonding cho bridge
-Nếu một Host có nhiều network interface, mà gần gom gộp thành một đường bonded để tận dụng băng thông hoặc cấu hình để 02 đường chạy active-backup.
+##6. Cấu hình VLAN cho bridge
+
+##7. Cấu hình bonding cho bridge
+Nếu một Host có nhiều network interface, mà gần gom gộp thành một đường bonded để tận dụng băng thông hoặc cấu hình để chạy active-backup.
 <img src="http://s0.cyberciti.org/uploads/faq/2016/07/bridge-bond-welcome.jpg">
 <ul> Fig.01: Sample setup – KVM bridge with Bonding on Ubuntu LTS Server </ul>
+
+####a. Tìm hiểu về bonding
+<ul> Bonding cho phép bạn gom gộp nhiều port thành một nhóm đơn, kết hợp hiệu quả băng thông vào trong một kết nối </ul>
+<ul> Bạn có thể sử dụng bonding ở nơi network cần đường dự phòng, chống chịu lỗi hay cân bằng tải. Nó là cách tốt nhất để có một network segment sẵn sàng cao (HA).
+Một trường hợp rất hữu dụng sử dụng bonding là sử dụng trong kết nối hỗ trợ 802.1q VLAN </ul>
+<ul> 
+<ul> Các loại mode của bonding </ul>
+<li> **mode=1 (active-backup)** </li>
+Cách hành xử active-backup: Chỉ có một slave trong bond được active. Một slave khác trở thành active chỉ khi active slave lỗi.
+Địa chỉ MAC của bond chỉ hiển thị duy nhất một port để tránh confusing với switch. Mode này cung cấp khả năng chịu lỗi. tùy chọn đầu tiên sẽ ảnh hưởng tới hành xử trong mode này. 
+
+<li> **mode=2 (balance-xor)** </li>
+Cách hành xử XOR: Truyền tin dựa trên việc [(source MAC address XOR'd with destination MAC address) modulo slave count]. Điều này chọn slave giống với destination MAC address.
+Mode này cung cấp cân bằng tải và khả năng chịu lỗi
+
+<li> **mode=3 (broadcast)** </li>
+Cách hành xử broadcast: Truyền tin tới mọi slave interface. Mode này cung cấp khả năng chịu lỗi.
+
+<li>  **mode=4 (802.3ad)** </li>
+IEEE 802.3ad chức năng tổng hợp link. Tạo ra các nhóm kết hợp tốc độ và duplex giống nhau. Sử dụng tất cả slave trong nhóm active theo một 802.3ad cụ thể.
+<ul> Yêu cầu: 
+<li> ethtool hỗ trợ trong base driver việc lấy tốc độ và duplex của mỗi slave. </li>
+<li> Một switch hỗ trợ IEEE 802.3ad Dynamic link aggregation. Các switch yêu cầu cấu hình để enable 802.3ad mode.</li>
+ </ul>
+
+<li> **mode=5 (balance-tlb)** </li>
+
+
+<li> </li>
+
+<li> </li>
+ </ul>
+<ul>  </ul>
+<ul>  </ul>
 
 #### Mô hình dưới là dựng thử nghiệm bonding active-backup
 *Do mô hình active-active (gom gộp băng thông) cần cấu hình 02 đầu kết nối: cấu hình trên server và cấu hình trên switch vật lý thật*
@@ -151,7 +187,12 @@ br0		8000.000c29a4c502	no		bond0
 # cat /proc/net/bonding/bond0
 ```
 
+##8. Kết hợp bridge với các máy ảo (VM) sử dụng virt
+<img src="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/images/Network_Interfaces-bridge-with-bond.png">
+<ul> Hình: Một network bridge gồm 2 interface Ethernet được bonded </ul>
+<ul>  </ul>
+
 ## Tham khảo
 <ul> http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html</ul>
 <ul> http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/</ul>
-
+<ul> http://www.linux-admins.net/2010/09/network-card-bonding-on-centos.html</ul>
