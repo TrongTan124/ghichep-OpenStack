@@ -318,6 +318,20 @@ virt-install \
 ```
 
 <ul> Mối liên hệ giữa tab interfaces và linux bridge </ul>
+**Mạng vật lý vs mạng ảo**
+<ul> Lưu lượng dữ liệu mạng được truyền bởi kết nối port Ethernet vật lý trên thiết bị vật lý. Tương tự cho máy ảo, các lưu lượng cũng cần được truyền bằng 
+các port Ethernet ảo. Cuối cùng, lưu lượng từ các port ảo được gửi tới mạng vật lý để kết nối ra ngoài. Điều này xảy ra như thế nào? Nhìn hình phía dưới để xem các thành phần 
+vật lý được liên kết ra sao trong mạng vật lý. </ul>
+<ul>
+	<li> Ethernet port trên server - thường được gọi là pNIC (physical NIC) </li>
+	<li> Cáp RJ45 </li>
+	<li> Ethernet port trên switch vật lý </li>
+	<li> Port uplink trên switch vật lý - kết nối ra mạng ngoài </li>
+</ul>
+<img src="http://www.innervoice.in/blogs/wp-content/uploads/2013/12/Physical-Network.png">
+<ul> Mục đích của ảo hóa là giả lập các thành phần vật lý trong phần mềm, nó phải hỗ trợ một cấu trúc tương tự: 
+"Port ảo của một máy ảo được kết nối tới switch ảo"</ul>
+<img src="http://www.innervoice.in/blogs/wp-content/uploads/2013/12/VirtualNetwotk.png">
 
 
 
