@@ -129,11 +129,9 @@ khác nhau sử dụng hardware address khác nhau cho server. Bạn có thể s
 </ul>
  </ul>
 <ul> Kiểm tra băng thông trong trường hợp gộp chung các network interface vào trong bond: </ul>
+Sử dụng iperf để đo băng thông.
 
-
-<ul>  </ul>
-
-#### Mô hình dưới là dựng thử nghiệm bonding active-backup
+####c. Mô hình dưới là dựng thử nghiệm bonding active-backup
 *Do mô hình active-active (gom gộp băng thông) cần cấu hình 02 đầu kết nối: cấu hình trên server và cấu hình trên switch vật lý thật*
 
 <ul> Cài đặt thêm ifenslace cho Ubuntu </ul>
@@ -213,6 +211,87 @@ br0		8000.000c29a4c502	no		bond0
 # cat /proc/net/bonding/bond0
 ```
 
+####b. Hướng dẫn sử dụng iperf để đo băng thông
+<ul> iperf là một công cụ thuận tiện cho việc tính toán băng thông của mạng </ul>
+**Cài đặt trên Ubuntu dùng lệnh: **
+```
+root@ubuntu:~# apt-get install iperf
+```
+<ul> Sử dụng help để xem các tùy chọn của lệnh: </ul>
+```
+root@ubuntu:~# iperf --help
+Usage: iperf [-s|-c host] [options]
+       iperf [-h|--help] [-v|--version]
+
+Client/Server:
+  -f, --format    [kmKM]   format to report: Kbits, Mbits, KBytes, MBytes
+  -i, --interval  #        seconds between periodic bandwidth reports
+  -l, --len       #[KM]    length of buffer to read or write (default 8 KB)
+  -m, --print_mss          print TCP maximum segment size (MTU - TCP/IP header)
+  -o, --output    <filename> output the report or error message to this specified file
+  -p, --port      #        server port to listen on/connect to
+  -u, --udp                use UDP rather than TCP
+  -w, --window    #[KM]    TCP window size (socket buffer size)
+  -B, --bind      <host>   bind to <host>, an interface or multicast address
+  -C, --compatibility      for use with older versions does not sent extra msgs
+  -M, --mss       #        set TCP maximum segment size (MTU - 40 bytes)
+  -N, --nodelay            set TCP no delay, disabling Nagle's Algorithm
+  -V, --IPv6Version        Set the domain to IPv6
+
+Server specific:
+  -s, --server             run in server mode
+  -U, --single_udp         run in single threaded UDP mode
+  -D, --daemon             run the server as a daemon
+
+Client specific:
+  -b, --bandwidth #[KM]    for UDP, bandwidth to send at in bits/sec
+                           (default 1 Mbit/sec, implies -u)
+  -c, --client    <host>   run in client mode, connecting to <host>
+  -d, --dualtest           Do a bidirectional test simultaneously
+  -n, --num       #[KM]    number of bytes to transmit (instead of -t)
+  -r, --tradeoff           Do a bidirectional test individually
+  -t, --time      #        time in seconds to transmit for (default 10 secs)
+  -F, --fileinput <name>   input the data to be transmitted from a file
+  -I, --stdin              input the data to be transmitted from stdin
+  -L, --listenport #       port to receive bidirectional tests back on
+  -P, --parallel  #        number of parallel client threads to run
+  -T, --ttl       #        time-to-live, for multicast (default 1)
+  -Z, --linux-congestion <algo>  set TCP congestion control algorithm (Linux only)
+
+Miscellaneous:
+  -x, --reportexclude [CDMSV]   exclude C(connection) D(data) M(multicast) S(settings) V(server) reports
+  -y, --reportstyle C      report as a Comma-Separated Values
+  -h, --help               print this message and quit
+  -v, --version            print version information and quit
+
+[KM] Indicates options that support a K or M suffix for kilo- or mega-
+
+The TCP window size option can be set by the environment variable
+TCP_WINDOW_SIZE. Most other options can be set by an environment variable
+IPERF_<long option name>, such as IPERF_BANDWIDTH.
+
+Report bugs to <iperf-users@lists.sourceforge.net>
+```
+<ul> **Mô hình chung:** </ul>
+<img src="https://camo.githubusercontent.com/69090167971053bf2170fec8175fbf627a799d82/687474703a2f2f692e696d6775722e636f6d2f697a4a487a6e6f2e706e67">
+
+<ul> Một số lệnh đơn dùng để kiểm tra: 
+	<ul>  Đối với TCP
+		<li>  </li>
+		<li> </li>
+		<li> </li>
+	</ul>
+	<ul>  Đối với UDP
+		<li> </li>
+		<li> </li>
+		<li> </li>
+	</ul>
+</ul>
+
+<ul>  </ul>
+<ul>  </ul>
+<ul>  </ul>
+
 ##8. Kết hợp bridge với các máy ảo (VM) sử dụng virt
 <img src="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/images/Network_Interfaces-bridge-with-bond.png">
 <ul> Hình: Một network bridge gồm 2 interface Ethernet được bonded </ul>
@@ -222,3 +301,4 @@ br0		8000.000c29a4c502	no		bond0
 <ul> http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html</ul>
 <ul> http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/</ul>
 <ul> http://www.linux-admins.net/2010/09/network-card-bonding-on-centos.html</ul>
+<ul> https://github.com/ducnc/iperf#user-content-1-c%C3%A0i-%C4%91%E1%BA%B7t </ul>
