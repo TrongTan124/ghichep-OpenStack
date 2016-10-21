@@ -11,20 +11,20 @@ models </li>
 </ul>
 
 <ul> Một hệ thống cloud computing cần đáp ứng được các điểm cần thiết dưới đây: </ul>
-<ul> **5 đặc tính**
+<ul> <b>5 đặc tính</b>
 <li> Rapid elasticity: </li>
 <li> Broad network access: </li>
 <li> Resource pooling: </li>
 <li> Measured service: </li>
 <li> On-demand self-service: </li>
 </ul>
-<ul> **4 mô hình triển khai**
+<ul> <b>4 mô hình triển khai</b>
 <li> Private cloud: </li>
 <li> Public cloud: </li>
 <li> Hybrid cloud: </li>
 <li> Community cloud: </li>
 </ul>
-<ul> **3 mô hình dịch vụ**
+<ul> <b>3 mô hình dịch vụ</b>
 <li> Software as a Service (SaaS): </li>
 <li> Platform as a Service (PaaS): </li>
 <li> Infrastructure as a Service (IaaS): </li>
