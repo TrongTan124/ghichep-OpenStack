@@ -64,6 +64,13 @@ commands:
 root@ubuntu:~# brctl addbr br0
 ```
 
+**Chỉnh sửa dns**
+vi /etc/resolv.conf
+```
+# add
+nameserver 8.8.8.8 8.8.4.4
+```
+
 ##5. Cấu hình STP cho bridge
 
 ##6. Cấu hình VLAN cho bridge
@@ -97,14 +104,30 @@ IEEE 802.3ad chức năng tổng hợp link. Tạo ra các nhóm kết hợp t�
 <li> Một switch hỗ trợ IEEE 802.3ad Dynamic link aggregation. Các switch yêu cầu cấu hình để enable 802.3ad mode.</li>
  </ul>
 
-<li> **mode=5 (balance-tlb)** </li>
+<li> **mode=5 (balance-tlb)** (transmit load balancing) </li>
+Thích ứng với truyền cân bằng tải: Channel bonding không yêu cầu switch hỗ trợ. Lưu lượng đi ra được phân tán dựa vào chiều load của mỗi slave. Lưu lượng đi vào được nhận bởi chiều slave.
+Nếu slave nhận lỗi, một slave khác sẽ đè lên MAC address của slave nhận lỗi.
+<ul> *Yêu cầu:* ethtool hỗ trợ trong base driver trong việc lấy speed và duplex của mỗi slave. </ul>
 
+<li> **mode=6 (balance-alb)** (adaptive load balancing) </li>
+Thích hợp cân bằng tải: Bao gồm balance-tbl được thêm receive load balancing (rlb) cho lưu lượng IPV4, và không yêu cầu switch hỗ trợ riêng biệt. RLB được hoàn tất bởi thương lượng ARP. 
+Bonding driver chắn ARP replies gửi bởi local system theo cách của chúng ra ngoài và ghi đè source hardware address với hardware address duy nhất của mỗi slave trong bond như các peer 
+khác nhau sử dụng hardware address khác nhau cho server. Bạn có thể sử dụng nhiều bond interface nhưng bạn phải load bonding module nhiều.
 
 <li> </li>
+<ul> Một số command: 
+<li> **Check the bonding: ** *root@ubuntu:~# ifenslave -a* </li>
 
-<li> </li>
+<li> **Hoặc check: ** *root@ubuntu:~# cat /proc/net/bonding/bond0*  </li>
+
+<li> **Thay đổi active interface sang eth2: ** *root@ubuntu:~# ifenslave -c bond0 eth2* </li>
+
+<li> **Kiểm tra thông số speed: ** *root@ubuntu:~# ethtool bond0* </li>
+</ul>
  </ul>
-<ul>  </ul>
+<ul> Kiểm tra băng thông trong trường hợp gộp chung các network interface vào trong bond: </ul>
+
+
 <ul>  </ul>
 
 #### Mô hình dưới là dựng thử nghiệm bonding active-backup
