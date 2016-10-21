@@ -17,7 +17,7 @@ Các đặc tính thuần túy của bridge
 <ul> Fire-walling: Có một phần của luật bridging cho phép bạn sử dụng IP chain trên interface vào một bridge </ul>
 
 ##2. Các quy tắc trên Bridging
-Có một số quy tắc bạn không được phép phá vỡ
+<ul> Có một số quy tắc bạn không được phép phá vỡ</ul>
 <ul> 
 <li> Một port chỉ có thể là một thành phần của một bridge  </li>
 <li> Một bridge không biết gì về route </li>
@@ -300,6 +300,22 @@ Report bugs to <iperf-users@lists.sourceforge.net>
 <img src="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/images/Network_Interfaces-bridge-with-bond.png">
 <ul> Hình: Một network bridge gồm 2 interface Ethernet được bonded </ul>
 <ul>  </ul>
+
+<ul> Câu lệnh tạo máy ảo bằng virt: </ul>
+```
+virt-install \
+--name test2 \
+--ram 1024 \
+--disk path=/var/kvm/images/test2.img,size=20 \
+--vcpus 1 \
+--os-type linux \
+--os-variant ubuntutrusty \
+--network bridge=br0 \
+--graphics none \
+--console pty,target_type=serial \
+--location 'http://jp.archive.ubuntu.com/ubuntu/dists/trusty/main/installer-amd64/' \
+--extra-args 'console=ttyS0,115200n8 serial'
+```
 
 ## Tham khảo
 <ul> http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html</ul>
