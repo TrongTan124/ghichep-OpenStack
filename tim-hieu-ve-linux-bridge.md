@@ -1,7 +1,7 @@
 ﻿##1. Linux bridge là gì?
-<ul> Một bridge là cách thức phân chia thành 2 hoặc nhiều hơn các phần mạng (network segment) riêng biệt trong phạm vi một logical network (ví dụ một IP-subnet)</ul>
+<ul> Một bridge là cách thức kết hợp 2 hoặc nhiều các phần mạng (network segment) riêng biệt vào trong trong một logical network (ví dụ một IP-subnet)</ul>
 <ul> Một bridge thường được đặt giữa 2 nhóm riêng biệt của máy tính, nơi chúng trao đổi với nhau nhưng không trao đổi với nhóm khác. </ul>
-<ul> Công việc của bridge là xem xét đích của các data packet tại một thời điểm và lựa chọn có cho packet đi tới side khác của Ethernet. 
+<ul> Công việc của bridge là xem xét đích của các data packet tại một thời điểm và lựa chọn cho packet đi tới side khác của Ethernet. 
 Dẫn tới network sẽ nhanh hơn, đơn giản hơn với ít miền đụng độ </ul>
 <ul> Luật bridge quyết định việc gửi hay xóa dữ liệu không dựa vào loại protocol (IP, IPX, NetBEUI), nhưng xem xét duy nhất địa chỉ MAC của mỗi NIC </ul>
 **Note**: Quan trọng để hiểu bridge không phải là router hay firewall. Nói ngắn gọn, một bridge xử lý như một switch (Layer 2 switch), 
@@ -74,6 +74,7 @@ nameserver 8.8.8.8 8.8.4.4
 ##5. Cấu hình STP cho bridge
 
 ##6. Cấu hình VLAN cho bridge
+
 
 ##7. Cấu hình bonding cho bridge
 Nếu một Host có nhiều network interface, mà gần gom gộp thành một đường bonded để tận dụng băng thông hoặc cấu hình để chạy active-backup.
@@ -302,3 +303,5 @@ Report bugs to <iperf-users@lists.sourceforge.net>
 <ul> http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/</ul>
 <ul> http://www.linux-admins.net/2010/09/network-card-bonding-on-centos.html</ul>
 <ul> https://github.com/ducnc/iperf#user-content-1-c%C3%A0i-%C4%91%E1%BA%B7t </ul>
+<ul> https://github.com/lethanhlinh247/Thuc-tap-thang-03-2016/tree/master/LTLinh/LTLinh-Virtual%20Switching/Linux%20Bridge </ul>
+<ul> https://github.com/lethanhlinh247/Thuc-tap-thang-03-2016/blob/master/LTLinh/LTLinh-Virtual%20Switching/LTLinh-NetworkBonding.md </ul>
