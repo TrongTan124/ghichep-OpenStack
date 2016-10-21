@@ -317,6 +317,10 @@ virt-install \
 --extra-args 'console=ttyS0,115200n8 serial'
 ```
 
+<ul> Mối liên hệ giữa tab interfaces và linux bridge </ul>
+
+
+
 ## Tham khảo
 <ul> http://www.tldp.org/HOWTO/BRIDGE-STP-HOWTO/what-is-a-bridge.html</ul>
 <ul> http://www.cyberciti.biz/faq/ubuntu-linux-bridging-and-bonding-setup/</ul>
@@ -324,3 +328,5 @@ virt-install \
 <ul> https://github.com/ducnc/iperf#user-content-1-c%C3%A0i-%C4%91%E1%BA%B7t </ul>
 <ul> https://github.com/lethanhlinh247/Thuc-tap-thang-03-2016/tree/master/LTLinh/LTLinh-Virtual%20Switching/Linux%20Bridge </ul>
 <ul> https://github.com/lethanhlinh247/Thuc-tap-thang-03-2016/blob/master/LTLinh/LTLinh-Virtual%20Switching/LTLinh-NetworkBonding.md </ul>
+<ul> http://www.innervoice.in/blogs/2013/12/08/tap-interfaces-linux-bridge/ </ul>
+<ul> http://www.innervoice.in/blogs/2013/12/02/linux-bridge-virtual-networking/ </ul>
