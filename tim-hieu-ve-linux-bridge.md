@@ -331,6 +331,9 @@ vật lý được liên kết ra sao trong mạng vật lý. </ul>
 <img src="http://www.innervoice.in/blogs/wp-content/uploads/2013/12/Physical-Network.png">
 <ul> Mục đích của ảo hóa là giả lập các thành phần vật lý trong phần mềm, nó phải hỗ trợ một cấu trúc tương tự: 
 "Port ảo của một máy ảo được kết nối tới switch ảo"</ul>
+
+**Port switch**
+<ul> Như đã nói ở trên, Linux bridge cung cấp một switch vào trong nhân Linux. Như mọi switch, nó yêu cầu các port hay interface để mang dữ liệu vào và ra trên switch. </ul>
 <img src="http://www.innervoice.in/blogs/wp-content/uploads/2013/12/VirtualNetwotk.png">
 
 
