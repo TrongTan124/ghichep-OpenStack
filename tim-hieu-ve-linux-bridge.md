@@ -306,7 +306,7 @@ Report bugs to <iperf-users@lists.sourceforge.net>
 virt-install \
 --name test2 \
 --ram 1024 \
---disk path=/var/kvm/images/test2.img,size=20 \
+--disk path=/var/kvm/images/test2.img,size=20,bus=virtio \
 --vcpus 1 \
 --os-type linux \
 --os-variant ubuntutrusty \
@@ -315,6 +315,9 @@ virt-install \
 --console pty,target_type=serial \
 --location 'http://jp.archive.ubuntu.com/ubuntu/dists/trusty/main/installer-amd64/' \
 --extra-args 'console=ttyS0,115200n8 serial'
+#--cdrom=/var/lib/libvirt/boot/CentOS-7-x86_64-Minimal-1511.iso \
+# --virt-type=kvm \
+# --hvm \
 ```
 
 <ul> Mối liên hệ giữa tab interfaces và linux bridge </ul>
@@ -347,3 +350,5 @@ vật lý được liên kết ra sao trong mạng vật lý. </ul>
 <ul> https://github.com/lethanhlinh247/Thuc-tap-thang-03-2016/blob/master/LTLinh/LTLinh-Virtual%20Switching/LTLinh-NetworkBonding.md </ul>
 <ul> http://www.innervoice.in/blogs/2013/12/08/tap-interfaces-linux-bridge/ </ul>
 <ul> http://www.innervoice.in/blogs/2013/12/02/linux-bridge-virtual-networking/ </ul>
+<ul> http://www.server-world.info/en/note?os=Ubuntu_14.04&p=kvm&f=2 </ul>
+<ul> http://www.cyberciti.biz/faq/how-to-install-kvm-on-ubuntu-linux-14-04/ </ul>

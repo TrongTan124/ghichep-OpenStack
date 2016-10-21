@@ -24,9 +24,12 @@ root@kvm:~# virsh define /tmp/test.xml
 root@kvm:~# apt-get install virt-manager
 ```
 
+##4. Quản lý VM bằng webvirt manager
 
 
 ## Tham khảo
 <ul> https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Virtualization_Administration_Guide/chap-Virtualization_Administration_Guide-Managing_guests_with_virsh.html </ul>
 <ul> https://help.ubuntu.com/community/KVM/Managing </ul>
+<ul> https://github.com/caongocuy/Install-Webvirtmgr-KVM-simple</ul>
+<ul> https://libvirt.org/sources/virshcmdref/html/ </ul>
 <ul> </ul>
