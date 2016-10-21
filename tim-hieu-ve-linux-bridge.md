@@ -86,6 +86,9 @@ Nếu một Host có nhiều network interface, mà gần gom gộp thành một
 Một trường hợp rất hữu dụng sử dụng bonding là sử dụng trong kết nối hỗ trợ 802.1q VLAN </ul>
 <ul> 
 <ul> Các loại mode của bonding </ul>
+<li> **mode=0 (balance-rr)** </li>
+Thiết lập điều luật round-robin cho khả năng chịu lỗi và cân bằng tải. Sự truyền tin được gửi và nhận tuần tự trên mỗi slave interface bắt đầu với một slave sẵn sàng.
+
 <li> **mode=1 (active-backup)** </li>
 Cách hành xử active-backup: Chỉ có một slave trong bond được active. Một slave khác trở thành active chỉ khi active slave lỗi.
 Địa chỉ MAC của bond chỉ hiển thị duy nhất một port để tránh confusing với switch. Mode này cung cấp khả năng chịu lỗi. tùy chọn đầu tiên sẽ ảnh hưởng tới hành xử trong mode này. 
