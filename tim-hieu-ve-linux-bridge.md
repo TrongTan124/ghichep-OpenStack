@@ -5,13 +5,13 @@
 Dẫn tới network sẽ nhanh hơn, đơn giản hơn với ít miền đụng độ </ul>
 <ul> Luật bridge quyết định việc gửi hay xóa dữ liệu không dựa vào loại protocol (IP, IPX, NetBEUI), nhưng xem xét duy nhất địa chỉ MAC của mỗi NIC </ul>
 
-<ul>**Note** : Quan trọng để hiểu bridge không phải là router hay firewall. Nói ngắn gọn, một bridge xử lý như một switch (Layer 2 switch), 
+<ul>Note: Quan trọng để hiểu bridge không phải là router hay firewall. Nói ngắn gọn, một bridge xử lý như một switch (Layer 2 switch), 
 làm trong suốt các thành phần mạng (không chính xác tuyệt đối nhưng gần đúng).</ul>
 
 <ul> Thêm nữa, bạn có thể khắc phục hardware không tương thích với một bridge, không cần sự cho phép address-range của IP-net hay subnet. </ul>
 <ul>ví dụ: nó có thể bridge giữa kết nối vật lý khác nhau như 10 Base T và 100 Base TX </ul>
 
-**Các đặc tính thuần túy của bridge**
+Các đặc tính thuần túy của bridge
 <ul> STP: Spanning Tree Protocol là một phương thức thuận lợi cho việc giữ các thiết bị kết nối trong khi có nhiều kết nối.</ul>
 <ul> Multiple Bridge Instances: cho phép bạn chạy được nhiều hơn một bridge trên máy và điều khiển một cái tách biệt nhau. </ul>
 <ul> Fire-walling: Có một phần của luật bridging cho phép bạn sử dụng IP chain trên interface vào một bridge </ul>
@@ -24,9 +24,10 @@ Có một số quy tắc bạn không được phép phá vỡ
 <li> Một bridge không biết gì về các giao thức cao hơn ARP. Đó là lý do nó có thể bridge mọi giao thức có thế chạy trên Ethernet của bạn </li>
 <li> Không có vấn đề về việc có bao nhiêu port trong logical bridge, nó được bao phủ bởi một logical interface duy nhất </li>
 <li> Ngay khi một port (ví dụ một NIC) được gán cho một bridge, bạn sẽ không thể trực tiếp điều khiển nó </li>
- </ul>
+</ul>
 
 ##3. Cài đặt bridge
+
 ```
 # apt-get install bridge-utils
 ```
