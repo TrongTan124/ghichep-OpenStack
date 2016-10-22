@@ -13,19 +13,19 @@ models </i></p></li>
 
 <ul> Một hệ thống cloud computing cần đáp ứng được các điểm cần thiết dưới đây: </ul>
 <ul> <b>5 đặc tính</b>
-<li> <font color="red">Rapid elasticity</font>: Khả năng cấp phát và thu hồi tài nguyên, tự động mở rộng theo nhu cầu người dùng bất cứ lúc nào.
+<li> Rapid elasticity: Khả năng cấp phát và thu hồi tài nguyên, tự động mở rộng theo nhu cầu người dùng bất cứ lúc nào.
  <p>(<i>Capabilities can be elastically provisioned and released, in some cases
 automatically, to scale rapidly outward and inward commensurate with demand. To the
 consumer, the capabilities available for provisioning often appear to be unlimited and can
 be appropriated in any quantity at any time</i>)</p></li>
 
-<li> <font color="red">Broad network access</font>: Khả năng truy cập thông qua các chuẩn kết nối 
+<li> Broad network access: Khả năng truy cập thông qua các chuẩn kết nối 
 
 <p>(<i>Capabilities are available over the network and accessed through standard
 mechanisms that promote use by heterogeneous thin or thick client platforms (e.g.,
 mobile phones, tablets, laptops, and workstations)</i>)</p></li>
 
-<li> <font color="red">Resource pooling</font>: Gom gộp tài nguyên và phân bổ tự động theo nhu cầu người dùng. 
+<li> Resource pooling: Gom gộp tài nguyên và phân bổ tự động theo nhu cầu người dùng. 
 
 <p>(<i>The provider’s computing resources are pooled to serve multiple consumers
 using a multi-tenant model, with different physical and virtual resources dynamically
@@ -35,7 +35,7 @@ location of the provided resources but may be able to specify location at a high
 abstraction (e.g., country, state, or datacenter). Examples of resources include storage,
 processing, memory, and network bandwidth</i>)</p></li>
 
-<li> <font color="red">Measured service</font>: Tự động kiểm soát và tối ưu tài nguyên bằng cách đo lường mức độ sử dụng dịch vụ.
+<li> Measured service: Tự động kiểm soát và tối ưu tài nguyên bằng cách đo lường mức độ sử dụng dịch vụ.
 
 <p>(<i>Cloud systems automatically control and optimize resource use by leveraging
 a metering capability at some level of abstraction appropriate to the type of service (e.g.,
@@ -43,7 +43,7 @@ storage, processing, bandwidth, and active user accounts). Resource usage can be
 monitored, controlled, and reported, providing transparency for both the provider and
 consumer of the utilized service</i>)</p></li>
 
-<li> <font color="red">On-demand self-service</font>: Khả năng tự phục vụ theo nhu cầu một cách tự động mà không cần tương tác giữa khách hàng và nhà cung cấp.
+<li> On-demand self-service: Khả năng tự phục vụ theo nhu cầu một cách tự động mà không cần tương tác giữa khách hàng và nhà cung cấp.
 
 <p>(<i>A consumer can unilaterally provision computing capabilities, such as
 server time and network storage, as needed automatically without requiring human
@@ -51,27 +51,27 @@ interaction with each service provider</i>)</p></li>
 
 </ul>
 <ul> <b>4 mô hình triển khai</b>
-<li> <font color="red">Private cloud</font>: 
+<li> Private cloud: 
 
 <p>(<i>The cloud infrastructure is provisioned for exclusive use by a single organization
 comprising multiple consumers (e.g., business units). It may be owned, managed, and
 operated by the organization, a third party, or some combination of them, and it may exist
 on or off premises</i>)</p></li>
 
-<li> <font color="red">Public cloud</font>: 
+<li> Public cloud: 
 
 <p>(<i>The cloud infrastructure is provisioned for open use by the general public. It may be
 owned, managed, and operated by a business, academic, or government organization, or
 some combination of them. It exists on the premises of the cloud provider</i>)</p></li>
 
-<li> <font color="red">Hybrid cloud</font>: 
+<li> Hybrid cloud: 
 
 <p>(<i>The cloud infrastructure is a composition of two or more distinct cloud
 infrastructures (private, community, or public) that remain unique entities, but are bound
 together by standardized or proprietary technology that enables data and application
 portability (e.g., cloud bursting for load balancing between clouds)</i>)</p></li>
 
-<li> <font color="red">Community cloud</font>: 
+<li> Community cloud: 
 
 <p>(<i>The cloud infrastructure is provisioned for exclusive use by a specific
 community of consumers from organizations that have shared concerns (e.g., mission,
@@ -81,7 +81,7 @@ party, or some combination of them, and it may exist on or off premises</i>)</p>
 </ul>
 
 <ul> <b>3 mô hình dịch vụ</b>
-<li> <font color="red">Software as a Service (SaaS)</font>: 
+<li> Software as a Service (SaaS): 
 
 <p>(<i>The capability provided to the consumer is to use the provider’s
 applications running on a cloud infrastructure. The applications are accessible from
@@ -90,7 +90,7 @@ web-based email), or a program interface. The consumer does not manage or contro
 underlying cloud infrastructure including network, servers, operating systems, storage, or
 even individual application capabilities, with the possible exception of limited userspecific application configuration settings.</i>)</p></li>
 
-<li> <font color="red">Platform as a Service (PaaS)</font>: 
+<li> Platform as a Service (PaaS): 
 
 <p>(<i>The capability provided to the consumer is to deploy onto the cloud
 infrastructure consumer-created or acquired applications created using programming
@@ -99,7 +99,7 @@ not manage or control the underlying cloud infrastructure including network, ser
 operating systems, or storage, but has control over the deployed applications and possibly
 configuration settings for the application-hosting environment.</i>)</p></li>
 
-<li> <font color="red">Infrastructure as a Service (IaaS)</font>: 
+<li> Infrastructure as a Service (IaaS): 
 
 <p>(<i>The capability provided to the consumer is to provision
 processing, storage, networks, and other fundamental computing resources where the
@@ -109,8 +109,39 @@ infrastructure but has control over operating systems, storage, and deployed app
 and possibly limited control of select networking components (e.g., host firewalls)</i>)</p></li>
 </ul>
 
+##2. OpenStack
+###a. Giới thiệu
+<p> Cloud là một khái niệm trừu tượng, để chuyển các khái niệm đó thành thực tế cần xây dựng hệ thống đáp ứng được các đặc điểm cần thiết của cloud computing được chỉ ra bên trên. </p>
+<p> Thực tế có rất nhiều hệ thống đáp ứng nhu cầu dựng một hệ thống cloud computing như: </p>
+<ul>Chúng ta thực hiện chọn OpenStack để xây dựng hệ thống cloud computing vì một số đặc điểm sau:
+<li> Openstack là 1 công nghệ mới và còn phát triển hơn nữa trong tương lai. </li>
+<li> Được các công ty lớn ủng hộ như: IBM, Cisco, Google... </li>
+<li> Sử dụng 1 ngôn ngữ duy nhất (99% python). </li>
+<li> Triển khai quy mô lớn </li>
+<li> Mọi thứ đều mở, open source code. </li>
+<li> Có lộ trình phát triển rõ ràng. </li>
+</ul>
+
+###b. Tóm lược
+<ul> OpenStack được thiết kế theo hướng module, nghĩa là các thành phần phía trong có thể triển khai tách rời và tương tác với nhau theo API. </ul>
+<ul> Mở về thiết kế, lộ trình phát triển, cộng đồng, mã nguồn. </ul>
+<ul> Mỗi 6 tháng sẽ phát hành một phiên bản mới </ul>
+<ul> Sử dụng ngôn ngữ python </ul>
+
+###c. Kiến trúc
+<ul> Kiến trúc theo ý niệm: </ul>
+<img src="https://camo.githubusercontent.com/9733463e8cf45224c060acf265166d7c8b428609/687474703a2f2f646f63732e6f70656e737461636b2e6f72672f6a756e6f2f696e7374616c6c2d67756964652f696e7374616c6c2f6170742f636f6e74656e742f666967757265732f312f612f636f6d6d6f6e2f666967757265732f6f70656e737461636b5f686176616e615f636f6e6365707475616c5f617263682e706e67">
+<ul> Kiến trúc theo logic </ul>
+<img src="https://camo.githubusercontent.com/efc54e908f39e6d3c5630175b3aba93aaad14947/687474703a2f2f646f63732e6f70656e737461636b2e6f72672f696365686f7573652f747261696e696e672d6775696465732f636f6e74656e742f666967757265732f352f612f666967757265732f6f70656e737461636b2d617263682d686176616e612d6c6f676963616c2d76312e6a7067">
+<ul> Kiến trúc triển khai thử nghiệm </ul>
+<img src="http://2.bp.blogspot.com/-VV4BMLgzUr4/VElEolk2BjI/AAAAAAAAAFI/EOlNMtfpCm0/s1600/OpenStack-Compute-Nodes-.png">
+
+
 <ul> </ul>
 <ul> </ul>
 <ul> </ul>
 <ul> </ul>
 <ul> </ul>
+
+## Tham khảo
+<ul>https://github.com/hocchudong/Thuc-tap-thang-03-2016/blob/master/TriMQ/TriMQ_baocaoCloudComputing%26Openstack.md </ul>
