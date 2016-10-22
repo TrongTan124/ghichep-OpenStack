@@ -36,15 +36,15 @@ storage, processing, bandwidth, and active user accounts). Resource usage can be
 monitored, controlled, and reported, providing transparency for both the provider and
 consumer of the utilized service</i>)</li>
 <li> On-demand self-service: Khả năng tự phục vụ theo nhu cầu một cách tự động mà không cần tương tác giữa khách hàng và nhà cung cấp.
- (<i>A consumer can unilaterally provision computing capabilities, such as
+ <p>(<i>A consumer can unilaterally provision computing capabilities, such as
 server time and network storage, as needed automatically without requiring human
-interaction with each service provider</i>)</li>
+interaction with each service provider</i>)</p></li>
 </ul>
 <ul> <b>4 mô hình triển khai</b>
-<li> Private cloud: (<i>The cloud infrastructure is provisioned for exclusive use by a single organization
+<li> Private cloud: <p>(<i>The cloud infrastructure is provisioned for exclusive use by a single organization
 comprising multiple consumers (e.g., business units). It may be owned, managed, and
 operated by the organization, a third party, or some combination of them, and it may exist
-on or off premises</i>)</li>
+on or off premises</i>)</p></li>
 <li> Public cloud: (<i>The cloud infrastructure is provisioned for open use by the general public. It may be
 owned, managed, and operated by a business, academic, or government organization, or
 some combination of them. It exists on the premises of the cloud provider</i>)</li>
@@ -60,14 +60,14 @@ party, or some combination of them, and it may exist on or off premises</i>)</li
 </ul>
 <ul> <b>3 mô hình dịch vụ</b>
 <li> Software as a Service (SaaS): (<i>The capability provided to the consumer is to use the provider’s
-applications running on a cloud infrastructure2. The applications are accessible from
+applications running on a cloud infrastructure. The applications are accessible from
 various client devices through either a thin client interface, such as a web browser (e.g.,
 web-based email), or a program interface. The consumer does not manage or control the
 underlying cloud infrastructure including network, servers, operating systems, storage, or
 even individual application capabilities, with the possible exception of limited userspecific application configuration settings.</i>)</li>
 <li> Platform as a Service (PaaS): (<i>The capability provided to the consumer is to deploy onto the cloud
 infrastructure consumer-created or acquired applications created using programming
-languages, libraries, services, and tools supported by the provider.3 The consumer does
+languages, libraries, services, and tools supported by the provider. The consumer does
 not manage or control the underlying cloud infrastructure including network, servers,
 operating systems, or storage, but has control over the deployed applications and possibly
 configuration settings for the application-hosting environment.</i>)</li>
