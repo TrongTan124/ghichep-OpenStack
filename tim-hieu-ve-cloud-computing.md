@@ -3,24 +3,26 @@
 <li> Cloud Computing là mô hình cho phép truy cập qua mạng để lựa chọn và sử dụng tài nguyên có thể được tính toán 
 (ví dụ: mạng, máy chủ, lưu trữ, ứng dụng và dịch vụ) theo nhu cầu một cách thuận tiện và nhanh chóng; 
 đồng thời cho phép kết thúc sử dụng dịch vụ, giải phóng tài nguyên dễ dàng, giảm thiểu các giao tiếp với nhà cung cấp” </li>
-<li> <i>Cloud computing is a model for enabling ubiquitous, convenient, on-demand network access to a shared
+<p> <i>Cloud computing is a model for enabling ubiquitous, convenient, on-demand network access to a shared
 pool of configurable computing resources (e.g., networks, servers, storage, applications, and services) that
 can be rapidly provisioned and released with minimal management effort or service provider interaction.
 This cloud model is composed of five essential characteristics, three service models, and four deployment
-models </i></li>
+models </i></p>
 </ul>
 
 <ul> Một hệ thống cloud computing cần đáp ứng được các điểm cần thiết dưới đây: </ul>
 <ul> <b>5 đặc tính</b>
 <li> Rapid elasticity: Khả năng cấp phát và thu hồi tài nguyên, tự động mở rộng theo nhu cầu người dùng bất cứ lúc nào.
- (<i>Capabilities can be elastically provisioned and released, in some cases
+ <p>(<i>Capabilities can be elastically provisioned and released, in some cases
 automatically, to scale rapidly outward and inward commensurate with demand. To the
 consumer, the capabilities available for provisioning often appear to be unlimited and can
-be appropriated in any quantity at any time</i>)</li>
+be appropriated in any quantity at any time</i>)</p></li>
+
 <li> Broad network access: Khả năng truy cập thông qua các chuẩn kết nối 
-(<i>Capabilities are available over the network and accessed through standard
+
+<p>(<i>Capabilities are available over the network and accessed through standard
 mechanisms that promote use by heterogeneous thin or thick client platforms (e.g.,
-mobile phones, tablets, laptops, and workstations)</i>)</li>
+mobile phones, tablets, laptops, and workstations)</i>)</p></li>
 
 <li> Resource pooling: Gom gộp tài nguyên và phân bổ tự động theo nhu cầu người dùng. 
 
