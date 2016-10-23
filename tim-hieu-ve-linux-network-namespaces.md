@@ -1,7 +1,7 @@
 ﻿##1. Giới thiệu
-<ul> - Network namespaces cho phép bạn tạo ra các môi trường mạng tách biệt trên 1 host đơn. </ul>
-<ul> - Mỗi namepaces có giao diện và bảng routing riêng, phân chia với các namespaces khác
-Thêm nữa, việc xử lý trên hệ thống của bạn có thể được kết hợp với một network namespace cụ thể. </ul>
+<ul> - Network namespaces cho phép bạn tạo ra các môi trường mạng tách biệt trên 1 host vật lý. </ul>
+<ul> - Mỗi namepaces có giao diện, bảng routing và forwarding riêng, phân chia với các namespaces khác
+Việc xử lý có thể riêng với từng network namespace cụ thể. </ul>
 <ul> - Network namespace đã sử dụng trong các dự án đa dạng như Openstack, Docker và Minimet. 
 Để tìm hiểu sâu về những dự án này, bạn phải làm quen với namespaces và biết được cách chúng làm việc. </ul>
 
