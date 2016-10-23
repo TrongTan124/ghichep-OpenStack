@@ -5,12 +5,12 @@ Việc xử lý có thể riêng với từng network namespace cụ thể. </ul
 <ul> - Network namespace đã sử dụng trong các dự án đa dạng như Openstack, Docker và Minimet. 
 Để tìm hiểu sâu về những dự án này, bạn phải làm quen với namespaces và biết được cách chúng làm việc. </ul>
 
-####a. Làm việc với network namespaces
+###a. Làm việc với network namespaces
 <ul> Khi bắt đầu với Linux, bạn sẽ có một namespace trên hệ thống, mọi tiến trình khởi tạo sẽ kế thừa namespace này như cha của nó. Vì vậy, tất cả các tiền trình thừa kế network namespace sử dụng bởi init (PID 1)  </ul>
 
 <img src="http://i0.wp.com/abregman.com/wp-content/uploads/2016/09/namespace_level1.jpg">
 
-####b. Liệt kê các namespace
+###b. Liệt kê các namespace
 <ul> Cách làm việc với namespace là sử dụng lệnh: *ip netns* </ul>
 <ul> Để liệt kê tất cả các network namespace trên hệ thống của bạn, sử dụng lệnh "ip netns" hoặc "ip netns list" </ul>
 ```
@@ -18,7 +18,7 @@ Việc xử lý có thể riêng với từng network namespace cụ thể. </ul
 ```
 <ul> Nếu bạn chưa thêm bất kỳ namespace nào, output sẽ trống. Namespace mặc định thì không được tính vào output của lệnh "ip netns list" </ul>
 
-####c. Thêm namespace
+###c. Thêm namespace
 <ul> Để thêm một namespace, sử dụng lệnh "ip netns add <name>" </ul>
 
 Ví dụ:
