@@ -1,6 +1,6 @@
 ﻿##1. Giới thiệu
 <ul> - Network namespaces cho phép bạn tạo ra các môi trường mạng tách biệt trên 1 host vật lý. </ul>
-<ul> - Mỗi namepaces có giao diện, bảng routing và forwarding riêng, phân chia với các namespaces khác
+<ul> - Mỗi namepaces có giao diện, bảng routing và forwarding riêng, phân chia với các namespaces khác.
 Việc xử lý có thể riêng với từng network namespace cụ thể. </ul>
 <ul> - Network namespace đã sử dụng trong các dự án đa dạng như Openstack, Docker và Minimet. 
 Để tìm hiểu sâu về những dự án này, bạn phải làm quen với namespaces và biết được cách chúng làm việc. </ul>
@@ -24,8 +24,53 @@ Việc xử lý có thể riêng với từng network namespace cụ thể. </ul
 Ví dụ:
 
 ##2. Chuẩn bị môi trường LAB
-<ul> - Thực hiện lab trên môi trường máy ảo chạy Ubuntu server 14.04 64bit </ul>
+<ul> - Thực hiện lab trên môi trường máy ảo chạy Ubuntu server 14.04 64bit, đã cài openvswitch </ul>
 <ul> NOTE: nên thực hiện clone và snapshot máy ảo để thuận tiện trong quá trình thử nghiệm </ul>
+
+<ul> Các command thực hiện test:
+	<li> Tạo 02 namespace 
+		<ul> 
+			<li> ip netns add red </li>
+			<li> ip netns add green </li>
+			<li> ip netns exec red ip link </li>
+			<li> ip netns exec green ip link </li>
+		</ul>
+	</li>
+	<li> Tạo ovs 
+		<ul> 
+			<li> ovs-vsctl add-br ovs1 </li>
+			<li> ovs-vsctl show </li>
+		</ul>
+	</li>
+	<img src="http://prntscr.com/cxsl49">
+	<li> Tạo kết nối từ ovs tới namespace tương ứng
+		<ul> 
+			<li> ip link add eth0-r type veth peer name veth-r </li>
+			<li> ip link set eth0-r netns red </li>
+			<li> ovs-vsctl add-port ovs1 veth-r </li>
+			<img src="http://prntscr.com/cxslqp">
+			<li> ip link add eth0-g type veth peer name veth-g </li>
+			<li> ip link set eth0-g netns green </li>
+			<li> ovs-vsctl add-port ovs1 veth-g </li>
+			<img src="http://prntscr.com/cxsm1x">
+			<li> ovs-vsctl show 
+				<p>     Bridge "ovs1"
+						Port veth-g
+							Interface veth-g
+						Port veth-r
+							Interface veth-r
+						Port "ovs1"
+							Interface "ovs1"
+								type: internal
+				</p>
+			</li>
+		</ul>
+	</li>
+	<li> </li>
+	<li> </li>
+	<li> </li>
+	<li> </li>
+</ul>
 
 
 ## Reference
