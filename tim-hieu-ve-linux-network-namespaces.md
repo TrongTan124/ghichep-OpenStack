@@ -42,17 +42,17 @@ Ví dụ:
 			<li> ovs-vsctl show </li>
 		</ul>
 	</li>
-	<img src="http://prntscr.com/cxsl49">
+	<img src="http://image.prntscr.com/image/1519a9586ea44ec38195ef06227ffb8c.png">
 	<li> Tạo kết nối từ ovs tới namespace tương ứng
 		<ul> 
 			<li> ip link add eth0-r type veth peer name veth-r </li>
 			<li> ip link set eth0-r netns red </li>
 			<li> ovs-vsctl add-port ovs1 veth-r </li>
-			<img src="http://prntscr.com/cxslqp">
+			<img src="http://image.prntscr.com/image/e8e6f6a60518406b803ea0426b99a528.png">
 			<li> ip link add eth0-g type veth peer name veth-g </li>
 			<li> ip link set eth0-g netns green </li>
 			<li> ovs-vsctl add-port ovs1 veth-g </li>
-			<img src="http://prntscr.com/cxsm1x">
+			<img src="http://image.prntscr.com/image/51c9decdcd07465aa54b927c06374f40.png">
 			<li> ovs-vsctl show 
 				<p>     Bridge "ovs1"
 						Port veth-g
