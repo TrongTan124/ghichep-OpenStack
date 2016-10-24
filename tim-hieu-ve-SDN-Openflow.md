@@ -1,4 +1,4 @@
-﻿<h1>SDN là gì</h1>
+﻿<h1>1. SDN là gì</h1>
 <img src="https://vietstack.files.wordpress.com/2015/03/sdn-3layers.gif?w=435&h=284">
 <ul>Mô hình 3 lớp của SDN</ul>
 <ul>
@@ -36,7 +36,7 @@
 <ul></ul>
 <ul></ul>
 
-<h1>OpenFlow là gì?</h1>
+<h1>2. OpenFlow là gì?</h1>
 	<ul>
 	<p>Giao thức OpenFlow là một chuẩn giao thức quy định hành vi tương tác của switch từ nhiều vendor</p>
 	
