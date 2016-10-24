@@ -32,8 +32,18 @@
 	<li>Monitoring</li>
 	<li>Load Balancing</li>
 </ul>
-<ul></ul>
-<ul></ul>
+<ul><p>Kiến trúc SDN</p>
+	<ul> Theo Open Networking Foundation, kiến trúc của SDN bao gồm bao lớp tách biệt truy cập thông qua các APIs mở:
+		<li><b>Lớp ứng dụng</b>: bao gồm các ứng dụng của người dùng cuối sử dụng các dịch vụ truyền thông qua SDN. Ranh giới giao tiếp giữa lớp ứng dụng và lớp điều khiển được thực hiện bởi northbound API</li>
+		<li><b>Lớp điều khiển (SDN control plance)</b>: cung cấp chức năng quản lý tập trung làm nhiệm vụ quản lý việc chuyển tiếp trong mạng thông các các open interfaces. Các chức năng này bao gồm: định tuyến, khai báo tên, chính sách và thực hiện kiểm tra vấn đề bảo mật</li>
+		<li><b>Lớp cơ sở hạ tầng (SDN data plane)</b>: bao gồm các phần tử và thiết bị mạng cung cấp chức năng chuyển mạch và forward các gói tin</li>
+	</ul>
+</ul>
+<ul> Theo mô hình này, một kiến trúc SDN được đặc trưng bởi 3 thuộc tính chính
+	<li><b>Logically centralized intelligence</b>: Trong kiến trúc SDN, network control được phân chia từ forwarding sử dụng giao diện chuẩn southbound: OpenFlow</li>
+	<li><b>Programmability</b>: Mạng SDN vốn được điều khiển bởi chức năng phần mềm, được cung cấp bởi vendor hoặc bộ khiển của của chính nó. </li>
+	<li><b>Abstraction</b>: Trọng mạng SDN, các ứng dụng sử dụng dịch vụ SDN được trừu tượng hóa với các công nghệ mạng phía dưới</li>
+</ul>
 <ul></ul>
 
 <h1>2. OpenFlow là gì?</h1>
