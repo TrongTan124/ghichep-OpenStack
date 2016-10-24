@@ -36,7 +36,18 @@
 <ul></ul>
 <ul></ul>
 
-<h1></h1>
+<h1>OpenFlow là gì?</h1>
+	<ul>
+	<p>Giao thức OpenFlow là một chuẩn giao thức quy định hành vi tương tác của switch từ nhiều vendor</p>
+	
+	<p><i>The OpenFlow protocol is a standardized protocol for interacting with the forwarding behaviors of switches from multiple vendors.
+		This provides us a way to control the behavior of switches throughout our network dynamically and programmatically.
+		OpenFlow is a key protocol in many SDN solutions. Much more detail on OpenFlow and SDN can be found at <a href="https://www.youtube.com/watch?v=l25Ukkmk6Sk">Link here</a>
+	</i></p>
+	</ul>
+	<ul></ul>
+	<ul></ul>
+	<ul></ul>
 
 <h1></h1>
 
