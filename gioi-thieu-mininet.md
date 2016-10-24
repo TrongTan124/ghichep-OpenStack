@@ -4,7 +4,19 @@
 	<ul> Vào trang <a href=mininet.ort>mininet.org<a> để biết thêm chi tiết. </ul>
 
 <h1>2. Cài đặt</h1>
-	<ul> Tìm và download image phù hợp tại <a href="https://github.com/mininet/mininet/wiki/Mininet-VM-Images">đây</a> </ul>
+	<ul>Cách 1: download VM đã cài đặt sẵn mininet 
+		<li>Tìm và download image phù hợp tại <a href="https://github.com/mininet/mininet/wiki/Mininet-VM-Images">đây</a></li>
+		<li>Username/Password để đăng nhập là: mininet/mininet</li>
+	</ul>
+	<ul>Cách 2: Cài đặt từ source 
+		<li>git clone git://github.com/mininet/mininet </li>
+		<li> </li>
+		<li> </li>
+		<li> </li>
+		<li> </li>
+		<li> </li>
+		<li> </li>
+	</ul>
 	<ul> </ul>
 	<ul> </ul>
 	<ul> </ul>
@@ -27,7 +39,7 @@
 
 <h1>Tham khảo</h1>
 	<ul> https://www.youtube.com/watch?v=jmlgXaocwiE </ul>
-	<ul> </ul>
+	<ul> http://mininet.org/download/ </ul>
 	<ul> </ul>
 	<ul> </ul>
 	<ul> </ul>

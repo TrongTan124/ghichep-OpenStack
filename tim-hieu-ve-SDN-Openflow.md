@@ -45,9 +45,50 @@
 		OpenFlow is a key protocol in many SDN solutions. Much more detail on OpenFlow and SDN can be found at <a href="https://www.youtube.com/watch?v=l25Ukkmk6Sk">Link here</a>
 	</i></p>
 	</ul>
-	<ul></ul>
-	<ul></ul>
-	<ul></ul>
+	<h2>Dựng thử nghiệm bằng mininet</h2>
+		<img src="http://image.prntscr.com/image/5e699df97a12413d987869fa50b6276e.png">
+		<ul> Command tạo topo
+			<li>root@mininet-vm:~# mn --topo=single,4
+			<pre>
+root@mininet-vm:~# mn --topo=single,4
+*** Creating network
+*** Adding controller
+*** Adding hosts:
+h1 h2 h3 h4 
+*** Adding switches:
+s1 
+*** Adding links:
+(h1, s1) (h2, s1) (h3, s1) (h4, s1) 
+*** Configuring hosts
+h1 h2 h3 h4 
+*** Starting controller
+c0 
+*** Starting 1 switches
+s1 ...
+*** Starting CLI:
+***
+			</pre>
+			</li>
+			<li>mininet> dump
+			<pre>
+mininet> dump
+<Host h1: h1-eth0:10.0.0.1 pid=2613> 
+<Host h2: h2-eth0:10.0.0.2 pid=2616> 
+<Host h3: h3-eth0:10.0.0.3 pid=2618> 
+<Host h4: h4-eth0:10.0.0.4 pid=2620> 
+<OVSSwitch s1: lo:127.0.0.1,s1-eth1:None,s1-eth2:None,s1-eth3:None,s1-eth4:None pid=2625> 
+<Controller c0: 127.0.0.1:6633 pid=2606> 
+mininet>
+			</pre>
+			</li>
+			<li>mininet> h4 python -m SimpleHTTPServer 80 &</li>
+			<li>mininet> h1 wget 10.0.0.4</li>
+			<img src="http://image.prntscr.com/image/20da748867dc4b548db06dd3584fea8a.png">
+			<img src="http://image.prntscr.com/image/4e3222e76c15441299da2fa14cf7bdaf.png">
+			<img src="http://image.prntscr.com/image/865ca0d5539d416c82c64c2aa27137a6.png">
+		</ul>
+		<ul></ul>
+		<ul></ul>
 
 <h1></h1>
 
