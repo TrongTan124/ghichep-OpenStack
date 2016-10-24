@@ -32,6 +32,7 @@
 	<li>Monitoring</li>
 	<li>Load Balancing</li>
 </ul>
+<img src="http://image.prntscr.com/image/92e5190d5c2140b2a3fc9701a2996a27.png">
 <ul><p>Kiến trúc SDN</p>
 	<ul> Theo Open Networking Foundation, kiến trúc của SDN bao gồm bao lớp tách biệt truy cập thông qua các APIs mở:
 		<li><b>Lớp ứng dụng</b>: bao gồm các ứng dụng của người dùng cuối sử dụng các dịch vụ truyền thông qua SDN. Ranh giới giao tiếp giữa lớp ứng dụng và lớp điều khiển được thực hiện bởi northbound API</li>
@@ -71,6 +72,7 @@
 <ul>https://vietstack.wordpress.com/2015/03/25/tong-quan-ve-sdn-va-nfv/</ul>
 <ul>https://www.academia.edu/13497161/T%C3%ACm_hi%E1%BB%83u_c%C3%A1c_v%E1%BA%A5n_%C4%91%E1%BB%81_an_to%C3%A0n_trong_SDN</ul>
 <ul>https://github.com/hocchudong/Thuc-tap-thang-03-2016/blob/master/ThaiPH/SDN/ThaiPH_SDN_OpenFlow.md</ul>
-
+<ul>https://www.youtube.com/watch?v=l25Ukkmk6Sk</ul>
+<ul>https://www.youtube.com/watch?v=DiChnu_PAzA</ul>
 
 
