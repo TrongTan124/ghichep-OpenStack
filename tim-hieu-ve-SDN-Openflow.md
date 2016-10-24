@@ -46,16 +46,16 @@
 	</i></p>
 </ul>
 <h2>Dựng thử nghiệm bằng mininet</h2>
-	<img src="http://image.prntscr.com/image/5e699df97a12413d987869fa50b6276e.png">
-	<ul> Command tạo topo
-		<li>mn --topo=single,4</li>
-		<li>dump</li>
-		<li> h4 python -m SimpleHTTPServer 80 & </li>
-		<li> h1 wget 10.0.0.4</li>
-		<img src="http://image.prntscr.com/image/20da748867dc4b548db06dd3584fea8a.png">
-		<img src="http://image.prntscr.com/image/4e3222e76c15441299da2fa14cf7bdaf.png">
-		<img src="http://image.prntscr.com/image/865ca0d5539d416c82c64c2aa27137a6.png">
-	</ul>
+<img src="http://image.prntscr.com/image/5e699df97a12413d987869fa50b6276e.png">
+<ul> Command tạo topo
+	<li>mn --topo=single,4</li>
+	<li>dump</li>
+	<li> h4 python -m SimpleHTTPServer 80 & </li>
+	<li> h1 wget 10.0.0.4</li>
+	<img src="http://image.prntscr.com/image/20da748867dc4b548db06dd3584fea8a.png">
+	<img src="http://image.prntscr.com/image/4e3222e76c15441299da2fa14cf7bdaf.png">
+	<img src="http://image.prntscr.com/image/865ca0d5539d416c82c64c2aa27137a6.png">
+</ul>
 
 <h1>Tham khảo</h1>
 <ul>https://vietstack.wordpress.com/2015/03/25/tong-quan-ve-sdn-va-nfv/</ul>
