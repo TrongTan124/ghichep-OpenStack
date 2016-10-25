@@ -321,7 +321,7 @@ virt-install \
 ```
 
 <ul> Mối liên hệ giữa tab interfaces và linux bridge </ul>
-**Mạng vật lý vs mạng ảo**
+<b>Mạng vật lý vs mạng ảo</b>
 <ul> Lưu lượng dữ liệu mạng được truyền bởi kết nối port Ethernet vật lý trên thiết bị vật lý. Tương tự cho máy ảo, các lưu lượng cũng cần được truyền bằng 
 các port Ethernet ảo. Cuối cùng, lưu lượng từ các port ảo được gửi tới mạng vật lý để kết nối ra ngoài. Điều này xảy ra như thế nào? Nhìn hình phía dưới để xem các thành phần 
 vật lý được liên kết ra sao trong mạng vật lý. </ul>
@@ -335,7 +335,7 @@ vật lý được liên kết ra sao trong mạng vật lý. </ul>
 <ul> Mục đích của ảo hóa là giả lập các thành phần vật lý trong phần mềm, nó phải hỗ trợ một cấu trúc tương tự: 
 "Port ảo của một máy ảo được kết nối tới switch ảo"</ul>
 
-**Port switch**
+<b>Port switch</b>
 <ul> Như đã nói ở trên, Linux bridge cung cấp một switch vào trong nhân Linux. Như mọi switch, nó yêu cầu các port hay interface để mang dữ liệu vào và ra trên switch. </ul>
 <img src="http://www.innervoice.in/blogs/wp-content/uploads/2013/12/VirtualNetwotk.png">
 
