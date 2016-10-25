@@ -35,9 +35,9 @@ Các đặc tính thuần túy của bridge
 ##4. Cấu hình bridge
 <ul> Chắc chắn rằng tất cả các network card đều làm việc ổn và có thể truy nhập. </ul>
 <ul> Gõ **ifconfig** để xem sơ đồ phần cứng của network interface.</ul>
-<ul> Sau khi đã check những bước trên, gõ **modprobe -v bridge** </ul>
-<ul> Bạn có thể kiểm tra đã thành công chưa bằng cách in ra **cat /proc/modules | grep bridge** </ul>
-<ul> Nếu bridge-utilities đã được cài đúng và kernel, bridge-module đều OK, thực hiện gõ **brctl** để nhìn bảng tóm tắt lệnh </ul>
+<ul> Sau khi đã check những bước trên, gõ <b>modprobe -v bridge</b> </ul>
+<ul> Bạn có thể kiểm tra đã thành công chưa bằng cách in ra <b>cat /proc/modules | grep bridge</b> </ul>
+<ul> Nếu bridge-utilities đã được cài đúng và kernel, bridge-module đều OK, thực hiện gõ <b>brctl</b> để nhìn bảng tóm tắt lệnh </ul>
 <ul>  </ul>
 
 ```
@@ -90,46 +90,46 @@ Nếu một Host có nhiều network interface, mà gần gom gộp thành một
 Một trường hợp rất hữu dụng sử dụng bonding là sử dụng trong kết nối hỗ trợ 802.1q VLAN </ul>
 <ul> 
 <ul> Các loại mode của bonding </ul>
-<li> **mode=0 (balance-rr)** </li>
+<li> <b>mode=0 (balance-rr)</b> </li>
 Thiết lập điều luật round-robin cho khả năng chịu lỗi và cân bằng tải. Sự truyền tin được gửi và nhận tuần tự trên mỗi slave interface bắt đầu với một slave sẵn sàng.
 
-<li> **mode=1 (active-backup)** </li>
+<li> <b>mode=1 (active-backup)</b> </li>
 Cách hành xử active-backup: Chỉ có một slave trong bond được active. Một slave khác trở thành active chỉ khi active slave lỗi.
 Địa chỉ MAC của bond chỉ hiển thị duy nhất một port để tránh confusing với switch. Mode này cung cấp khả năng chịu lỗi. tùy chọn đầu tiên sẽ ảnh hưởng tới hành xử trong mode này. 
 
-<li> **mode=2 (balance-xor)** </li>
+<li> <b>mode=2 (balance-xor)</b> </li>
 Cách hành xử XOR: Truyền tin dựa trên việc [(source MAC address XOR'd with destination MAC address) modulo slave count]. Điều này chọn slave giống với destination MAC address.
 Mode này cung cấp cân bằng tải và khả năng chịu lỗi
 
-<li> **mode=3 (broadcast)** </li>
+<li> <b>mode=3 (broadcast)</b> </li>
 Cách hành xử broadcast: Truyền tin tới mọi slave interface. Mode này cung cấp khả năng chịu lỗi.
 
-<li>  **mode=4 (802.3ad)** </li>
+<li>  <b>mode=4 (802.3ad)</b> </li>
 IEEE 802.3ad chức năng tổng hợp link. Tạo ra các nhóm kết hợp tốc độ và duplex giống nhau. Sử dụng tất cả slave trong nhóm active theo một 802.3ad cụ thể.
 <ul> Yêu cầu: 
 <li> ethtool hỗ trợ trong base driver việc lấy tốc độ và duplex của mỗi slave. </li>
 <li> Một switch hỗ trợ IEEE 802.3ad Dynamic link aggregation. Các switch yêu cầu cấu hình để enable 802.3ad mode.</li>
  </ul>
 
-<li> **mode=5 (balance-tlb)** (transmit load balancing) </li>
+<li><b>mode=5 (balance-tlb)</b> (transmit load balancing) </li>
 Thích ứng với truyền cân bằng tải: Channel bonding không yêu cầu switch hỗ trợ. Lưu lượng đi ra được phân tán dựa vào chiều load của mỗi slave. Lưu lượng đi vào được nhận bởi chiều slave.
 Nếu slave nhận lỗi, một slave khác sẽ đè lên MAC address của slave nhận lỗi.
-<ul> *Yêu cầu:* ethtool hỗ trợ trong base driver trong việc lấy speed và duplex của mỗi slave. </ul>
+<ul> <i>Yêu cầu</i>: ethtool hỗ trợ trong base driver trong việc lấy speed và duplex của mỗi slave. </ul>
 
-<li> **mode=6 (balance-alb)** (adaptive load balancing) </li>
+<li> <b>mode=6 (balance-alb)</b> (adaptive load balancing) </li>
 Thích hợp cân bằng tải: Bao gồm balance-tbl được thêm receive load balancing (rlb) cho lưu lượng IPV4, và không yêu cầu switch hỗ trợ riêng biệt. RLB được hoàn tất bởi thương lượng ARP. 
 Bonding driver chắn ARP replies gửi bởi local system theo cách của chúng ra ngoài và ghi đè source hardware address với hardware address duy nhất của mỗi slave trong bond như các peer 
 khác nhau sử dụng hardware address khác nhau cho server. Bạn có thể sử dụng nhiều bond interface nhưng bạn phải load bonding module nhiều.
 
 <li> </li>
 <ul> Một số command: 
-<li> **Check the bonding: ** *root@ubuntu:~# ifenslave -a* </li>
+<li> <b>Check the bonding: </b> *root@ubuntu:~# ifenslave -a* </li>
 
-<li> **Hoặc check: ** *root@ubuntu:~# cat /proc/net/bonding/bond0*  </li>
+<li> <b>Hoặc check:</b> *root@ubuntu:~# cat /proc/net/bonding/bond0*  </li>
 
-<li> **Thay đổi active interface sang eth2: ** *root@ubuntu:~# ifenslave -c bond0 eth2* </li>
+<li> <b>Thay đổi active interface sang eth2:</b> *root@ubuntu:~# ifenslave -c bond0 eth2* </li>
 
-<li> **Kiểm tra thông số speed: ** *root@ubuntu:~# ethtool bond0* </li>
+<li> <b>Kiểm tra thông số speed:</b> *root@ubuntu:~# ethtool bond0* </li>
 </ul>
  </ul>
 <ul> Kiểm tra băng thông trong trường hợp gộp chung các network interface vào trong bond: </ul>
@@ -276,7 +276,7 @@ IPERF_<long option name>, such as IPERF_BANDWIDTH.
 
 Report bugs to <iperf-users@lists.sourceforge.net>
 ```
-<ul> **Mô hình chung:** </ul>
+<ul> <b>Mô hình chung:</b> </ul>
 <img src="https://camo.githubusercontent.com/69090167971053bf2170fec8175fbf627a799d82/687474703a2f2f692e696d6775722e636f6d2f697a4a487a6e6f2e706e67">
 
 <ul> Một số lệnh đơn dùng để kiểm tra: 

@@ -50,6 +50,63 @@ EOF
 <ul> </ul>
 <ul> </ul>
 
+##4. Cấu hình OVS
+###a. OVS + KVM-QEMU
+<ul> Thực hiện cấu hình switch:
+	<li>Add thêm một switch: <i>root@ubuntu:~/openvswitch# ovs-vsctl add-br br-int</i> </li>
+	<li>Sau khi thực hiện lệnh gán port cho switch, thì sẽ ko thể control được port vừa gán. Vì vậy cần cần thận chọn đúng port.</li>
+	<li>Gán port của host (vật lý) vào switch vừa tạo: <i>root@ubuntu:~# ovs-vsctl add-port br-int eth0</i> </li>
+	<li>Clear IP cho port của host sẽ gán vào switch vừa tạo: <i>ifconfig eth0 0</i></li>
+	<li>Gán IP để truy nhập vào host qua switch: <i>ifconfig br-int 172.16.69.110 netmask 255.255.255.0</i></li>
+	<li>Thực hiện add route default: <i>route add default gw 172.16.69.1</i></li>
+	<li>Kiểm tra kết nối ra internet: <i>ping 8.8.8.8</i></li>
+	<li>Thêm DNS cho host: vi /etc/resolv.conf
+		<p>Comment các dòng cũ và Thêm dòng sau: nameserver 8.8.8.8 8.8.4.4</p>
+	</li>
+	<li>Show switch vừa tạo: <i>root@ubuntu:~# ovs-vsctl show</i> 
+		<pre>
+			ff424c58-2e9a-44c8-b2c4-ab81c556dd50
+			Bridge br-int
+				Port br-int
+					Interface br-int
+						type: internal
+				Port "eth2"
+					Interface "eth2"
+			ovs_version: "2.5.0"
+		</pre>
+	</li>
+</ul>
+<ul> Cài đặt KVM
+	<li>Chạy lệnh sau để thực hiện cài đặt KVM: <i>root@ubuntu:~# apt-get install kvm -y</i></li>
+	<li>Thực hiện tạo 02 scritp để add và xóa port trong switch:
+		<ul>
+			<li>Script add port vào switch: <i>vi /etc/ovs-ifup</i>
+				<pre>
+					#!/bin/sh
+					switch='br-int'
+					/sbin/ifconfig $1 0.0.0.0 up
+					ovs-vsctl add-port $(switch) $1
+				</pre>
+			</li>
+			<li>Script xóa port trên switch: <i>vi /etc/ovs-ifdown</i>
+				<pre>
+					#!/bin/sh
+					switch='br-int'
+					/sbin/ifconfig $1 0.0.0.0 down
+					ovs-vsctl del-port $(switch) $1
+				</pre>
+			</li>
+			<li>Phân quyền để script có thể thực thi: <i>chmod +x /etc/ovs-ifup /etc/ovs-ifdown</i></li>
+		</ul>
+	</li>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
+<ul> </ul>
+<ul> </ul>
+<ul> </ul>
+<ul> </ul>
 
 ## Tham khảo
 <ul>http://dannykim.me/danny/openflow/57620?ckattempt=2 </ul>
