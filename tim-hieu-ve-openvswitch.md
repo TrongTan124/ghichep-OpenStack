@@ -85,7 +85,7 @@ EOF
 					#!/bin/sh
 					switch='br-int'
 					/sbin/ifconfig $1 0.0.0.0 up
-					ovs-vsctl add-port $(switch) $1
+					ovs-vsctl add-port ${switch} $1
 				</pre>
 			</li>
 			<li>Script xóa port trên switch: <i>vi /etc/ovs-ifdown</i>
@@ -93,22 +93,23 @@ EOF
 					#!/bin/sh
 					switch='br-int'
 					/sbin/ifconfig $1 0.0.0.0 down
-					ovs-vsctl del-port $(switch) $1
+					ovs-vsctl del-port ${switch} $1
 				</pre>
 			</li>
 			<li>Phân quyền để script có thể thực thi: <i>chmod +x /etc/ovs-ifup /etc/ovs-ifdown</i></li>
 		</ul>
 	</li>
-	<li></li>
-	<li></li>
-	<li></li>
 </ul>
-<ul> </ul>
+<ul> Thực hiện tạo KVM VM với cirror image và gán vào ovs bridge "br-int"
+	<li>Lệnh tạo máy ảo 1: <i>kvm -m 512 -net nic,macaddr=00:00:00:00:cc:10 -net tap,script=/etc/ovs-ifup,downscript=/etc/ovs-ifdown -nographic /home/tannt/cirros-0.3.4-x86_64-disk.img</i></li>
+	<li>Lệnh tạo máy ảo 2: <i>kvm -m 512 -net nic,macaddr=00:11:22:CC:CC:10 -net tap,script=/etc/ovs-ifup,downscript=/etc/ovs-ifdown -nographic /home/tannt/cirros-0.3.4-x86_64-disk.img</i></li>
+	<li>Lệnh tạo máy ảo 3: <i>kvm -m 512 -net nic,macaddr=22:22:22:00:cc:10 -net tap,script=/etc/ovs-ifup,downscript=/etc/ovs-ifdown -nographic /home/tannt/cirros-0.3.4-x86_64-disk.img</i></li>
+</ul>
 <ul> </ul>
 <ul> </ul>
 <ul> </ul>
 
 ## Tham khảo
 <ul>http://dannykim.me/danny/openflow/57620?ckattempt=2 </ul>
-<ul> </ul>
+<ul>https://www.youtube.com/watch?v=Gud2GoI-W_w&index=3&list=PLUUhQ61ndlZVdwm3_gAyoTcmIVlm_yc2h </ul>
 <ul> </ul>
