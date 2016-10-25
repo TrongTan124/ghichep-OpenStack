@@ -55,30 +55,31 @@ hướng dẫn sẽ có bước này).
 			</li>
 		</ul>
 	</li>
+	<li>Command thực hiện restart network: <i>ovs-vsctl add-port br0 eth1 && ifdown -a && ifup -a && ifconfig eth1 0 && route add default gw 172.16.69.1</i></li>
 	<li>B2: Sửa file <i>/etc/network/interfaces</i> để tạo bridge tự động khi khởi động máy.
 		<pre>
-			root@ubuntu:~# cat /etc/network/interfaces |egrep -v "^#|^$"
-			auto lo
-			iface lo inet loopback
-			auto eth0
-			iface eth0 inet static
-			address 10.10.10.71
-			netmask 255.255.255.0
-			auto eth1
-			iface eth1 inet manual
-			auto br0
-			iface br0 inet static
-			address 172.16.69.71
-			netmask 255.255.255.0
-			gateway 172.16.69.1
-			network 172.16.69.0
-			broadcast 172.16.69.255
-			bridge_port eth1
-			bridge_fd 9
-			bridge_hello 2
-			bridge_maxage 12
-			bridge_stp off
-			dns-nameservers 8.8.8.8 8.8.4.4
+root@ubuntu:~# cat /etc/network/interfaces |egrep -v "^#|^$"
+auto lo
+iface lo inet loopback
+auto eth0
+iface eth0 inet static
+address 10.10.10.71
+netmask 255.255.255.0
+auto eth1
+iface eth1 inet manual
+auto br0
+iface br0 inet static
+address 172.16.69.71
+netmask 255.255.255.0
+gateway 172.16.69.1
+network 172.16.69.0
+broadcast 172.16.69.255
+bridge_port eth1
+bridge_fd 9
+bridge_hello 2
+bridge_maxage 12
+bridge_stp off
+dns-nameservers 8.8.8.8 8.8.4.4
 		</pre>
 	</li>
 </ul>
@@ -111,7 +112,7 @@ hướng dẫn sẽ có bước này).
 <ul>Ở đây tạo nhanh một KVM guest sử dụng <i>virt-install</i>:
 <pre>
 virt-install --name vmname --ram 1024 --vcpus=1 \
---disk path=/var/lib/libvirt/images/vmname.img,size=20 \
+--disk path=/var/lib/libvirt/images/vmname.img,size=20,bus=virtio \
 --network bridge=br0 \
 --cdrom /home/tannt/ubuntu-14.04.4-server-amd64.iso \
 --graphics none --console pty,target_type=serial --hvm \
