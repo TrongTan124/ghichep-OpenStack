@@ -113,7 +113,7 @@ dns-nameservers 8.8.8.8 8.8.4.4
 <pre>
 virt-install --name vmname --ram 1024 --vcpus=1 \
 --disk path=/var/lib/libvirt/images/vmname.img,size=20,bus=virtio \
---network bridge=br0 \
+--network bridge=ovsbr0 \
 --cdrom /home/tannt/ubuntu-14.04.4-server-amd64.iso \
 --graphics none --console pty,target_type=serial --hvm \
 --os-variant ubuntutrusty --virt-type=kvm --os-type linux
@@ -124,7 +124,7 @@ virt-install --name vmname --ram 1024 --vcpus=1 \
 ## Tham khảo
 <ul>http://blog.scottlowe.org/2012/08/17/installing-kvm-and-open-vswitch-on-ubuntu/</ul>
 <ul>http://blog.scottlowe.org/2012/08/21/working-with-kvm-guests/</ul>
-<ul></ul>
+<ul>https://www.rivy.org/2014/04/install-a-kvm-host-on-ubuntu-14-04-trusty-tahr/</ul>
 <ul></ul>
 <ul></ul>
 <ul>

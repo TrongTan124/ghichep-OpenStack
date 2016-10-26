@@ -21,8 +21,8 @@
 	<li>root@ubuntu:~/openvswitch# cd datapath/linux </li>
 	<li>root@ubuntu:~/openvswitch/datapath/linux# modprobe openvswitch </li>
 	<li>root@ubuntu:~/openvswitch/datapath/linux# lsmod | grep openvswitch
-		<p>	openvswitch            86016  0
-			libcrc32c              16384  1 openvswitch</p>
+		<pre>	openvswitch            86016  0
+			libcrc32c              16384  1 openvswitch</pre>
 	</li>
 	<li>root@ubuntu:~/openvswitch/datapath/linux# touch /usr/local/etc/ovs-vswitchd.conf </li>
 	<li>root@ubuntu:~/openvswitch/datapath/linux# mkdir -p /usr/local/etc/openvswitch </li>
@@ -57,7 +57,7 @@ EOF
 	<li>Sau khi thực hiện lệnh gán port cho switch, thì sẽ ko thể control được port vừa gán. Vì vậy cần cần thận chọn đúng port.</li>
 	<li>Gán port của host (vật lý) vào switch vừa tạo: <i>root@ubuntu:~# ovs-vsctl add-port br-int eth0</i> </li>
 	<li>Clear IP cho port của host sẽ gán vào switch vừa tạo: <i>ifconfig eth0 0</i></li>
-	<li>Gán IP để truy nhập vào host qua switch: <i>ifconfig br-int 172.16.69.110 netmask 255.255.255.0</i></li>
+	<li>Gán IP để truy nhập vào host qua switch: <i>ifconfig br-int 172.16.69.110 netmask 255.255.255.0 up</i></li>
 	<li>Thực hiện add route default: <i>route add default gw 172.16.69.1</i></li>
 	<li>Kiểm tra kết nối ra internet: <i>ping 8.8.8.8</i></li>
 	<li>Thêm DNS cho host: vi /etc/resolv.conf
@@ -82,18 +82,18 @@ EOF
 		<ul>
 			<li>Script add port vào switch: <i>vi /etc/ovs-ifup</i>
 				<pre>
-					#!/bin/sh
-					switch='br-int'
-					/sbin/ifconfig $1 0.0.0.0 up
-					ovs-vsctl add-port ${switch} $1
+#!/bin/sh
+switch='br-int'
+/sbin/ifconfig $1 0.0.0.0 up
+ovs-vsctl add-port ${switch} $1
 				</pre>
 			</li>
 			<li>Script xóa port trên switch: <i>vi /etc/ovs-ifdown</i>
 				<pre>
-					#!/bin/sh
-					switch='br-int'
-					/sbin/ifconfig $1 0.0.0.0 down
-					ovs-vsctl del-port ${switch} $1
+#!/bin/sh
+switch='br-int'
+/sbin/ifconfig $1 0.0.0.0 down
+ovs-vsctl del-port ${switch} $1
 				</pre>
 			</li>
 			<li>Phân quyền để script có thể thực thi: <i>chmod +x /etc/ovs-ifup /etc/ovs-ifdown</i></li>
@@ -105,11 +105,28 @@ EOF
 	<li>Lệnh tạo máy ảo 2: <i>kvm -m 512 -net nic,macaddr=00:11:22:CC:CC:10 -net tap,script=/etc/ovs-ifup,downscript=/etc/ovs-ifdown -nographic /home/tannt/cirros-0.3.4-x86_64-disk.img</i></li>
 	<li>Lệnh tạo máy ảo 3: <i>kvm -m 512 -net nic,macaddr=22:22:22:00:cc:10 -net tap,script=/etc/ovs-ifup,downscript=/etc/ovs-ifdown -nographic /home/tannt/cirros-0.3.4-x86_64-disk.img</i></li>
 </ul>
+
+##5. Triển khai GRE cho OVS
+<ul> Mô hình triển khai
+	<img src="http://openvswitch.github.io/support/config-cookbooks/port-tunneling/2host-4vm-2nic-tunnel.png">
+</ul>
+<ul> 
+	<li>Tạo OVS bridge ovsbr0 <i>ovs-vsctl add-br ovsbr0</i>
+		<ul>Chú ý chỉ gán port e</ul>
+	</li>
+	<li></li>
+	<li></li>
+	<li></li>
+</ul>
 <ul> </ul>
-<ul> </ul>
-<ul> </ul>
+
+##6. Triển khai Controller SDN cho OVS
 
 ## Tham khảo
 <ul>http://dannykim.me/danny/openflow/57620?ckattempt=2 </ul>
 <ul>https://www.youtube.com/watch?v=Gud2GoI-W_w&index=3&list=PLUUhQ61ndlZVdwm3_gAyoTcmIVlm_yc2h </ul>
+<ul>http://networkstatic.net/openflow-openvswitch-lab/ </ul>
+<ul>http://networkstatic.net/open-vswitch-gre-tunnel-configuration/ </ul>
+<ul>https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Virtualization_Administration_Guide/ch19s05.html </ul>
+<ul> </ul>
 <ul> </ul>
