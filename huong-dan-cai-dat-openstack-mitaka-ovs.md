@@ -149,6 +149,7 @@ apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
 			<li>vi /etc/apache2/sites-available/wsgi-keystone.conf</li>
 		</ul>
 	</li>
+</ul>
 ```sh
 Listen 5000
 Listen 35357
@@ -199,6 +200,7 @@ Listen 35357
     </Directory>
 </VirtualHost>
 ```
+<ul>
 	<li>Tạo liên kết cho apache load file config vừa tạo: <i>ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled</i></li>
 	<li>Khởi động lại apache2 <i>service apache2 restart</i></li>
 	<li>Xóa file DB không cần thiết của keystone: <i>rm -f /var/lib/keystone/keystone.db</i></li>
