@@ -314,6 +314,27 @@ stores = file,http
 filesystem_store_datadir = /var/lib/glance/images/
 ```
 
+- Backup lại file cấu hình */etc/glance/glance-registry.conf*
+```sh
+cp /etc/glance/glance-registry.conf /etc/glance/glance-registry.conf.bk
+```
+- Sửa file: /etc/glance/glance-registry.conf
+ - Thẻ [DEFAULT]
+```sh
+verbose = True
+```
+ - Thẻ [database]
+Thêm
+ ```sh
+connection  mysql+pymysql://glance:$GLANCE_DBPASS@$CTL_MGNT_IP/glance
+```
+Xóa
+```sh
+sqlite_db
+```
+
+
+
 <h1></h1>
 <ul></ul>
 <ul></ul>
