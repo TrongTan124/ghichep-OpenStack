@@ -6,8 +6,7 @@
 </ul>
 <ul>Sửa file cấu hình interface
 	<li><i>vi /etc/network/interfaces</i> và sửa như sau: </li>
-<pre>
-```
+```sh
 # LOOPBACK NET
 auto lo
 iface lo inet loopback
@@ -26,7 +25,6 @@ netmask 255.255.255.0
 gateway 172.16.69.1
 dns-nameservers 8.8.8.8 8.8.4.4
 ```
-</pre>
 </ul>
 <ul>Sửa lại file hostname
 	<li><i>vi /etc/hostname</i></li>
@@ -46,13 +44,11 @@ dns-nameservers 8.8.8.8 8.8.4.4
 	</li>
 </ul>
 <ul>Thêm repo cho OpenStack Mitaka:</ul>
-<pre>
-```
+```sh
 apt-get install software-properties-common -y
 add-apt-repository cloud-archive:mitaka -y
 apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
 ```
-</pre>
 <ul>Khởi động lại server sau khi đã upgrade xong.</ul>
 
 
@@ -150,8 +146,7 @@ apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
 	<li>Tạo file cấu hình apache cho keystone:
 		<ul>
 			<li>vi /etc/apache2/sites-available/wsgi-keystone.conf</li>
-<pre>
-```
+```sh
 Listen 5000
 Listen 35357
 
@@ -201,7 +196,6 @@ Listen 35357
     </Directory>
 </VirtualHost>
 ```
-</pre>
 		</ul>
 	</li>
 	<li>Tạo liên kết cho apache load file config vừa tạo: <i>ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled</i></li>
