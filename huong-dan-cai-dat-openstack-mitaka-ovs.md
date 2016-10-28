@@ -319,16 +319,15 @@ filesystem_store_datadir = /var/lib/glance/images/
 cp /etc/glance/glance-registry.conf /etc/glance/glance-registry.conf.bk
 ```
 - Sửa file: /etc/glance/glance-registry.conf
- - Thẻ [DEFAULT]
+ - Thẻ [DEFAULT] thêm
 ```sh
 verbose = True
 ```
- - Thẻ [database]
-Thêm
+ - Thẻ [database] thêm
  ```sh
 connection  mysql+pymysql://glance:$GLANCE_DBPASS@$CTL_MGNT_IP/glance
 ```
-Xóa
+ - Thẻ [database] xóa
 ```sh
 sqlite_db
 ```
