@@ -325,7 +325,7 @@ verbose = True
 ```
  - Thẻ [database] thêm
  ```sh
-connection  mysql+pymysql://glance:$GLANCE_DBPASS@$CTL_MGNT_IP/glance
+connection = mysql+pymysql://glance:$GLANCE_DBPASS@$CTL_MGNT_IP/glance
 ```
  - Thẻ [database] xóa
 ```sh
