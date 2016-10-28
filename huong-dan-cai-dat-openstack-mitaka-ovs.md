@@ -324,15 +324,40 @@ cp /etc/glance/glance-registry.conf /etc/glance/glance-registry.conf.bk
 verbose = True
 ```
  - Thẻ [database] thêm
- ```sh
+```sh
 connection = mysql+pymysql://glance:$GLANCE_DBPASS@$CTL_MGNT_IP/glance
 ```
  - Thẻ [database] xóa
 ```sh
 sqlite_db
 ```
+ - Thẻ [keystone_authtoken] sửa
+```sh
+auth_uri = http://10.10.10.80:5000
+auth_url = http://10.10.10.80:35357
+memcached_servers = 10.10.10.80:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = glance
+password = tan124
+```
+ - Thẻ [paste_deploy] sửa
+```sh
+flavor = keystone
+```
 
+- Đồng bộ DB Glance
+```sh
+su -s /bin/sh -c "glance-manage db_sync" glance
+```
 
+- Restart Glance service
+```sh
+service glance-registry restart
+service glance-api restart
+```
 
 <h1></h1>
 <ul></ul>
