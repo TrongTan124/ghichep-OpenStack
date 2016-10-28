@@ -359,6 +359,26 @@ service glance-registry restart
 service glance-api restart
 ```
 
+- Kéo file cirros image:
+```sh
+mkdir images
+cd images
+wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+```
+
+- Import image to glance
+```sh
+openstack image create "cirros" \
+    --file cirros-0.3.4-x86_64-disk.img \
+    --disk-format qcow2 --container-format bare \
+    --public
+```
+
+- Kiểm tra lại Glance image
+```sh
+openstack image list
+```
+
 <h1></h1>
 <ul></ul>
 <ul></ul>
