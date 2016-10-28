@@ -286,10 +286,33 @@ export OS_IMAGE_API_VERSION=2
  - Sửa file cấu hình: *vi /etc/glance/glance-api.conf*
  - Sửa thẻ [database], xóa dòng *sqlite_db* và thêm dòng: 
 ```sh
-connection  mysql+pymysql://glance:tan124@10.10.10.80/glance
+connection = mysql+pymysql://glance:tan124@10.10.10.80/glance
 ```
 
+ - Sửa thẻ [keystone_authtoken]
+```sh
+auth_uri = http://10.10.10.80:5000
+auth_url = http://10.10.10.80:35357
+memcached_servers = 10.10.10.80:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = glance
+password tan124
+```
 
+ - Sửa thẻ [paste_deploy]
+```sh
+flavor = keystone
+```
+
+ - Sửa thẻ [glance_store]
+```sh
+default_store = file
+stores = file,http
+filesystem_store_datadir = /var/lib/glance/images/
+```
 
 <h1></h1>
 <ul></ul>
