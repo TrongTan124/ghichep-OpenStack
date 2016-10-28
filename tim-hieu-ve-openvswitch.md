@@ -121,6 +121,26 @@ ovs-vsctl del-port ${switch} $1
 <ul> </ul>
 
 ##6. Triển khai Controller SDN cho OVS
+<ul>Cài đặt Floodlight openflow controller và gán vào openswitch 
+	<li>Cài đặt các gói phụ thuộc: <i>apt-get install build-essential default-jdk ant python-dev eclipse git</i></li>
+	<li>Update lên java 1.8: 
+		<ul> 
+			<li>apt-add-repository ppa:webupd8team/java</li>
+			<li>apt-get update</li>
+			<li>apt-get install oracle-java8-installer</li>
+			<li>java -version</li>
+		</ul>
+	</li>
+	<li>Kéo floodlight từ git về: <i>git clone git://github.com/floodlight/floodlight.git</i></li>
+	<li>Build source thành file jar: <i>ant</i></li>
+	<li>Chạy file java vừa build được: <i>java -jar target/floodlight.jar</i></li>
+</ul>
+<ul> Thực hiện gán openvswitch vào controller
+	<li>ovs-vsctl set-controller br-int tcp:172.16.69.72:6633</li>
+	<li>ovs-vsctl set-controller ovsbr0 tcp:172.16.69.72:6633</li>
+	<li>ovs-vsctl set-controller br-gre tcp:172.16.69.72:6633</li>
+	<li>ovs-vsctl show</li>
+</ul>
 
 ## Tham khảo
 <ul>http://dannykim.me/danny/openflow/57620?ckattempt=2 </ul>

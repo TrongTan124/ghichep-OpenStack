@@ -34,7 +34,7 @@ Các đặc tính thuần túy của bridge
 
 ##4. Cấu hình bridge
 <ul> Chắc chắn rằng tất cả các network card đều làm việc ổn và có thể truy nhập. </ul>
-<ul> Gõ **ifconfig** để xem sơ đồ phần cứng của network interface.</ul>
+<ul> Gõ <b>ifconfig</b> để xem sơ đồ phần cứng của network interface.</ul>
 <ul> Sau khi đã check những bước trên, gõ <b>modprobe -v bridge</b> </ul>
 <ul> Bạn có thể kiểm tra đã thành công chưa bằng cách in ra <b>cat /proc/modules | grep bridge</b> </ul>
 <ul> Nếu bridge-utilities đã được cài đúng và kernel, bridge-module đều OK, thực hiện gõ <b>brctl</b> để nhìn bảng tóm tắt lệnh </ul>
