@@ -283,11 +283,11 @@ export OS_IMAGE_API_VERSION=2
 <ul>Cài đặt package Glance <i>apt-get -y install glance</i></ul>
 - Cấu hình GLANCE API
  - Backup lại file config: *cp /etc/glance/glance-api.conf /etc/glance/glance-api.conf.bk*
- - Sửa file cấu hình *vi /etc/glance/glance-api.conf*
+ - Sửa file cấu hình: *vi /etc/glance/glance-api.conf*
  - Sửa thẻ [database], xóa dòng *sqlite_db* và thêm dòng: 
-	```sh
-	connection  mysql+pymysql://glance:tan124@10.10.10.80/glance
-	```
+```sh
+connection  mysql+pymysql://glance:tan124@10.10.10.80/glance
+```
 
 
 
