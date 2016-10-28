@@ -7,23 +7,25 @@
 <ul>Sửa file cấu hình interface
 	<li><i>vi /etc/network/interfaces</i></li>
 <pre>
-\# LOOPBACK NET
+```
+# LOOPBACK NET
 auto lo
 iface lo inet loopback
 
-\# MGNT NETWORK
+# MGNT NETWORK
 auto eth0
 iface eth0 inet static
 address 10.10.10.80
 netmask 255.255.255.0
 
-\# EXT NETWORK
+# EXT NETWORK
 auto eth1
 iface eth1 inet static
 address 172.16.69.80
 netmask 255.255.255.0
 gateway 172.16.69.1
 dns-nameservers 8.8.8.8 8.8.4.4
+```
 </pre>
 </ul>
 <ul>Sửa lại file hostname
