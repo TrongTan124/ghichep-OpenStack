@@ -78,23 +78,35 @@ cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bk
 - Sửa file cấu hình
  - Comment các dòng sau:
 ```sh 
-		server 0.debian.pool.ntp.org offline minpoll 8
-		server 1.debian.pool.ntp.org offline minpoll 8
-		server 2.debian.pool.ntp.org offline minpoll 8
-		server 3.debian.pool.ntp.org offline minpoll 8
+server 0.debian.pool.ntp.org offline minpoll 8
+server 1.debian.pool.ntp.org offline minpoll 8
+server 2.debian.pool.ntp.org offline minpoll 8
+server 3.debian.pool.ntp.org offline minpoll 8
+```
+ - Thêm vào các dòng sau:
+```sh
+server 1.vn.pool.ntp.org iburst
+server 0.asia.pool.ntp.org iburst
+server 3.asia.pool.ntp.org iburst
 ```
  - Khởi động lại Chrony: */etc/init.d/chrony restart*
 
 
 ###d. Cài đặt RabbitMQ
-- Cài đặt bằng lệnh: *apt-get install rabbitmq-server -y*
+- Cài đặt bằng lệnh: 
+```sh
+apt-get install rabbitmq-server -y
+```
 - Tạo và set quyền cho user dùng Rabbit:
 ```sh
 rabbitmqctl add_user openstack tan124
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ```
 
-- Khởi động lại rabbitmq: *service rabbitmq-server restart*
+- Khởi động lại rabbitmq: 
+```sh
+service rabbitmq-server restart
+```
 
 ###e. Cài đặt MySQL
 - Cài đặt bằng lệnh: 
