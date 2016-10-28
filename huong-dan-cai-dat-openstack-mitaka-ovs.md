@@ -75,8 +75,7 @@ apt-get -y install chrony
 cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bk
 ```
 
-- Sửa file cấu hình
- - Comment các dòng sau:
+- Sửa file cấu hình, comment các dòng sau:
 ```sh 
 server 0.debian.pool.ntp.org offline minpoll 8
 server 1.debian.pool.ntp.org offline minpoll 8
@@ -89,7 +88,10 @@ server 1.vn.pool.ntp.org iburst
 server 0.asia.pool.ntp.org iburst
 server 3.asia.pool.ntp.org iburst
 ```
- - Khởi động lại Chrony: */etc/init.d/chrony restart*
+ - Khởi động lại Chrony: 
+```sh
+/etc/init.d/chrony restart
+```
 
 
 ###d. Cài đặt RabbitMQ
@@ -116,7 +118,7 @@ apt-get -y install mariadb-server python-mysqldb curl
  - Lưu ý: password mặc định cho mọi cài đặt là: tan124
 
 - Cấu hình MySQL
- - Tạo file cấu hình cho OpenStack: 
+- Tạo file cấu hình cho OpenStack: 
 ```sh
 touch /etc/mysql/conf.d/mysqld_openstack.cnf
 ```
@@ -132,7 +134,10 @@ touch /etc/mysql/conf.d/mysqld_openstack.cnf
 		character-set-server = utf8
 ```
 
-- Restart lại MySQL: *service mysql restart*
+- Restart lại MySQL: 
+```sh
+service mysql restart
+```
 
 ##3. Cài đặt Keystone
 - Khởi tạo DB cho keystone
@@ -144,7 +149,7 @@ FLUSH PRIVILEGES;
 ```
 
 - Cài đặt
- - Không cho keystone khởi động sau khi cài: "
+ - Không cho keystone khởi động sau khi cài:
 ```sh
 echo "manual" > /etc/init/keystone.override
 ```
@@ -166,33 +171,33 @@ cp /etc/memcached.conf /etc/memcached.conf.bk
 ```sh
 cp /etc/keystone/keystone.conf /etc/keystone/keystone.conf.bk
 ```
- - Sửa lại file /etc/keystone/keystone.conf:
-  - Trong thẻ [DEFAULT]
+- Sửa lại file /etc/keystone/keystone.conf:
+- Trong thẻ [DEFAULT]
 ```sh
 admin_token = tan124				
 ```
-  - Trong thẻ [database], tìm và sửa:
+- Trong thẻ [database], tìm và sửa:
 ```sh
 connection mysql+pymysql://keystone:tan124@10.10.10.80/keystone
 ```
-  - Trong thẻ [token]
+- Trong thẻ [token]
 ```sh
 provider = fernet
 ```
 
- - Thực hiện dump DB keystone vào MySQL: 
+- Thực hiện dump DB keystone vào MySQL: 
 ```sh
 su -s /bin/sh -c "keystone-manage db_sync" keystone
 ```
- - Tạo token: 
+- Tạo token: 
 ```sh
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
 ```
- - Mở file */etc/apache2/apache2.conf* và thêm dòng sau vào cuối file: *
+- Mở file */etc/apache2/apache2.conf* và thêm dòng sau vào cuối file:
 ```sh
 ServerName 10.10.10.80
 ```
- - Tạo file cấu hình apache cho keystone: *vi /etc/apache2/sites-available/wsgi-keystone.conf*
+- Tạo file cấu hình apache cho keystone: *vi /etc/apache2/sites-available/wsgi-keystone.conf*
 
 ```sh
 Listen 5000
@@ -244,47 +249,51 @@ Listen 35357
     </Directory>
 </VirtualHost>
 ```
- - Tạo liên kết cho apache load file config vừa tạo: 
+- Tạo liên kết cho apache load file config vừa tạo: 
 ```sh
 ln -s /etc/apache2/sites-available/wsgi-keystone.conf /etc/apache2/sites-enabled
 ```
- - Khởi động lại apache2:
+- Khởi động lại apache2:
 ```sh
 service apache2 restart
 ```
- - Xóa file DB không cần thiết của keystone: 
+- Xóa file DB không cần thiết của keystone: 
 ```sh
 rm -f /var/lib/keystone/keystone.db
 ```
- - Tạo 03 biến môi trường để gen endpoint cho keystone:
+- Tạo 03 biến môi trường để gen endpoint cho keystone:
 ```sh
 			export OS_TOKEN=tan124
 			export OS_URL=http://10.10.10.80:35357/v3
 			export OS_IDENTITY_API_VERSION=3
 ```
- - Tạo các endpoint, project, user, group cho OpenStack
+- Tạo các endpoint, project, user, group cho OpenStack
 ```sh
 openstack service create --name keystone --description "OpenStack Identity" identity
 openstack endpoint create --region RegionOne identity public http://10.10.10.80:5000/v3
 openstack endpoint create --region RegionOne identity internal http://10.10.10.80:5000/v3
 openstack endpoint create --region RegionOne identity admin http://10.10.10.80:35357/v3
+
 openstack domain create --description "Default Domain" default
 openstack project create --domain default --description "Admin Project" admin
 openstack user create admin --domain default --password tan124
+
 openstack role create admin
 openstack role add --project admin --user admin admin
+
 openstack project create --domain default --description "Service Project" service
 openstack project create --domain default --description "Demo Project" demo
 openstack user create demo --domain default --password tan124
+
 openstack role create user
 openstack role add --project demo --user demo user
 ```
 	
- - Xóa 02 biến môi trường: 
+- Xóa 02 biến môi trường: 
 ```sh
 unset OS_TOKEN OS_URL
 ```
- - Tạo file biến môi trường cho user admin: *vi admin-openrc*
+- Tạo file biến môi trường cho user admin: *vi admin-openrc*
 ```sh
 export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
@@ -296,11 +305,11 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 ```
 	
- - Thực thi file biến môi trường vừa tạo: 
+- Thực thi file biến môi trường vừa tạo: 
 ```sh
 source admin-openrc
 ```
- - Tạo file biến môi trường cho user demo: *vi demo-openrc*
+- Tạo file biến môi trường cho user demo: *vi demo-openrc*
 ```sh
 export OS_PROJECT_DOMAIN_NAME=default
 export OS_USER_DOMAIN_NAME=default
@@ -312,7 +321,7 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 ```
 	
- - Check lại keystone sau khi cài đặt: 
+- Check lại keystone sau khi cài đặt: 
 ```sh
 openstack token issue
 ```
@@ -327,12 +336,12 @@ GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'tan124';
 FLUSH PRIVILEGES;
 ```
 
-- Tạo user và endpoint cho Glance
- - Export biến môi trường: 
+- Tạo user và endpoint cho Glance:
+- Export biến môi trường: 
 ```sh
 source admin-openrc
 ```
- - Tạo user và endpoint:
+- Tạo user và endpoint:
 ```sh
 openstack user create glance --domain default --password tan124
 openstack role add --project service --user glance admin
@@ -343,16 +352,25 @@ openstack endpoint create --region RegionOne image admin http://10.10.10.80:9292
 ```
 	
 
-- Cài đặt package Glance *apt-get -y install glance*
-- Cấu hình GLANCE API
- - Backup lại file config: *cp /etc/glance/glance-api.conf /etc/glance/glance-api.conf.bk*
- - Sửa file cấu hình: *vi /etc/glance/glance-api.conf*
- - Sửa thẻ [database], xóa dòng *sqlite_db* và thêm dòng: 
+- Cài đặt package Glance 
+```sh
+apt-get -y install glance
+```
+- Cấu hình GLANCE API:
+- Backup lại file config: 
+```sh
+cp /etc/glance/glance-api.conf /etc/glance/glance-api.conf.bk
+```
+- Sửa file cấu hình: 
+```sh
+vi /etc/glance/glance-api.conf
+```
+- Sửa thẻ [database], xóa dòng *sqlite_db* và thêm dòng: 
 ```sh
 connection = mysql+pymysql://glance:tan124@10.10.10.80/glance
 ```
 
- - Sửa thẻ [keystone_authtoken]
+- Sửa thẻ [keystone_authtoken]
 ```sh
 auth_uri = http://10.10.10.80:5000
 auth_url = http://10.10.10.80:35357
@@ -365,12 +383,12 @@ username = glance
 password tan124
 ```
 
- - Sửa thẻ [paste_deploy]
+- Sửa thẻ [paste_deploy]
 ```sh
 flavor = keystone
 ```
 
- - Sửa thẻ [glance_store]
+- Sửa thẻ [glance_store]
 ```sh
 default_store = file
 stores = file,http
@@ -382,19 +400,19 @@ filesystem_store_datadir = /var/lib/glance/images/
 cp /etc/glance/glance-registry.conf /etc/glance/glance-registry.conf.bk
 ```
 - Sửa file: /etc/glance/glance-registry.conf
- - Thẻ [DEFAULT] thêm
+- Thẻ [DEFAULT] thêm
 ```sh
 verbose = True
 ```
- - Thẻ [database] thêm
+- Thẻ [database] thêm
 ```sh
 connection = mysql+pymysql://glance:$GLANCE_DBPASS@$CTL_MGNT_IP/glance
 ```
- - Thẻ [database] xóa
+- Thẻ [database] xóa
 ```sh
 sqlite_db
 ```
- - Thẻ [keystone_authtoken] sửa
+- Thẻ [keystone_authtoken] sửa
 ```sh
 auth_uri = http://10.10.10.80:5000
 auth_url = http://10.10.10.80:35357
@@ -406,7 +424,7 @@ project_name = service
 username = glance
 password = tan124
 ```
- - Thẻ [paste_deploy] sửa
+- Thẻ [paste_deploy] sửa
 ```sh
 flavor = keystone
 ```
@@ -442,17 +460,10 @@ openstack image create "cirros" \
 openstack image list
 ```
 
-<h1></h1>
--
--
--
 
 #II. Cài đặt Compute
 
-<h1>Tham khảo</h1>
--
--
--
--
+##Tham khảo
+
 
 
