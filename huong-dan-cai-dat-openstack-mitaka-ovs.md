@@ -4,7 +4,7 @@
 - Backup lại file cấu hình interface *cp /etc/network/interfaces /etc/network/interfaces.bk*
 
 - Sửa file cấu hình interface
- - *vi /etc/network/interfaces* và sửa như sau:
+ - Mở *vi /etc/network/interfaces* và sửa như sau:
 
 ```sh
 # LOOPBACK NET
@@ -31,9 +31,11 @@ dns-nameservers 8.8.8.8 8.8.4.4
  - Sửa thành dòng sau: *controller*
 
 - Sửa lại file hosts
- - Backup lại cấu hình: *cp /etc/hosts /etc/hosts.bk*
- - *vi /etc/hosts*
- - Sửa thành dòng sau: 
+ - Backup lại cấu hình: 
+```sh
+cp /etc/hosts /etc/hosts.bk
+```
+ - Sửa *vi /etc/hosts* thành dòng sau: 
 ```sh 
 		127.0.0.1		localhost controller
 		10.10.10.80		$HOST_CTL
@@ -54,16 +56,24 @@ apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
 
 ##2. Cài đặt các thành phần hỗ trợ
 ###a. Cài đặt CRUDINI
-- *apt-get -y install python-pip*
-- *pip install https://pypi.python.org/packages/source/c/crudini/crudini-0.7.tar.gz*
+```sh
+apt-get -y install python-pip*
+pip install https://pypi.python.org/packages/source/c/crudini/crudini-0.7.tar.gz
+```
 
 ###b. Cài đặt python client
-- *apt-get -y install python-openstackclient*
+```sh
+apt-get -y install python-openstackclient
+```
 
 ###c. Cài đặt NTP
-- *apt-get -y install chrony*
+```sh
+apt-get -y install chrony
+```
 - Back up lại cấu hình chrony
- - cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bk
+```sh
+cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bk
+```
 
 - Sửa file cấu hình
  - Comment các dòng sau:
@@ -87,11 +97,17 @@ rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 - Khởi động lại rabbitmq: *service rabbitmq-server restart*
 
 ###e. Cài đặt MySQL
-- Cài đặt bằng lệnh: *apt-get -y install mariadb-server python-mysqldb curl*
+- Cài đặt bằng lệnh: 
+```sh
+apt-get -y install mariadb-server python-mysqldb curl
+```
  - Lưu ý: password mặc định cho mọi cài đặt là: tan124
 
 - Cấu hình MySQL
- - Tạo file cấu hình cho OpenStack: *touch /etc/mysql/conf.d/mysqld_openstack.cnf*
+ - Tạo file cấu hình cho OpenStack: 
+```sh
+touch /etc/mysql/conf.d/mysqld_openstack.cnf
+```
  - Thêm đoạn sau vào file
 ```sh 
 		[mysqld]
@@ -116,8 +132,14 @@ FLUSH PRIVILEGES;
 ```
 
 - Cài đặt
-	<li>Không cho keystone khởi động sau khi cài: "echo "manual" > /etc/init/keystone.override"
-	<li>Cài đặt các gói cần thiết:*apt-get -y install keystone apache2 libapache2-mod-wsgi memcached python-memcache*
+ - Không cho keystone khởi động sau khi cài: "
+```sh
+echo "manual" > /etc/init/keystone.override
+```
+ - Cài đặt các gói cần thiết:
+```sh
+apt-get -y install keystone apache2 libapache2-mod-wsgi memcached python-memcache
+```
 
 - Cấu hình:
  - Backup lại file cấu hình memcache: 
@@ -139,11 +161,11 @@ admin_token = tan124
 ```
   - Trong thẻ [database], tìm và sửa:
 ```sh
-				connection mysql+pymysql://keystone:tan124@10.10.10.80/keystone
+connection mysql+pymysql://keystone:tan124@10.10.10.80/keystone
 ```
   - Trong thẻ [token]
 ```sh
-				provider = fernet
+provider = fernet
 ```
 
  - Thực hiện dump DB keystone vào MySQL: 
