@@ -406,7 +406,7 @@ verbose = True
 ```
 - Thẻ [database] thêm
 ```sh
-connection = mysql+pymysql://glance:$GLANCE_DBPASS@$CTL_MGNT_IP/glance
+connection = mysql+pymysql://glance:tan124@10.10.10.80/glance
 ```
 - Thẻ [database] xóa
 ```sh
@@ -459,6 +459,164 @@ openstack image create "cirros" \
 ```sh
 openstack image list
 ```
+
+##5. Cài đặt Nova
+- Tạo DB cho Nova
+```sh
+CREATE DATABASE nova_api;
+CREATE DATABASE nova;
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY 'tan124';
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY 'tan124';
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'tan124';
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'tan124';
+FLUSH PRIVILEGES;
+```
+
+- Tạo user và end point cho Nova
+```sh
+openstack user create nova --domain default  --password tan124
+
+openstack role add --project service --user nova admin
+
+openstack service create --name nova --description "OpenStack Compute" compute
+
+openstack endpoint create --region RegionOne \
+    compute public http://10.10.10.80:8774/v2.1/%\(tenant_id\)s
+
+openstack endpoint create --region RegionOne \
+    compute internal http://10.10.10.80:8774/v2.1/%\(tenant_id\)s
+
+openstack endpoint create --region RegionOne \
+    compute admin http://10.10.10.80:8774/v2.1/%\(tenant_id\)s
+```
+
+- Cài đặt Nova
+```sh
+apt-get -y install nova-api nova-cert \
+    nova-conductor nova-consoleauth \
+    nova-novncproxy nova-scheduler
+```
+
+- Backup file cấu hình
+```sh
+cp /etc/nova/nova.conf /etc/nova/nova.conf.bk
+```
+
+- Chỉnh sửa file cấu hình 
+```sh
+vi /etc/nova/nova.conf
+```
+- Chỉnh sửa [DEFAULT], thêm các dòng sau:
+```sh
+log-dir = /var/log/nova
+enabled_apis = osapi_compute,metadata
+rpc_backend = rabbit
+auth_strategy = keystone
+rootwrap_config = /etc/nova/rootwrap.conf
+my_ip = 10.10.10.80
+use_neutron = True
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+```
+- Trong [DEFAULT] xóa 2 dòng cấu hình sau: 
+```sh
+logdir
+verbose
+```
+
+- Thêm thẻ [api_database]
+```sh
+connection = mysql+pymysql://nova:tan124@10.10.10.80/nova_api
+```
+
+- Thêm thẻ [database]
+```sh
+connection = mysql+pymysql://nova:tan124@10.10.10.80/nova
+```
+
+- Thêm thẻ [oslo_messaging_rabbit]
+```sh
+rabbit_host = 10.10.10.80
+rabbit_userid = openstack
+rabbit_password = tan124
+```
+
+- Thêm thẻ [keystone_authtoken]
+```sh
+auth_uri = http://10.10.10.80:5000
+auth_url = http://10.10.10.80:35357
+memcached_servers = 10.10.10.80:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = nova
+password = tan124
+```
+
+- Thêm thẻ [vnc]
+```sh
+vncserver_listen = $my_ip
+vncserver_proxyclient_address = $my_ip
+```
+
+- Thêm thẻ [glance]
+```sh
+api_servers = http://10.10.10.80:9292
+```
+
+- Thêm thẻ [oslo_concurrency]
+```sh
+lock_path = /var/lib/nova/tmp
+```
+
+- Thêm thẻ [neutron]
+```sh
+url = http://10.10.10.80:9696
+auth_url = http://10.10.10.80:35357
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = neutron
+password = tan124
+service_metadata_proxy = True
+metadata_proxy_shared_secret = tan124
+```
+
+- Thêm thẻ [cinder]
+```sh
+os_region_name = RegionOne
+```
+
+- Xóa DB defaul của nova
+```sh
+rm /var/lib/nova/nova.sqlite
+```
+
+- Đồng bộ DB Nova, lênh này sẽ tạo bảng cho DB nova
+```sh
+su -s /bin/sh -c "nova-manage api_db sync" nova
+su -s /bin/sh -c "nova-manage db sync" nova
+```
+
+- Khởi động lại Nova
+```sh
+service nova-api restart
+service nova-cert restart
+service nova-consoleauth restart
+service nova-scheduler restart
+service nova-conductor restart
+service nova-novncproxy restart
+```
+
+- Kiểm tra dịch vụ Nova
+```sh
+openstack compute service list
+```
+
+##6. Cài đặt Neutron
+###a. Cài đặt Open vSwitch theo provider
 
 
 #II. Cài đặt Compute
