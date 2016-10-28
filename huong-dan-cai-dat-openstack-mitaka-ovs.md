@@ -38,7 +38,7 @@ cp /etc/hosts /etc/hosts.bk
  - Sửa *vi /etc/hosts* thành dòng sau: 
 ```sh 
 		127.0.0.1		localhost controller
-		10.10.10.80		$HOST_CTL
+		10.10.10.80		controller
 		10.10.10.81		compute1
 		10.10.10.82		compute2
 		10.10.10.83		cinder
@@ -617,7 +617,245 @@ openstack compute service list
 
 ##6. Cài đặt Neutron
 ###a. Cài đặt Open vSwitch theo provider
+- Cấu hình network forward cho VMs
+```sh
+echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+echo "net.ipv4.conf.all.rp_filter=0" >> /etc/sysctl.conf
+echo "net.ipv4.conf.default.rp_filter=0" >> /etc/sysctl.conf
+sysctl -p
+```
 
+- Tạo DB cho Neutron
+```sh
+CREATE DATABASE neutron;
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'tan124';
+GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'tan124';
+FLUSH PRIVILEGES;
+```
+
+- Tạo user và endpoint cho Neutron
+```sh
+openstack user create neutron --domain default --password tan124
+
+openstack role add --project service --user neutron admin
+
+openstack service create --name neutron \
+    --description "OpenStack Networking" network
+
+openstack endpoint create --region RegionOne \
+    network public http://10.10.10.80:9696
+
+openstack endpoint create --region RegionOne \
+    network internal http://10.10.10.80:9696
+
+openstack endpoint create --region RegionOne \
+    network admin http://10.10.10.80:9696
+```
+
+- Cài đặt Neutron sử dụng Open vSwitch
+```sh
+apt-get -y install neutron-server neutron-plugin-ml2 \
+    neutron-plugin-openvswitch-agent neutron-dhcp-agent \
+    neutron-metadata-agent python-neutronclient ipset
+```
+
+- Backup lại file cấu hình neutron.conf
+```sh
+cp /etc/neutron/neutron.conf /etc/neutron/neutron.conf.bk
+```
+- Chỉnh sửa file */etc/neutron/neutron.conf*
+- Tại thẻ [DEFAULT]
+```sh
+core_plugin = ml2
+service_plugins = router
+allow_overlapping_ips = True
+auth_strategy = keystone
+rpc_backend = rabbit
+notify_nova_on_port_status_changes = True
+notify_nova_on_port_data_changes = True
+```
+
+- Tại thẻ [database], chỉnh sửa:
+```sh
+connection = mysql+pymysql://neutron:tan124@10.10.10.80/neutron
+```
+
+- Tại thẻ [keystone_authtoken]
+```sh
+auth_uri = http://10.10.10.80:5000
+auth_url = http://10.10.10.80:35357
+memcached_servers = 10.10.10.80:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = neutron
+password = tan124
+```
+
+- Tại thẻ [oslo_messaging_rabbit]
+```sh
+rabbit_host = 10.10.10.80
+rabbit_userid = openstack
+rabbit_password = tan124
+```
+
+- Tại thẻ [nova]
+```sh
+auth_url = http://10.10.10.80:35357
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = nova
+password = tan124
+```
+
+- Backup lại file cấu hình ml2
+```sh
+cp /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugins/ml2/ml2_conf.ini.bk
+```
+
+- Chỉnh sửa file */etc/neutron/plugins/ml2/ml2_conf.ini*
+- Tại thẻ [ml2]
+```sh
+type_drivers = flat,vlan,vxlan,gre
+tenant_network_types = vlan
+mechanism_drivers = openvswitch
+extension_drivers = port_security
+```
+
+- Tại thẻ [ml2_type_flat]
+```sh
+flat_networks = external
+```
+
+- Tại thẻ [ml2_type_vlan]
+```sh
+network_vlan_ranges = external
+```
+
+- Tại thẻ [securitygroup]
+```sh
+enable_ipset = True
+firewall_driver = neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver
+enable_security_group = True
+```
+
+- Backup lại file cấu hình openvswitch_agent
+```sh
+cp /etc/neutron/plugins/ml2/openvswitch_agent.ini /etc/neutron/plugins/ml2/openvswitch_agent.ini.bk
+```
+
+- Tại thẻ [ovs]
+```sh
+bridge_mappings = external:br-ex
+```
+
+- Backup cấu hình DHCP AGENT
+```sh
+cp /etc/neutron/dhcp_agent.ini /etc/neutron/dhcp_agent.ini.bk
+```
+
+- Tại thẻ [DEFAULT]
+```sh
+interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
+enable_isolated_metadata = True
+```
+
+- Backup cấu hình METADATA AGENT
+```sh
+cp /etc/neutron/metadata_agent.ini /etc/neutron/metadata_agent.ini.bk
+```
+
+- Tại thẻ [DEFAULT]
+```sh
+nova_metadata_ip = 10.10.10.80
+metadata_proxy_shared_secret = tan124
+```
+
+- Dump DB cho Neutron
+```sh
+su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+--config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+```
+
+- Khởi động lại dịch vụ Nova
+```sh
+service nova-api restart
+service nova-scheduler restart
+service nova-conductor restart
+```
+
+- Khởi động lại dịch vụ Neutron
+```sh
+service neutron-server restart
+service neutron-openvswitch-agent restart
+service neutron-dhcp-agent restart
+service neutron-metadata-agent restart
+```
+
+- Xóa DB mặc định
+```sh
+rm -f /var/lib/neutron/neutron.sqlite
+```
+
+- Kiểm tra dịch vụ Neutron
+```sh
+neutron agent-list
+```
+
+- Cấu hình IP cho các switch OVS br-ex
+- Backup lại cấu hình network
+```sh
+cp /etc/network/interfaces /etc/network/interfaces.bk
+```
+
+- Chỉnh sửa lại file */etc/network/interfaces* có định dạng như sau
+```sh
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto br-ex
+iface br-ex inet static
+address 172.16.69.80
+netmask 255.255.255.0
+gateway 172.16.69.1
+dns-nameservers 8.8.8.8
+
+auto eth1
+iface eth1 inet manual
+   up ifconfig $IFACE 0.0.0.0 up
+   up ip link set $IFACE promisc on
+   down ip link set $IFACE promisc off
+   down ifconfig $IFACE down
+
+auto eth0
+iface eth0 inet static
+address 10.10.10.80
+netmask 255.255.255.0
+```
+
+- Add br-ex
+```sh
+ovs-vsctl add-br br-ex
+ovs-vsctl add-port br-ex eth1
+```
+
+- Restart network
+```sh
+ifdown -a && ifup -a
+route add default gw 172.16.69.1 br-ex
+```
+
+- Add thêm DNS
+```sh
+nameserver 8.8.8.8 8.8.4.4
+```
 
 #II. Cài đặt Compute
 
