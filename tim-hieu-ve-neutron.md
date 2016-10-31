@@ -14,7 +14,7 @@ OpenStack Networking là một thành phần độc lập, có thể được tr
 	- OpenStack Compute service (nova): sử dụng để gắn mỗi virtual NIC trên VM vào một mạng cụ thể
 	- OpenStack Dashboard (horizon): sử dụng bởi người quản trị và tenant user để tạo và quản lý dịch vụ mạng thông qua giao diện đồ họa web
 	
-![Mitaka-topo-flow-ops](/ghichep-OpenStack/Images/topo_flow_OPS.png)
+![Mitaka-topo-flow-ops](/Images/topo_flow_OPS.png)
 
 # 2. Chức năng
 
