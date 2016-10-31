@@ -1,6 +1,6 @@
 ﻿# 1. Giới thiệu
 Service Networking của OpenStack cung cấp một API cho phép người dùng tạo và xác định các kết nối, địa chỉ trong cloud.
-Project code-name cho service networking là neutron. OpenStack Networking điều khiển khởi tạo và quản lý hạ tầng mạng ảo, bao gồm:
+Project code-name cho service networking là neutron. OpenStack Networking điều khiển việc khởi tạo và quản lý hạ tầng mạng ảo, bao gồm:
 network, switch, subnet và router cho các thiết bị được quản lý bởi OpenStack Compute service (nova). Các dịch vụ cao cấp như firewall 
 hoặc VPNs cũng có thể được sử dụng.
 
@@ -16,16 +16,35 @@ OpenStack Networking là một thành phần độc lập, có thể được tr
 	
 ![Mitaka-topo-flow-ops](/Images/topo_flow_OPS.png)
 
-# 2. Chức năng
+==> Tổng kết: OpenStack Networking cung cấp một hạ tầng thiết bị mạng ảo cho các virtual machine tương tự như các thiết bị mạng vật lý.
 
+# 2. Các thành phần
 
-# 3. Các thành phần
+## a. Neutron Server
+- Thành phần chính của Neutron là Neutron-server. Được viết bằng python và có thể khởi động khi thực thi lệnh
+```sh
+service neutron-server start
+```
 
+- Neutron-server khởi động 2 thành phần chính:
+	- Neutron REST service
+	- Neutron Plugin - core and service plugin
+	
+- Neutron RPC service cũng được khởi động để liên kết neutron-server với các agent. RPC server thường load cùng Neutron Plugin
+![Neutron-Server-Loading-Steps](/Images/Neutron-Server-Loading-Steps.png)
 
+## b. Neutron Plugins
+- Plugin trong Neutron cho phép mở rộng và/hoặc tùy biến các chức năng đã có sẵn trong Neutron. Các Networking vendor có thể viết plugin để đảm bảo trơn tru kết nối giữa OpenStack Neutron 
+và phần cứng, phần mềm của vendor cụ thể. Việc tiếp cận này làm phong phú tài nguyên mạng thật và ảo có thể cung cấp cho các virtual machine.
+
+## c. Neutron Agents
+- Các agent là tập hợp các thành phần quan trọng khác trong Neutron. Thành phần chính Neutron-server (và các plugin) kết nối với các Neutron agent. 
+Neutron agents thực thi chức năng mạng đặc thù. Ví dụ DHCP agent, L3 agent. Một vài agent đặc biệt cho plugin như Linux Bridge Neutron Agent.
 
 
 
 # Tham khảo
-- [OpenStack basic](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
-- [OpenStack neutron and sdn](http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn)
+- [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
+- [http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn](http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn)
+- [http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/](http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/)
 - []()
