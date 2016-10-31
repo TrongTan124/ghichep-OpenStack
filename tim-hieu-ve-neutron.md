@@ -73,12 +73,29 @@ dùng thực hiện "Add interface" trên Router. Bạn sẽ nhìn thấy nhiề
 - **network:router_gateway**: với một Router, External Network miêu tả "gateway" đi ra mạng ngoài (internet). Một port cụ thể loại "network:router_gateway" được tạo ở đây. 
 Port này được tạo khi người dùng thực hiện "Set Gateway" trên một Router và Port này trên Network Node.
 
-## b. Neutron Plugin và Agent trong OpenStack
+## b. Neutron Plugin trong OpenStack
 - Networking trong OpenStack (cho các VM) thì tương tự với networking trong thế giới thật. VM khởi tạo yêu cầu tối thiểu kết nối Layer2 (L2) network. Thêm nữa, khởi tạo có thể 
 yêu cầu dịch vụ routing, firewall và load-balancing. Các công nghệ và dịch vụ mạng này có thể thực thi sử dụng kết hợp với phần mềm và phần cứng mạng. 
 
 **ML2 - the most important core plugin** 
-- ML2 hay Modular Layer 2 plugin được gói lại với OpenStack.
+- ML2 hay Modular Layer 2 plugin được gói lại với OpenStack. Nó là important core plugin bởi vì nó hỗ trợ nhiều công nghệ L2. Quan trọng hơn, ML2 plugin cho phép nhiểu công nghệ 
+của nhiều nhà cung cấp cùng tồn tại.
+
+- ML2 plugin hỗ trợ nhiều công nghệ Layer2 như VLAN, VXLAN, GRE,... Các công nghệ này được nhắc đến như Type drivers.
+
+## b. Neutron Agent trong OpenStack
+- Trong khi Neutron server đóng vai trò như controller tập trung, câu lệnh liên quan tới mạng thực tế và cấu hình được thực thi trên Compute và Network node. Và các agent là các thực thể 
+thực thi thay đổi mạng thực tế trên các node đó. Các agent nhận tin nhắn và chỉ dẫn từ Neutron server (thông qua plugin hoặc trực tiếp) trên message bus.
+
+- Hình dưới chỉ ra một cái nhìn đơn giản tương tác của plugin và agent với các thành phần trong OpenStack Networking
+
+**Ví dụ: Open vSwitch (OVS) Plugin and Agent**
+
+- Trong hình trên, Neutron nhận một API request (thông qua operatinos done trên Horizon hay CLI). API server gọi đến ML2 plugin để xử lý request. ML2 plugin đã tải OVS mechanism driver và 
+chuyển tiếp yêu cầu liên quan tới OVS driver. OVS driver tạo một RPC message sử dụng các thông tin có sẵn trong request. RPC message là **cast** tới một OVS agent cụ thể chạy trên compute 
+node. OVS agent này nhận RPC message và thực hiện cấu hình khởi tạo local của OVS switch.
+
+![OVS-Plugin-Agents](/Images/OVS-Plugin-Agents.jpg)
 
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
