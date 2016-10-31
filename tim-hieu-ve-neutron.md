@@ -41,10 +41,41 @@ và phần cứng, phần mềm của vendor cụ thể. Việc tiếp cận nà
 - Các agent là tập hợp các thành phần quan trọng khác trong Neutron. Thành phần chính Neutron-server (và các plugin) kết nối với các Neutron agent. 
 Neutron agents thực thi chức năng mạng đặc thù. Ví dụ DHCP agent, L3 agent. Một vài agent đặc biệt cho plugin như Linux Bridge Neutron Agent.
 
+# 3. Kiến thức bổ sung
+## a. Port trong OpenStack Neutron
+- OpenStack hỗ trợ trừu tượng phong phú để xử lý nhu cầu mạng ảo hóa trong cloud. Với một người dùng, đối tượng dễ thấy nhất là các network, subnet, router, firewall,... 
+Nhưng nếu xem xét điểm vào và ra của lưu lượng dữ liệu, đối tượng quan trọng nhất là Port. OpenStack Neutron Port thường được tạo tự động như một phần của hoạt động người dùng. 
+Tuy nhiên, CLI cũng cho phép người dùng tạo các Port một các độc lập.
 
+- Port trong OpenStack networking được thực hiện bằng cách sử dụng giao diện (hầu hết là ảo) phía dưới hypervisor. Địa chỉ IP dùng cho máy ảo, router cũng thường được lưu trữ với các 
+đối tượng Port. Thậm chí Port đại diện cho điểm xuất nhập data trafic và các cấu hình liên quan như interface và địa chỉ IP. Chúng đóng một vai trò quan trọng trong OpenStack networking.
+
+- Các loại port trong OpenStack:
+
+![Topology-OpenStack-Ports-1](Topology-OpenStack-Ports-1.png)
+
+Trong hình trên, chúng ta có 2 Tenant Network, mỗi network có 1 máy ảo và 1 DHCP server. Hai Network được kết nối với nhau qua một Tenant Router. Thêm nữa, chúng ta sẽ sử dụng một 
+External Network và thiết lập nó như gateway trên Tenant Router cho các máy ảo truy nhập Internet. Topology đúng của OpenStack Network nhìn như sau:
+
+![OpenStack-Ports-Network-Topology-248x300](OpenStack-Ports-Network-Topology-248x300.png)
+
+- Để xem loại port trong cấu hình OpenStack, bao gồm cả các thuộc tính "device_owner" của port bằng lệnh sau:
+
+![OpenStack-Ports-CLI-Output-1024x191](OpenStack-Ports-CLI-Output-1024x191.png)
+
+- **compute:nova** chỉ ra rằng port được gán cho máy ảo. Các port này được tạo tự động như một phần của máy ảo (thông qua nova). Phần "compute" chỉ ra rằng port được tạo trên compute node.
+
+- **network:dhcp** chỉ ra port được gán cho DHCP server. Từ "network" ngụ ý rằng, port này được tạo trên Netwok node. Port DHCP được tạo khi máy ảo đầu tiên được tạo trên mạng tương ứng.
+
+- **network:router_interface** miêu tả "gateway" IP interface cho một tenant network và máy ảo của nó. Interface này được kết hợp với một OpenStack router (namespace). Các port loại này được tạo khi người 
+dùng thực hiện "Add interface" trên Router. Bạn sẽ nhìn thấy nhiều "network:router_interface" port - một trong những network ở ví dụ. Thêm một lần nữa, port loại này được nhìn thấy tại Network Node.
+
+- **network:router_gateway**: với một Router, External Network miêu tả "gateway" đi ra mạng ngoài (internet). Một port cụ thể loại "network:router_gateway" được tạo ở đây. 
+Port này được tạo khi người dùng thực hiện "Set Gateway" trên một Router và Port này trên Network Node.
 
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
 - [http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn](http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn)
 - [http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/](http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/)
+- [http://www.innervoice.in/blogs/2015/07/05/ports-in-openstack-neutron/](http://www.innervoice.in/blogs/2015/07/05/ports-in-openstack-neutron/)
 - []()
