@@ -7,12 +7,18 @@ hoặc VPNs cũng có thể được sử dụng.
 OpenStack Networking bao gồm neutron-server, 1 DB cho lưu trữ dài hạn, và một số plug-in agents, cái mà cung cấp dịch vụ giao diện cho 
 cơ chế mạng native Linux, thiết bị mở rộng hoặc SDN controller. 
 
-OpenStack Networking là một thành phần độc lập, có thể được triển khai tới các host riêng.
+OpenStack Networking là một thành phần độc lập, có thể được triển khai tới các host riêng biệt.
 
 - OpenStack Networking tương tác với các thành phần OpenStack khác:
 	- OpenStack Identity service (keystone): xác thực và cấp quyền cho các API request
 	- OpenStack Compute service (nova): sử dụng để gắn mỗi virtual NIC trên VM vào một mạng cụ thể
 	- OpenStack Dashboard (horizon): sử dụng bởi người quản trị và tenant user để tạo và quản lý dịch vụ mạng thông qua giao diện đồ họa web
+
+# 2. Chức năng
+
+Khi khởi tạo một instance, sẽ có rất nhiều tương tác giữa các thành phần của OpenStack. Trong đó có
+
+# 3. Các thành phần
 
 
 
