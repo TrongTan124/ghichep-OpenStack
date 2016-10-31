@@ -52,16 +52,16 @@ Tuy nhiên, CLI cũng cho phép người dùng tạo các Port một các độc
 
 - Các loại port trong OpenStack:
 
-![Topology-OpenStack-Ports-1](Topology-OpenStack-Ports-1.png)
+![Topology-OpenStack-Ports-1](/Images/Topology-OpenStack-Ports-1.png)
 
 Trong hình trên, chúng ta có 2 Tenant Network, mỗi network có 1 máy ảo và 1 DHCP server. Hai Network được kết nối với nhau qua một Tenant Router. Thêm nữa, chúng ta sẽ sử dụng một 
 External Network và thiết lập nó như gateway trên Tenant Router cho các máy ảo truy nhập Internet. Topology đúng của OpenStack Network nhìn như sau:
 
-![OpenStack-Ports-Network-Topology-248x300](OpenStack-Ports-Network-Topology-248x300.png)
+![OpenStack-Ports-Network-Topology-248x300](/Images/OpenStack-Ports-Network-Topology-248x300.png)
 
 - Để xem loại port trong cấu hình OpenStack, bao gồm cả các thuộc tính "device_owner" của port bằng lệnh sau:
 
-![OpenStack-Ports-CLI-Output-1024x191](OpenStack-Ports-CLI-Output-1024x191.png)
+![OpenStack-Ports-CLI-Output-1024x191](/Images/OpenStack-Ports-CLI-Output-1024x191.png)
 
 - **compute:nova** chỉ ra rằng port được gán cho máy ảo. Các port này được tạo tự động như một phần của máy ảo (thông qua nova). Phần "compute" chỉ ra rằng port được tạo trên compute node.
 
@@ -73,9 +73,13 @@ dùng thực hiện "Add interface" trên Router. Bạn sẽ nhìn thấy nhiề
 - **network:router_gateway**: với một Router, External Network miêu tả "gateway" đi ra mạng ngoài (internet). Một port cụ thể loại "network:router_gateway" được tạo ở đây. 
 Port này được tạo khi người dùng thực hiện "Set Gateway" trên một Router và Port này trên Network Node.
 
+## b. Neutron Plugin và Agent trong OpenStack
+
+
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
 - [http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn](http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn)
 - [http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/](http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/)
 - [http://www.innervoice.in/blogs/2015/07/05/ports-in-openstack-neutron/](http://www.innervoice.in/blogs/2015/07/05/ports-in-openstack-neutron/)
+- [http://www.innervoice.in/blogs/2015/03/31/openstack-neutron-plugins-and-agents/](http://www.innervoice.in/blogs/2015/03/31/openstack-neutron-plugins-and-agents/)
 - []()
