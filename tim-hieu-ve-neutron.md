@@ -74,7 +74,11 @@ dùng thực hiện "Add interface" trên Router. Bạn sẽ nhìn thấy nhiề
 Port này được tạo khi người dùng thực hiện "Set Gateway" trên một Router và Port này trên Network Node.
 
 ## b. Neutron Plugin và Agent trong OpenStack
+- Networking trong OpenStack (cho các VM) thì tương tự với networking trong thế giới thật. VM khởi tạo yêu cầu tối thiểu kết nối Layer2 (L2) network. Thêm nữa, khởi tạo có thể 
+yêu cầu dịch vụ routing, firewall và load-balancing. Các công nghệ và dịch vụ mạng này có thể thực thi sử dụng kết hợp với phần mềm và phần cứng mạng. 
 
+**ML2 - the most important core plugin** 
+- ML2 hay Modular Layer 2 plugin được gói lại với OpenStack.
 
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
