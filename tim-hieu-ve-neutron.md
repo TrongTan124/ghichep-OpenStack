@@ -3,12 +3,12 @@ Service Networking của OpenStack cung cấp một API cho phép người dùng
 Project code-name cho service networking là neutron. OpenStack Networking điều khiển khởi tạo và quản lý hạ tầng mạng ảo, bao gồm:
 network, switch, subnet và router cho các thiết bị được quản lý bởi OpenStack Compute service (nova). Các dịch vụ cao cấp như firewall 
 hoặc VPNs cũng có thể được sử dụng.
-====
+===
 OpenStack Networking bao gồm neutron-server, 1 DB cho lưu trữ dài hạn, và một số plug-in agents, cái mà cung cấp dịch vụ giao diện cho 
 cơ chế mạng native Linux, thiết bị mở rộng hoặc SDN controller. 
-====
+===
 OpenStack Networking là một thành phần độc lập, có thể được triển khai tới các host riêng.
-====
+===
 - OpenStack Networking tương tác với các thành phần OpenStack khác:
 	- OpenStack Identity service (keystone): xác thực và cấp quyền cho các API request
 	- OpenStack Compute service (nova): sử dụng để gắn mỗi virtual NIC trên VM vào một mạng cụ thể
