@@ -26,4 +26,6 @@ OpenStack Networking là một thành phần độc lập, có thể được tr
 
 
 # Tham khảo
+- [OpenStack basic](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
+- [OpenStack neutron and sdn](http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn)
 - []()
