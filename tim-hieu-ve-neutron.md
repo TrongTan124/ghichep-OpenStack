@@ -91,11 +91,11 @@ thực thi thay đổi mạng thực tế trên các node đó. Các agent nhậ
 
 **Ví dụ: Open vSwitch (OVS) Plugin and Agent**
 
+![OVS-Plugin-Agents](/Images/OVS-Plugin-Agents.jpg)
+
 - Trong hình trên, Neutron nhận một API request (thông qua operatinos done trên Horizon hay CLI). API server gọi đến ML2 plugin để xử lý request. ML2 plugin đã tải OVS mechanism driver và 
 chuyển tiếp yêu cầu liên quan tới OVS driver. OVS driver tạo một RPC message sử dụng các thông tin có sẵn trong request. RPC message là **cast** tới một OVS agent cụ thể chạy trên compute 
 node. OVS agent này nhận RPC message và thực hiện cấu hình khởi tạo local của OVS switch.
-
-![OVS-Plugin-Agents](/Images/OVS-Plugin-Agents.jpg)
 
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
