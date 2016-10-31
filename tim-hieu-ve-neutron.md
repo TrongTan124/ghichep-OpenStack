@@ -13,10 +13,11 @@ OpenStack Networking là một thành phần độc lập, có thể được tr
 	- OpenStack Identity service (keystone): xác thực và cấp quyền cho các API request
 	- OpenStack Compute service (nova): sử dụng để gắn mỗi virtual NIC trên VM vào một mạng cụ thể
 	- OpenStack Dashboard (horizon): sử dụng bởi người quản trị và tenant user để tạo và quản lý dịch vụ mạng thông qua giao diện đồ họa web
+	
+![Mitaka-topo-flow-ops](./images/topo_flow_OPS.png)
 
 # 2. Chức năng
 
-Khi khởi tạo một instance, sẽ có rất nhiều tương tác giữa các thành phần của OpenStack. Trong đó có
 
 # 3. Các thành phần
 
