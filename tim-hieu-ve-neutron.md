@@ -83,7 +83,7 @@ của nhiều nhà cung cấp cùng tồn tại.
 
 - ML2 plugin hỗ trợ nhiều công nghệ Layer2 như VLAN, VXLAN, GRE,... Các công nghệ này được nhắc đến như Type drivers.
 
-## b. Neutron Agent trong OpenStack
+## c. Neutron Agent trong OpenStack
 - Trong khi Neutron server đóng vai trò như controller tập trung, câu lệnh liên quan tới mạng thực tế và cấu hình được thực thi trên Compute và Network node. Và các agent là các thực thể 
 thực thi thay đổi mạng thực tế trên các node đó. Các agent nhận tin nhắn và chỉ dẫn từ Neutron server (thông qua plugin hoặc trực tiếp) trên message bus.
 
@@ -93,9 +93,73 @@ thực thi thay đổi mạng thực tế trên các node đó. Các agent nhậ
 
 ![OVS-Plugin-Agents](/Images/OVS-Plugin-Agents.jpg)
 
-- Trong hình trên, Neutron nhận một API request (thông qua operatinos done trên Horizon hay CLI). API server gọi đến ML2 plugin để xử lý request. ML2 plugin đã tải OVS mechanism driver và 
+- Trong hình trên, Neutron nhận một API request (thông qua điều khiển trên Horizon hay CLI). API server gọi đến ML2 plugin để xử lý request. ML2 plugin đã tải OVS mechanism driver và 
 chuyển tiếp yêu cầu liên quan tới OVS driver. OVS driver tạo một RPC message sử dụng các thông tin có sẵn trong request. RPC message là **cast** tới một OVS agent cụ thể chạy trên compute 
-node. OVS agent này nhận RPC message và thực hiện cấu hình khởi tạo local của OVS switch.
+node. OVS agent này nhận RPC message và thực hiện cấu hình khởi tạo trên local OVS switch.
+
+# 4. Flow trong Neutron
+
+- Trong mục này sẽ trình bày về kết quả từ một cấu hình OpenStack cụ thể
+	- Neutron sử dụng GRE tunnel
+	- Network controller riêng biệt
+	- Một instance chạy trên một compute host
+
+![Neutron_architecture](/Images/Neutron_architecture.png)
+Kiến trúc thu gọn các liên kết trong Neutron
+
+**Compute host: instance networking (A,B,C)**
+- Một packet đi ra ngoài từ eth0 của virtual instance (VM) được kết nối tới một tap device trên host, `tap7c7ae61e-05`. Tap device này được gắn vào Linux bridge, `qbr7c7ae61e-05`. 
+Muốn biết về linux bridge thì tham khảo tại [đây](https://github.com/TrongTan124/ghichep-OpenStack/blob/master/tim-hieu-ve-linux-bridge.md).
+
+	- Lý tưởng nhất, Tap device vnet0 được kết nối trực tiếp tới integration bridge, br-int. Tiếc là điều này không thể vì các OpenStack security group đang được thực thi. 
+	OpenStack sử dụng iptables rule trên TAP device như vnet0 để thực thi security group, và OpenStack thì không tương thích với iptables rules được áp dụng trực tiếp trên
+	TAP device kết nối với OpenvSwitch port.
+
+	- Vì bridge device này tồn tại chủ yếu để hỗ trợ firewall rules, nên sẽ đề cập tới nó như là "firewall bridge".
+	
+	- Nếu muốn kiểm tra firewall rules trên compute host, bạn sẽ tìm thấy vài rule được kết hợp với `tap` device này:
+```sh
+# iptables -S | grep tap7c7ae61e-05
+-A quantum-openvswi-FORWARD -m physdev --physdev-out tap7c7ae61e-05 --physdev-is-bridged -j quantum-openvswi-sg-chain 
+-A quantum-openvswi-FORWARD -m physdev --physdev-in tap7c7ae61e-05 --physdev-is-bridged -j quantum-openvswi-sg-chain 
+-A quantum-openvswi-INPUT -m physdev --physdev-in tap7c7ae61e-05 --physdev-is-bridged -j quantum-openvswi-o7c7ae61e-0 
+-A quantum-openvswi-sg-chain -m physdev --physdev-out tap7c7ae61e-05 --physdev-is-bridged -j quantum-openvswi-i7c7ae61e-0 
+-A quantum-openvswi-sg-chain -m physdev --physdev-in tap7c7ae61e-05 --physdev-is-bridged -j quantum-openvswi-o7c7ae61e-0
+```
+
+- `quantum-openvswi-sg-chain` là nơi `neutron-managed security group` được thực hiện. `quantum-openvswi-o7c7ae61e-0` chain điều khiển lưu lượng đi ra từ VM, mặc định được nhìn thấy như sau:
+```sh
+-A quantum-openvswi-o7c7ae61e-0 -m mac ! --mac-source FA:16:3E:03:00:E7 -j DROP 
+-A quantum-openvswi-o7c7ae61e-0 -p udp -m udp --sport 68 --dport 67 -j RETURN 
+-A quantum-openvswi-o7c7ae61e-0 ! -s 10.1.0.2/32 -j DROP 
+-A quantum-openvswi-o7c7ae61e-0 -p udp -m udp --sport 67 --dport 68 -j DROP 
+-A quantum-openvswi-o7c7ae61e-0 -m state --state INVALID -j DROP 
+-A quantum-openvswi-o7c7ae61e-0 -m state --state RELATED,ESTABLISHED -j RETURN 
+-A quantum-openvswi-o7c7ae61e-0 -j RETURN 
+-A quantum-openvswi-o7c7ae61e-0 -j quantum-openvswi-sg-fallback
+```
+
+- `quantum-openvswi-i7c7ae61e-0` chain điều khiển dữ liệu đi vào VM. Sau khi mở port 22 trong security group mặc định:
+```sh
+# neutron security-group-rule-create --protocol tcp \
+  --port-range-min 22 --port-range-max 22 --direction ingress default
+```
+
+- Các rule được nhìn thấy như sau:
+```sh
+-A quantum-openvswi-i7c7ae61e-0 -m state --state INVALID -j DROP 
+-A quantum-openvswi-i7c7ae61e-0 -m state --state RELATED,ESTABLISHED -j RETURN 
+-A quantum-openvswi-i7c7ae61e-0 -p icmp -j RETURN 
+-A quantum-openvswi-i7c7ae61e-0 -p tcp -m tcp --dport 22 -j RETURN 
+-A quantum-openvswi-i7c7ae61e-0 -p tcp -m tcp --dport 80 -j RETURN 
+-A quantum-openvswi-i7c7ae61e-0 -s 10.1.0.3/32 -p udp -m udp --sport 67 --dport 68 -j RETURN 
+-A quantum-openvswi-i7c7ae61e-0 -j quantum-openvswi-sg-fallback
+```
+
+- Interface thứ 2 được gắn vào bridge, `qvb7c7ae61e-05`, gắn từ firewall bridge tới integration bridge, `br-int`.
+
+**Compute host: integration bridge (D,E)**
+- 
 
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
@@ -103,4 +167,4 @@ node. OVS agent này nhận RPC message và thực hiện cấu hình khởi t�
 - [http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/](http://www.innervoice.in/blogs/2015/01/13/openstack-neutron-components/)
 - [http://www.innervoice.in/blogs/2015/07/05/ports-in-openstack-neutron/](http://www.innervoice.in/blogs/2015/07/05/ports-in-openstack-neutron/)
 - [http://www.innervoice.in/blogs/2015/03/31/openstack-neutron-plugins-and-agents/](http://www.innervoice.in/blogs/2015/03/31/openstack-neutron-plugins-and-agents/)
-- []()
+- [https://www.rdoproject.org/networking/networking-in-too-much-detail/](https://www.rdoproject.org/networking/networking-in-too-much-detail/)
