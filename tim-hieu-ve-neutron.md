@@ -367,6 +367,13 @@ qrouter-2d214fde-293c-4d64-8062-797f80ae2d8f
        valid_lft forever preferred_lft forever
 ```
 
+- interface đầu tiên, *qg-d48b49e0-aa*, kết nối router tới nhóm gateway bằng lệnh *router-gateway-set*. Interface thứ 2, *qr-c2d7dd02-56*, kết nối router tới integration bridge:
+```sh
+Port &quot;tapc2d7dd02-56&quot;
+        tag: 1
+        Interface &quot;tapc2d7dd02-56&quot;
+```
+
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
 - [http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn](http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn)
