@@ -374,6 +374,87 @@ Port &quot;tapc2d7dd02-56&quot;
         Interface &quot;tapc2d7dd02-56&quot;
 ```
 
+- Nhìn vào routing tables trong router, chúng ta nhìn thấy có một default gateway địa chỉ *.1* của mạng ngoài, và định tuyến mạng cho các mạng gắn trực tiếp.
+```sh
+# ip netns exec qrouter-2d214fde-293c-4d64-8062-797f80ae2d8f ip route
+172.24.4.224/28 dev qg-d48b49e0-aa  proto kernel  scope link  src 172.24.4.227 
+10.1.0.0/24 dev qr-c2d7dd02-56  proto kernel  scope link  src 10.1.0.1 
+default via 172.24.4.225 dev qg-d48b49e0-aa 
+```
+
+- Bảng *nat* trong router namespace chịu trách nhiệm kết hợp địa chỉ floating IP với một VM. Ví dụ, sau khi kết hợp địa chỉ 172.24.4.228 với VM, bảng *nat* như sau:
+```sh
+# ip netns exec qrouter-2d214fde-293c-4d64-8062-797f80ae2d8f iptables -t nat -S
+-P PREROUTING ACCEPT
+-P POSTROUTING ACCEPT
+-P OUTPUT ACCEPT
+-N quantum-l3-agent-OUTPUT
+-N quantum-l3-agent-POSTROUTING
+-N quantum-l3-agent-PREROUTING
+-N quantum-l3-agent-float-snat
+-N quantum-l3-agent-snat
+-N quantum-postrouting-bottom
+-A PREROUTING -j quantum-l3-agent-PREROUTING 
+-A POSTROUTING -j quantum-l3-agent-POSTROUTING 
+-A POSTROUTING -j quantum-postrouting-bottom 
+-A OUTPUT -j quantum-l3-agent-OUTPUT 
+-A quantum-l3-agent-OUTPUT -d 172.24.4.228/32 -j DNAT --to-destination 10.1.0.2 
+-A quantum-l3-agent-POSTROUTING ! -i qg-d48b49e0-aa ! -o qg-d48b49e0-aa -m conntrack ! --ctstate DNAT -j ACCEPT 
+-A quantum-l3-agent-PREROUTING -d 169.254.169.254/32 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 9697 
+-A quantum-l3-agent-PREROUTING -d 172.24.4.228/32 -j DNAT --to-destination 10.1.0.2 
+-A quantum-l3-agent-float-snat -s 10.1.0.2/32 -j SNAT --to-source 172.24.4.228 
+-A quantum-l3-agent-snat -j quantum-l3-agent-float-snat 
+-A quantum-l3-agent-snat -s 10.1.0.0/24 -j SNAT --to-source 172.24.4.227 
+-A quantum-postrouting-bottom -j quantum-l3-agent-snat 
+```
+
+- Có *SNAT* và *DNAT* rule ánh xạ lưu lượng giữa địa chỉ floating, *172.24.4.228*, và địa chỉ private *10.1.0.2*:
+```sh
+-A quantum-l3-agent-OUTPUT -d 172.24.4.228/32 -j DNAT --to-destination 10.1.0.2 
+-A quantum-l3-agent-PREROUTING -d 172.24.4.228/32 -j DNAT --to-destination 10.1.0.2 
+-A quantum-l3-agent-float-snat -s 10.1.0.2/32 -j SNAT --to-source 172.24.4.228 
+```
+
+- Khi bạn kết hợp một địa chỉ floating ip với một VM, rule tương tự sẽ được tạo trong bảng này.
+
+- Có một *SNAT* rule thực hiện NATs tất cả lưu lượng đi ra từ mạng private tới *172.24.4.227*:
+```sh
+-A quantum-l3-agent-snat -s 10.1.0.0/24 -j SNAT --to-source 172.24.4.227 
+```
+
+- Điều này cho phép VM có thể kết nối ra ngoài mà không cần một địa chỉ IP public.
+
+**Network host: External traffic (K,L)**
+----
+- Lưu lượng "External" qua *br-ex* thông qua *qg-d48b49e0-aa* interface trong router namespace, kết nối tới *br-ex* ở *tapd48b49e0-aa*:
+```sh
+Bridge br-ex
+    Port &quot;tapd48b49e0-aa&quot;
+        Interface &quot;tapd48b49e0-aa&quot;
+    Port br-ex
+        Interface br-ex
+            type: internal
+```
+
+**NAT to host address**
+- Nếu bạn gán địa chỉ IP gateway cho public network tới *br-ex*:
+```sh
+# ip addr add 172.24.4.225/28 dev br-ex
+```
+
+- Khi đó bạn có thể tạo forwarding và NAT rule tác động lưu lượng "external" từ VM đươc viết lại thành địa chỉ IP của network controller và gửi vào network:
+```sh
+# iptables -A FORWARD -d 172.24.4.224/28 -j ACCEPT 
+# iptables -A FORWARD -s 172.24.4.224/28 -j ACCEPT 
+# iptables -t nat -I POSTROUTING 1 -s 172.24.4.224/28 -j MASQUERADE
+```
+
+**Direct network connection**
+- Nếu bạn có một external router có một gateway cho public network, bạn có thể thêm một interface cho network trên bridge. Ví dụ, *eth2* cùng mạng *172.24.4.225*:
+```sh
+# ovs-vsctl add-port br-ex eth2
+```
+
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
 - [http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn](http://www.slideshare.net/inakipascual/openstack-neutron-and-sdn)
