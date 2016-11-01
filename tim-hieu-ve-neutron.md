@@ -159,7 +159,37 @@ Muốn biết về linux bridge thì tham khảo tại [đây](https://github.co
 - Interface thứ 2 được gắn vào bridge, `qvb7c7ae61e-05`, gắn từ firewall bridge tới integration bridge, `br-int`.
 
 **Compute host: integration bridge (D,E)**
-- 
+- Integration bridge, `br-int`, thực hiện gán VLAN và bỏ gán VLAN cho traffic đến và đi từ VM. Tại thời điểm này, `br-int` được nhìn như sau:
+```sh
+# ovs-vsctl show
+Bridge br-int
+    Port &quot;qvo7c7ae61e-05&quot;
+        tag: 1
+        Interface &quot;qvo7c7ae61e-05&quot;
+    Port patch-tun
+        Interface patch-tun
+            type: patch
+            options: {peer=patch-int}
+    Port br-int
+        Interface br-int
+            type: internal
+```
+
+- Interface `qvo7c7ae61e-05` là điểm cuối của `qvb7c7ae61e-05`, vận chuyển lưu lượng tới và đi từ firewall bridge. `tag: 1` bạn nhìn thấy ở trên được tích hợp vào access port gắn với VLAN 1.
+Lưu lượng đi ra ko được tag từ VM sẽ được gán VLAN ID 1, và lưu lượng đi vào từ VLAN ID 1 sẽ bỏ VLAN tag rồi gửi vào port.
+
+- Mỗi network bạn tạo (với lệnh `neutron net-create`) sẽ được gán với VLAN ID khác nhau.
+
+- Tên interface `patch-tun` kết nối giữa integration bridge và tunnel bridge, `br-tun`.
+
+**Compute host: tunnel bridge (F,G)**
+- Tunnel bridge chuyển lưu lượng đã gán VLAN từ integration bridge tới GRE tunnel. Chuyển đổi giữa VLAN ID và tunnel ID được thực hiện bới OpenFlow rules cài trong `br-tun`. 
+Trước khi tạo mọi VM, flow rule trên bridge như sau:
+```sh
+# ovs-ofctl dump-flows br-tun
+NXST_FLOW reply (xid=0x4):
+ cookie=0x0, duration=871.283s, table=0, n_packets=4, n_bytes=300, idle_age=862, priority=1 actions=drop
+```
 
 # Tham khảo
 - [http://www.slideshare.net/KwonSunBae/openstack-basic-rev05](http://www.slideshare.net/KwonSunBae/openstack-basic-rev05)
