@@ -108,7 +108,8 @@ node. OVS agent này nhận RPC message và thực hiện cấu hình khởi t�
 Kiến trúc thu gọn các liên kết trong Neutron
 
 **Compute host: instance networking (A,B,C)**
-- Một packet đi ra ngoài từ eth0 của virtual instance (VM) được kết nối tới một tap device trên host, `tap7c7ae61e-05`. Tap device này được gắn vào Linux bridge, `qbr7c7ae61e-05`. 
+----
+- Một packet đi ra ngoài từ eth0 của virtual instance (VM) được kết nối tới một tap device trên host, *tap7c7ae61e-05*. Tap device này được gắn vào Linux bridge, `qbr7c7ae61e-05`. 
 Muốn biết về linux bridge thì tham khảo tại [đây](https://github.com/TrongTan124/ghichep-OpenStack/blob/master/tim-hieu-ve-linux-bridge.md).
 
 	- Lý tưởng nhất, Tap device vnet0 được kết nối trực tiếp tới integration bridge, br-int. Tiếc là điều này không thể vì các OpenStack security group đang được thực thi. 
@@ -159,7 +160,7 @@ Muốn biết về linux bridge thì tham khảo tại [đây](https://github.co
 - Interface thứ 2 được gắn vào bridge, `qvb7c7ae61e-05`, gắn từ firewall bridge tới integration bridge, `br-int`.
 
 **Compute host: integration bridge (D,E)**
-====
+----
 - Integration bridge, `br-int`, thực hiện gán VLAN và bỏ gán VLAN cho traffic đến và đi từ VM. Tại thời điểm này, `br-int` được nhìn như sau:
 ```sh
 # ovs-vsctl show
@@ -184,6 +185,7 @@ Lưu lượng đi ra ko được tag từ VM sẽ được gán VLAN ID 1, và l
 - Tên interface `patch-tun` kết nối giữa integration bridge và tunnel bridge, `br-tun`.
 
 **Compute host: tunnel bridge (F,G)**
+----
 - Tunnel bridge chuyển lưu lượng đã gán VLAN từ integration bridge tới GRE tunnel. Chuyển đổi giữa VLAN ID và tunnel ID được thực hiện bới OpenFlow rules cài trong `br-tun`. 
 Trước khi tạo mọi VM, flow rule trên bridge như sau:
 ```sh
