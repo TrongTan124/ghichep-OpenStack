@@ -159,6 +159,7 @@ Muốn biết về linux bridge thì tham khảo tại [đây](https://github.co
 - Interface thứ 2 được gắn vào bridge, `qvb7c7ae61e-05`, gắn từ firewall bridge tới integration bridge, `br-int`.
 
 **Compute host: integration bridge (D,E)**
+====
 - Integration bridge, `br-int`, thực hiện gán VLAN và bỏ gán VLAN cho traffic đến và đi từ VM. Tại thời điểm này, `br-int` được nhìn như sau:
 ```sh
 # ovs-vsctl show
