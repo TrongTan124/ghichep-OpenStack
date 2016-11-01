@@ -186,12 +186,185 @@ Lưu lượng đi ra ko được tag từ VM sẽ được gán VLAN ID 1, và l
 
 **Compute host: tunnel bridge (F,G)**
 ----
-- Tunnel bridge chuyển lưu lượng đã gán VLAN từ integration bridge tới GRE tunnel. Chuyển đổi giữa VLAN ID và tunnel ID được thực hiện bới OpenFlow rules cài trong `br-tun`. 
+- Tunnel bridge chuyển lưu lượng đã gán VLAN từ integration bridge tới GRE tunnel. Chuyển đổi giữa VLAN ID và tunnel ID được thực hiện bởi OpenFlow rules cài trong `br-tun`. 
 Trước khi tạo mọi VM, flow rule trên bridge như sau:
 ```sh
 # ovs-ofctl dump-flows br-tun
 NXST_FLOW reply (xid=0x4):
  cookie=0x0, duration=871.283s, table=0, n_packets=4, n_bytes=300, idle_age=862, priority=1 actions=drop
+```
+
+- Có một rule tác động bridge để drop tất cả các traffic. Sau khi khởi động VM trên compute node, các rule được chỉnh sửa như sau:
+```sh
+# ovs-ofctl dump-flows br-tun
+NXST_FLOW reply (xid=0x4):
+ cookie=0x0, duration=422.158s, table=0, n_packets=2, n_bytes=120, idle_age=55, priority=3,tun_id=0x2,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=mod_vlan_vid:1,output:1
+ cookie=0x0, duration=421.948s, table=0, n_packets=64, n_bytes=8337, idle_age=31, priority=3,tun_id=0x2,dl_dst=fa:16:3e:dd:c1:62 actions=mod_vlan_vid:1,NORMAL
+ cookie=0x0, duration=422.357s, table=0, n_packets=82, n_bytes=10443, idle_age=31, priority=4,in_port=1,dl_vlan=1 actions=set_tunnel:0x2,NORMAL
+ cookie=0x0, duration=1502.657s, table=0, n_packets=8, n_bytes=596, idle_age=423, priority=1 actions=drop
+```
+
+- Nhìn chung, các rule này chịu trách nhiệm ánh xạ lưu lượng giữa VLAN ID 1, được sử dụng bởi integration bridge và tunnel id 2, sử dụng bởi GRE tunnel.
+
+	- Rule đầu tiên....
+	```sh
+	cookie=0x0, duration=422.158s, table=0, n_packets=2, n_bytes=120, idle_age=55, priority=3,tun_id=0x2,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=mod_vlan_vid:1,output:1
+	```
+	... phù hợp với tất cả các lưu lượng multicast trên tunnel id 2(*tun_id=0x2*), các tag trên ethernet frame với VLAN ID 1 ( *actions=mod_vlan_vid:1* ), và gửi ra port 1. 
+	Chúng ta có thể nhìn từ *ovs-ofctl show br-tun* trên port 1 là *patch-int*
+	```sh
+# ovs-ofctl show br-tun
+OFPT_FEATURES_REPLY (xid=0x2): dpid:0000068df4e44a49
+n_tables:254, n_buffers:256
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: OUTPUT SET_VLAN_VID SET_VLAN_PCP STRIP_VLAN SET_DL_SRC SET_DL_DST SET_NW_SRC SET_NW_DST SET_NW_TOS SET_TP_SRC SET_TP_DST ENQUEUE
+ 1(patch-int): addr:46:3d:59:17:df:62
+     config:     0
+     state:      0
+     speed: 0 Mbps now, 0 Mbps max
+ 2(gre-2): addr:a2:5f:a1:92:29:02
+     config:     0
+     state:      0
+     speed: 0 Mbps now, 0 Mbps max
+ LOCAL(br-tun): addr:06:8d:f4:e4:4a:49
+     config:     0
+     state:      0
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+	```
+	
+	- rule kế tiếp...
+	```sh
+	cookie=0x0, duration=421.948s, table=0, n_packets=64, n_bytes=8337, idle_age=31, priority=3,tun_id=0x2,dl_dst=fa:16:3e:dd:c1:62 actions=mod_vlan_vid:1,NORMAL
+	```
+	... phù hợp với lưu lượng tới trên tunnel 2 ( *tun_id=0x2* ) với ethernet destination *fa:16:3e:dd:c1:62* ( *dl_dst=fa:16:3e:dd:c1:62* ) và gán ethernet frame với VLAN ID 1 
+	( *actions=mod_vlan_vid:1* ) trước khi gửi ra ngoài *patch-int* (vào firewall bridge).
+	
+	- rule tiếp theo...
+	```sh
+	cookie=0x0, duration=422.357s, table=0, n_packets=82, n_bytes=10443, idle_age=31, priority=4,in_port=1,dl_vlan=1 actions=set_tunnel:0x2,NORMAL
+	```
+	... phù hợp với lưu lượng tới từ port 1 ( *in_port=1* ) với VLAN ID 1 ( *dl_vlan=1* ) và thiết lập tunnel id là 2 ( *actions=set_tunnel:0x2* ) trước khi gửi ra GRE tunnel.
+
+**Network host: tunnel bridge (H,I)**
+----
+- Lưu lượng đến trên network host thông qua GRE tunnel gán tại *br-tun*. Bridge này có flow table tương tự với *br-tun* trên compute host
+```sh
+# ovs-ofctl dump-flows br-tun
+NXST_FLOW reply (xid=0x4):
+ cookie=0x0, duration=1239.229s, table=0, n_packets=23, n_bytes=4246, idle_age=15, priority=3,tun_id=0x2,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=mod_vlan_vid:1,output:1
+ cookie=0x0, duration=524.477s, table=0, n_packets=15, n_bytes=3498, idle_age=10, priority=3,tun_id=0x2,dl_dst=fa:16:3e:83:69:cc actions=mod_vlan_vid:1,NORMAL
+ cookie=0x0, duration=1239.157s, table=0, n_packets=50, n_bytes=4565, idle_age=148, priority=3,tun_id=0x2,dl_dst=fa:16:3e:aa:99:3c actions=mod_vlan_vid:1,NORMAL
+ cookie=0x0, duration=1239.304s, table=0, n_packets=76, n_bytes=9419, idle_age=10, priority=4,in_port=1,dl_vlan=1 actions=set_tunnel:0x2,NORMAL
+ cookie=0x0, duration=1527.016s, table=0, n_packets=12, n_bytes=880, idle_age=527, priority=1 actions=drop
+```
+	
+	- Như compute host, rule đầu tiên ánh xạ multicast traffic trên tunnel ID 2 tới VLAN 1.
+	- Rule thứ 2...
+	```sh
+	cookie=0x0, duration=524.477s, table=0, n_packets=15, n_bytes=3498, idle_age=10, priority=3,tun_id=0x2,dl_dst=fa:16:3e:83:69:cc actions=mod_vlan_vid:1,NORMAL
+	```
+	... phù hợp với lưu lượng trên tunnel định trước cho DHCP server *fa:16:3e:83:69:cc*. Đây là một tiến trình *dnsmasq* chạy trong một network namespace.
+	- Rule kế tiếp...
+	```sh
+	cookie=0x0, duration=1239.157s, table=0, n_packets=50, n_bytes=4565, idle_age=148, priority=3,tun_id=0x2,dl_dst=fa:16:3e:aa:99:3c actions=mod_vlan_vid:1,NORMAL
+	```
+	... phù hợp với lưu lượng trên tunnel ID 2 đi đến router *fa:16:3e:aa:99:3c*, đây là một interface tại network namespace khác.
+	- Rule tiếp theo...
+	```sh
+	cookie=0x0, duration=1239.304s, table=0, n_packets=76, n_bytes=9419, idle_age=10, priority=4,in_port=1,dl_vlan=1 actions=set_tunnel:0x2,NORMAL
+	```
+	...đơn giản là ánh xạ toàn bộ lưu lượng đi ra trên VLAN ID 1 tới tunnel ID 2.
+	
+**Network host: integration bridge**
+----
+- Integration bridge trên network controller server kết nối VM tới network service như router và DHCP server.
+```sh
+# ovs-vsctl show
+.
+.
+.
+Bridge br-int
+    Port patch-tun
+        Interface patch-tun
+            type: patch
+            options: {peer=patch-int}
+    Port &quot;tapf14c598d-98&quot;
+        tag: 1
+        Interface &quot;tapf14c598d-98&quot;
+    Port br-int
+        Interface br-int
+            type: internal
+    Port &quot;tapc2d7dd02-56&quot;
+        tag: 1
+        Interface &quot;tapc2d7dd02-56&quot;
+.
+.
+.
+```
+- Nó kết nối tunnel bridge, *br-tun*, thông qua một patch interface, *patch-tun*.
+
+**Network host: DHCP server (O,P)**
+----
+- Mỗi network mà DHCP được kích hoạt có một DHCP server chạy trên network controller. DHCP server là một instance của dnsmasq chạy trong một network namespace. 
+Một network namespace là một tiện ích của Linux kernel cho phép nhóm các xử lý thành một network stack (interface, routing tables, iptables rules) riêng biệt trên chính host đó.
+
+- Bạn có thể nhìn ra danh sách network namespace với lệnh *ip netns*, cấu hình có thể nhìn thấy như sau:
+```sh
+# ip netns
+qdhcp-88b1609c-68e0-49ca-a658-f1edff54a264
+qrouter-2d214fde-293c-4d64-8062-797f80ae2d8f
+```
+
+- dòng đầu tiên ( *qdhcp...* ) là DHCP server namespace cho private subnet, dòng thứ hai ( *qrouter...* ) là router.
+
+- Bạn có thể chạy một lệnh bên trong namespace bằng lệnh *ip netns exec*. Ví dụ, để xem interface configuration trong DHCP server namespace (lo đã gỡ bỏ cho ngắn gọn)
+```sh
+# ip netns exec qdhcp-88b1609c-68e0-49ca-a658-f1edff54a264 ip addr
+71: ns-f14c598d-98: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether fa:16:3e:10:2f:03 brd ff:ff:ff:ff:ff:ff
+    inet 10.1.0.3/24 brd 10.1.0.255 scope global ns-f14c598d-98
+    inet6 fe80::f816:3eff:fe10:2f03/64 scope link 
+       valid_lft forever preferred_lft forever
+```
+
+- Chú ý rằng địa chỉ MAC trên interface *ns-f14c598d-98*; tương ứng với địa chỉ MAC trong flow rule mà ta đã xem ở tunnel bridge. Interface này kết nối tới integration bridge thông qua một tap device:
+```sh
+ Port &quot;tapf14c598d-98&quot;
+        tag: 1
+        Interface &quot;tapf14c598d-98&quot;
+```
+
+- Bạn có thể tìm thấy tiến trình *dnsmasq* kết hợp với namespace bằng cách in ra *ps*:
+```sh
+# ps -fe | grep 88b1609c-68e0-49ca-a658-f1edff54a264
+nobody   23195     1  0 Oct26 ?        00:00:00 dnsmasq --no-hosts --no-resolv --strict-order --bind-interfaces --interface=ns-f14c598d-98 --except-interface=lo --pid-file=/var/lib/quantum/dhcp/88b1609c-68e0-49ca-a658-f1edff54a264/pid --dhcp-hostsfile=/var/lib/quantum/dhcp/88b1609c-68e0-49ca-a658-f1edff54a264/host --dhcp-optsfile=/var/lib/quantum/dhcp/88b1609c-68e0-49ca-a658-f1edff54a264/opts --dhcp-script=/usr/bin/quantum-dhcp-agent-dnsmasq-lease-update --leasefile-ro --dhcp-range=tag0,10.1.0.0,static,120s --conf-file= --domain=openstacklocal
+root     23196 23195  0 Oct26 ?        00:00:00 dnsmasq --no-hosts --no-resolv --strict-order --bind-interfaces --interface=ns-f14c598d-98 --except-interface=lo --pid-file=/var/lib/quantum/dhcp/88b1609c-68e0-49ca-a658-f1edff54a264/pid --dhcp-hostsfile=/var/lib/quantum/dhcp/88b1609c-68e0-49ca-a658-f1edff54a264/host --dhcp-optsfile=/var/lib/quantum/dhcp/88b1609c-68e0-49ca-a658-f1edff54a264/opts --dhcp-script=/usr/bin/quantum-dhcp-agent-dnsmasq-lease-update --leasefile-ro --dhcp-range=tag0,10.1.0.0,static,120s --conf-file= --domain=openstacklocal
+```
+
+**Network host: Router (M,N)**
+----
+- Neutron router là một network namespace với một nhóm routing tables, iptables rule thực hiện routing giữa các subnet. Nhớ lại là ta đã nhìn thấy 2 network namespace ở trong cấu hình
+```sh
+# ip netns
+qdhcp-88b1609c-68e0-49ca-a658-f1edff54a264
+qrouter-2d214fde-293c-4d64-8062-797f80ae2d8f
+```
+
+- Sử dụng lệnh *ip netns exec*, chúng ta có thể kiểm tra interface xuất hiện với router (lo đã được bỏ cho ngắn gọn)
+```sh
+# ip netns exec qrouter-2d214fde-293c-4d64-8062-797f80ae2d8f ip addr
+66: qg-d48b49e0-aa: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether fa:16:3e:5c:a2:ac brd ff:ff:ff:ff:ff:ff
+    inet 172.24.4.227/28 brd 172.24.4.239 scope global qg-d48b49e0-aa
+    inet 172.24.4.228/32 brd 172.24.4.228 scope global qg-d48b49e0-aa
+    inet6 fe80::f816:3eff:fe5c:a2ac/64 scope link 
+       valid_lft forever preferred_lft forever
+68: qr-c2d7dd02-56: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether fa:16:3e:ea:64:6e brd ff:ff:ff:ff:ff:ff
+    inet 10.1.0.1/24 brd 10.1.0.255 scope global qr-c2d7dd02-56
+    inet6 fe80::f816:3eff:feea:646e/64 scope link 
+       valid_lft forever preferred_lft forever
 ```
 
 # Tham khảo
