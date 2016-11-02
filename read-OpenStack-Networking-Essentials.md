@@ -103,7 +103,40 @@ compute và network node bởi các agent. Neutron agent nhận message và ch�
 Neutron là một virtual networking service cho phép người dùng định nghĩa kết nối mạng, địa chỉ IP cho các instance và tài nguyên cloud khác sử dụng **application programmable interface 
 (API)**. 
 
+Hình dưới giải thích ở mức higt level về cách mà Neutron API server tương tác với các plugin và agent chịu trách nhiệm cấu thành mạng ảo và mạng vật lý trên cloud
+
 ![read-core-neutron](/Images/read-core-neutron.png)
+
+Trong hình giải thích tương tác giữa Neutron API service, Neutron plugin, dirver, service như L2 và L3 agent. Khi một tác động mạng được thực thi bởi người dùng thông qua API, 
+Neutron server đưa ra message và message queue để agent sử dụng. L2 agent xây dựng và vận hành hạ tầng mạng ảo, trong khi L3 agent chịu trách nhiệm xây dựng và vận hành Neutron router cùng 
+các chức năng liên quan.
+
+Đặc tả Neutron API có thể tìm thấy tại OpenStack wiki ở [đây](https://wiki.openstack.org/wiki/Neutron/APIv2-specification). Trong phần tiếp, chúng ta sẽ tìm hiểu về các core element của 
+API và mô hình dữ liệu sử dụng bởi các element này.
+
+## Networks
+
+Network là đối tượng trung tâm của Neutron v2.0 API data model và chỉ ra một **Layer 2** segment riêng biệt. Trong hạ tầng truyền thống, máy tính được kết nối tới switch port 
+và nhóm cùng nhau thành **Virtual Local Area Networks (VLANs)** định danh bởi IDs duy nhất. Các máy tính trong một mạng hay VLAN có thể kế nối với nhau và không thể kết nối ra mạng khác 
+trong các VLAN khác khi thiếu router. Hình sau giải thích cách mà network được tách biệt với nhau trong hạ tầng mạng truyền thống.
+
+![read-vlan.png](/Images/read-vlan.png)
+
+## Network attributes
+
+Bảng sau chỉ ra các thuộc tính cơ bản của network object; chi tiết hơn có thể tìm tại wiki trong mục trước.
+
+![read-network-attribute](/Images/read-network-attribute.png)
+
+Network được liên kết với tenants hoặc project, có thể sử dụng bởi người dùng là thành viên của cùng tenant hay project. Network có thể được chia sẻ với các project khác hay subnet của project 
+sử dụng tính năng **Role Based Access Control (RBAC)** của Neutron.
+
+**note**: Neutron RBAC xuất hiện đầu tiên trong bản Liberty của OpenStack, chi tiết về các đặc tính của RBAC xem tại [đây](https://developer.rackspace.com/blog/A-First-Look-at-RBAC-in-the-Liberty-Release-of-Neutron/)
+
+## Provider attributes
+
+Một trong những mở rộng sớm nhất của Neutron API được biết tới là **provider extension**. Provider network extension ánh xạ virtual network và physical network bằng cách thêm các thuộc tính mạng 
+như network type, segmentation ID và physical interface. 
 
 <a name="phan5"></a>
 # 5. Chương 4: Interfaceing with Neutron
