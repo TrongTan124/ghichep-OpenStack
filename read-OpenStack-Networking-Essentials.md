@@ -44,6 +44,55 @@ Neutron cung cấp routing và NAT để cho phép instance và thiết bị m�
 có thể tạo router và gắn một hoặc nhiều mạng ảo vào. Khi được gắc, các thiết bị trong mạng có thể kết nối với nhau, một vài trường hợp có thể kết nối ra ngoài internet Neutron cũng 
 cung cấp kết nối đi vào thông qua floating IP. Một floating IP là 1 liên kết 1-1 từ instance trong mạng ảo tới địa chỉ IP trên mạng thực. Tham khảo thêm tại [phần 7](#phan7)
 
+**Các đặc tính nâng cao khác**
+
+- **Load balacing**:
+
+- **Firewalling**:
+
+- **Virtual private networks**:
+
+**Kiến trúc OpenStack**
+
+- **Controller nodes**
+
+- **Network nodes**
+
+- **Compute nodes**
+
+- **Storage nodes**
+
+![3node-read-ONE](/Images/3node-read-ONE.png)
+
+**Implementing the network**
+
+- **Plugins and drivers**: 
+	- **Core plugins**: chịu trách nhiệm tương thích với logical network bằng API để có thể thực thi bằng L2 agent và IP Address Management (IPAM) chạy trên host. ML2 plugin được sử dụng tại đây.
+	
+	- **Service plugins**: Cung cấp việc add thêm các dịch vụ mạng như routing, load balancing, firewalling và có sẵn cho các tham chiếu.
+	
+ML2 plugin dựa vào các loại khác nhau của driver để xác định loại network thực thi và cơ chế để thực thi. **Type drivers** mô tả các loại mạng được hỗ trợ bởi Neutron, gồm: FLAT, VLAN, VXLAN, GRE.
+**Mechanism drivers** được sử dụng để thực thi mạng được chỉ ra trong phần mềm và phần cứng.
+
+- **Neutron agents**
+
+Neutron server là controller tập trung cảu mạng, chịu trách nhiệm cung cấp API cho người dùng lưu trữ thông tin về mạng trong database. Tuy nhiên, lệnh thực thi mạng được thực hiện tại
+compute và network node bởi các agent. Neutron agent nhận message và chỉ dận từ Neutron server trong message bus và thực thi.
+
+	- **DHCP agent**:
+	
+	- **metadata agent**:
+	
+	- **network plugin agent**:
+	
+![read-flow-agent](/Images/read-flow-agent.png)
+
+1. Neutron nhận yêu cầu kết nối máy ảo tới mạng. API server gọi tới ML2 plugin để xử lý yêu cầu
+2. ML2 plugin chuyển tiếp yêu cầu tới OVS mechanism driver để tạo message sử dụng thông tin có sẵn trong request. Message được gửi cho OVS agent tương ứng xử lý thông qua quản lý network.
+3. OVS agent nhận message và cấu hình trên local virtual switch
+4. Trong lúc đó, DHCP agent cũng nhận message tương ứng của yêu cầu này và cấu hình DHCP server trên network node. Sau khi xong, virtual machine instance sẽ giao tiếp với DHCP server và nhận 
+địa chỉ IP thông qua dữ liệu mạng.
+
 <a name="phan3"></a>
 # 3. Chương 2: Installing OpenStack Using RDO
 - Phần cài đặt, tôi thực hiện theo bài [này](https://github.com/TrongTan124/ghichep-OpenStack/blob/master/huong-dan-cai-dat-openstack-mitaka-ovs.md)
