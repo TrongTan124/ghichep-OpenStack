@@ -144,6 +144,8 @@ Tất cả các network đều có thuộc tính provider. Tuy nhiên, vì thu�
 Người dùng không có admin role có thể tạo network nhưng Neutron server, không phải người dùng, sẽ quyết định loại mạng được tạo và mọi interface hay segmentation ID phù hợp. Thuộc tính 
 provider sẽ được xem lại chi tiết trong [phần 6](#phan6) và [phần 8](#phan8)
 
+----
+
 ## Subnets
 
 Trong mô hình Neutron data, một subnet là một khối địa chỉ IPv4 hoặc IPv6 có thể gán cho máy ảo và tài nguyên mạng khác. Mỗi subnet phải có một subnet mask đại diện bởi một 
@@ -155,6 +157,8 @@ Trong hình trên, 3 VLAN riêng biệt tương ứng với các subnet. Instanc
 với nhau nhưng không thể kết nối tới mạng khác hoặc subnet không sử dụng router. Xem thêm thông tin về router tại [phần 7](#phan7). Hình sau chỉ ra Neutron subnet thuộc Layer 3 trong mô hình OSI:
 
 ![read-subnet-osi](/Images/read-subnet-osi.png)
+
+----
 
 ## Port
 
@@ -182,13 +186,26 @@ logical switch có thể mở rộng tới hàng trăm, hàng nghìn port, xem h
 Không có giới hạn số port có thể được tạo trong Neutron. Tuy nhiên, tồn tại một quota giới hạn số port cho một tenant có thể tạo. Khi số port Neutron mở rộng, hiệu xuất của Neutron API server 
 và thực thi của mạng trong cloud có thể giảm. Ý tưởng hay nhất là giữa quota tại điểm mà đảm bảo hiệu năng cloud, nhưng quota mặc định và subsequent nên tăng hợp lý.
 
-## The Neutron workflow
 ----
+
+## The Neutron workflow
+
 Theo workflow Neutron chuẩn, network phải được tạo đầu tiên, theo đó là subnet và port. Các phần sau mô tả workflow liên quan trong khi khởi động và xóa các instance.
 
 ### Booting an instance
 
-- 
+Trước khi một instance có thể được tạo, nó phải liên kết với một network có subnet phù hợp hoặc một port tạo trước đã liên kết với một network. Luồng xử lý sau chỉ ra các bước liên quan 
+trong khi khởi động một instance và gắn nó vào một network:
+
+1. Người dùng tạo một network
+2. Người dùng tạo một subnet và liên kết nó với network
+3. Người dùng khởi động máy ảo và network chỉ định
+4. Nova interface với Neutron tạo một port trên network
+5. Neutron gán một địa chỉ MAC và địa chỉ IP tới port vừa tạo sử dụng các thuộc tính định nghĩa bởi subnet
+6. Nova dựng instance với file XML bằng libvirt, chứa thông tin local network bridge và địa chỉ MAC. Khởi động instance.
+7. Instance gửi một DHCP request trong khi boot, DHCP respond với địa chỉ IP tương ứng tới địa chỉ MAC của instance.
+
+Nếu nhiều network interface được gắn vào một instance, mỗi network interface sẽ liên kết với một Neutron port duy nhất và có thể gửi DHCP request để nhận thông tin mạng tương ứng.
 
 <a name="phan5"></a>
 # 5. Chương 4: Interfaceing with Neutron
