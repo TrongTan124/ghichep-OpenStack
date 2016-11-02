@@ -122,7 +122,7 @@ trong các VLAN khác khi thiếu router. Hình sau giải thích cách mà netw
 
 ![read-vlan.png](/Images/read-vlan.png)
 
-## Network attributes
+### Network attributes
 
 Bảng sau chỉ ra các thuộc tính cơ bản của network object; chi tiết hơn có thể tìm tại wiki trong mục trước.
 
@@ -133,10 +133,51 @@ sử dụng tính năng **Role Based Access Control (RBAC)** của Neutron.
 
 **note**: Neutron RBAC xuất hiện đầu tiên trong bản Liberty của OpenStack, chi tiết về các đặc tính của RBAC xem tại [đây](https://developer.rackspace.com/blog/A-First-Look-at-RBAC-in-the-Liberty-Release-of-Neutron/)
 
-## Provider attributes
+### Provider attributes
 
 Một trong những mở rộng sớm nhất của Neutron API được biết tới là **provider extension**. Provider network extension ánh xạ virtual network và physical network bằng cách thêm các thuộc tính mạng 
-như network type, segmentation ID và physical interface. 
+như network type, segmentation ID và physical interface. Hình sau chỉ ra các thuộc tình provider khác nhau:
+
+![read-provider-attribute](/Images/read-provider-attribute.png)
+
+Tất cả các network đều có thuộc tính provider. Tuy nhiên, vì thuộc tính provider chỉ rõ cấu hình và ánh xạ mạng cụ thể, chỉ người dùng có admin role có thể chỉ định chúng khi tạo mạng. 
+Người dùng không có admin role có thể tạo network nhưng Neutron server, không phải người dùng, sẽ quyết định loại mạng được tạo và mọi interface hay segmentation ID phù hợp. Thuộc tính 
+provider sẽ được xem lại chi tiết trong [phần 6](#phan6) và [phần 8](#phan8)
+
+## Subnets
+
+Trong mô hình Neutron data, một subnet là một khối địa chỉ IPv4 hoặc IPv6 có thể gán cho máy ảo và tài nguyên mạng khác. Mỗi subnet phải có một subnet mask đại diện bởi một 
+**Classless Inter-Domain Routing (CIDR)** và phải liên kết với một network, như hình dưới.
+
+![read-subnet](/Images/read-subnet.png)
+
+Trong hình trên, 3 VLAN riêng biệt tương ứng với các subnet. Instance và các thiết bị khác không thể gắn vào network khi thiếu subnet cụ thể. Instance kết nối tới một network có thể kết nối 
+với nhau nhưng không thể kết nối tới mạng khác hoặc subnet không sử dụng router. Xem thêm thông tin về router tại [phần 7](#phan7). Hình sau chỉ ra Neutron subnet thuộc Layer 3 trong mô hình OSI:
+
+![read-subnet-osi](/Images/read-subnet-osi.png)
+
+## Port
+
+Trong mô hình Neutron data, một port đại diện cho một switch port trên một logical switch, triển khai trên toàn bộ cloud và chưa thông tin về thiết bị kết nối. **Virtual machine interfaces (VÍ)** 
+và các đối tượng network khác như router và DHCP server interface được ánh xạ tới Neutron port. Các port định nghĩa cả địa chỉ MAC và địa chỉ IP được gán cho thiết bị liên kết với chúng. 
+Mỗi port phải được kết nối với một Neutron network
+
+Hình sau chỉ ra cách một port gắn với Layer 2 trong mô hình OSI:
+
+![read-port-osi](/Images/read-port-osi.png)
+
+Khi Neutron được cài lần đầu, không có port nào tồn tại trong database. Khi network và subnet được tạo, port có thể được tạo với mỗi DHCP server tương ứng với mô hình logical switch sau:
+
+![read-port-logic](/Images/read-port-logic.png)
+
+Khi một Instance được tạo, một port được tạo với mỗi network interface gắn với instance:
+
+![read-port-vm](/Images/read-port-vm.png)
+
+Một port chỉ có thể được kết nối với một network. Do đó, nếu một instance được kết nối tới nhiều networks, nó sẽ được liên kết với nhiều port. Khi instance và tài nguyên cloud được khởi tạo, 
+logical switch có thể mở rộng tới hàng trăm, hàng nghìn port, xem hình dưới:
+
+![read-port-creat](/Images/read-port-creat.png)
 
 <a name="phan5"></a>
 # 5. Chương 4: Interfaceing with Neutron
