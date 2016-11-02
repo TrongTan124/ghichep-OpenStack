@@ -179,6 +179,17 @@ logical switch có thể mở rộng tới hàng trăm, hàng nghìn port, xem h
 
 ![read-port-creat](/Images/read-port-creat.png)
 
+Không có giới hạn số port có thể được tạo trong Neutron. Tuy nhiên, tồn tại một quota giới hạn số port cho một tenant có thể tạo. Khi số port Neutron mở rộng, hiệu xuất của Neutron API server 
+và thực thi của mạng trong cloud có thể giảm. Ý tưởng hay nhất là giữa quota tại điểm mà đảm bảo hiệu năng cloud, nhưng quota mặc định và subsequent nên tăng hợp lý.
+
+## The Neutron workflow
+----
+Theo workflow Neutron chuẩn, network phải được tạo đầu tiên, theo đó là subnet và port. Các phần sau mô tả workflow liên quan trong khi khởi động và xóa các instance.
+
+### Booting an instance
+
+- 
+
 <a name="phan5"></a>
 # 5. Chương 4: Interfaceing with Neutron
 
