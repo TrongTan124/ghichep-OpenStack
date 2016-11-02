@@ -323,8 +323,42 @@ switch, được biết như **provider bridge**. Một provider bridge được
 lưu lượng có thể chuyển từ instance tới physical network, và ngược lại, thông qua tập các switch. Neutron tạo và vận hành flow rule để xác định cách thức và vị trí lưu lượng được chuyển 
 tiếp; lưu lượng có thể được gán nhãn, gỡ nhãn, xóa bỏ,...
 
-- Khi network được cấu hình để sử dụng ML2 plugin và Open vSwitch, một service được biết như Open vSwitch agent chạy trên mỗi host. Agent chịu trách nhiệu sử dụng openvswitch kernel modules với
+Khi network được cấu hình để sử dụng ML2 plugin và Open vSwitch, một service được biết như Open vSwitch agent chạy trên mỗi host. Agent chịu trách nhiệu sử dụng openvswitch kernel modules với
 tiện ích userspace như ovs-vsctl, ovs-ofctl để quản lý Open vSwitch database và flow table để kết nối instance hoặc tài nguyên mạng khác tới virtual switch và physical switch
+
+**Network types**
+
+Neutron network type được sử dụng để định nghĩa công nghệ sử dụng cho segment traffic giữa network và mô tả, ở một glance, làm cách nào virtual switch được kết nối giữa các host. 
+Neutron hỗ trợ đa dạng network type, bao gồm:
+	- Local
+	- Flat
+	- VLAN
+	- VXLAN
+	- GRE
+	
+Nhớ rằng, người dùng bình thường không có khả năng xác định loại network họ tạo. Thực tế, người dùng không mong đợi biết được mọi thứ về hạ tầng nào khác ngoài những gì chỉ ra qua API. 
+Thay vào đó, người quản trị chịu trách nhiệm chọn loại network mặc định dựa vào giới hạn vật lý hoặc yêu cầu ảo hóa network. Một cách thủ công, người dùng với admin role có thể tạo mọi loại 
+network, có hay không đó là ý tưởng và thực tế có thể hỗ trợ bởi hạ tầng bên dưới.
+
+**Note**: Khi chúng ta nói về network type và kiến trúc khác nhau khi triển khai giữa Open vSwitch và LinuxBrige, giữ tay bạn xa khỏi bàn phím, Không có gì để làm trong khi bạn vẫn chưa kiểm tra.
+
+**Local Networks**
+
+Một **local network** là một network mà Neutron không kết nối tới physical network theo bấy kỳ cách nào. Theo cách rất tự nhiên, nó đơn giản là loại network để thực thi. Trên host sử dụng LinuxBridge 
+driver, Neutron thực thi một virtual switch cho mỗi local network. Các thiết bị kết nối tới local network có thể kết nối với máy khác nhưng không kết nối được tới mạng khác.
+
+![read-local-network](/Images/read-local-network.png)
+
+Trong sơ đồ trên, virtual switch không được kết nối tới physical interface, kết quả, traffic từ virtual machine instance bị giới hạn trong virtual switch của nó.
+
+![read-local-network](/Images/read-local-network1.png)
+
+Trong hình trên, instance trong cùng local VLAN có thể kết nối với nhau, thiếu flow rule trên virtual switch port đồng nghĩa với việc lưu lượng từ các port bị chia tách với virtual switch 
+và sẽ không chuyển tiếp tới provider bridge để ra hạ tầng physical network.
+
+**Flat network**
+
+
 
 <a name="phan7"></a>
 # 7. Chương 6: Routing
