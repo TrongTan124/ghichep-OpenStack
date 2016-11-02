@@ -358,7 +358,11 @@ và sẽ không chuyển tiếp tới provider bridge để ra hạ tầng physi
 
 **Flat network**
 
+Một **flat network** trong Neutron thì tương tự một network không có tag. Nghĩa là Neutron không tag traffic khi nó rời virtual switch và tới physical switch. Khi traffic không tag, port trên 
+switch vaatjlys phải được cấu hình như một access hoặc untagged port, hoặc một native VLAN đẻ có thể sử dụng nếu port được cấu hình như trunk hoặc tagged port. Hệ quả của cấu hình này là 
+chỉ có 1 mạng duy nhất tồn tại trên bridge và đúng với physical interface.
 
+![read-flat-network](/Images/read-flat-network.png)
 
 <a name="phan7"></a>
 # 7. Chương 6: Routing
