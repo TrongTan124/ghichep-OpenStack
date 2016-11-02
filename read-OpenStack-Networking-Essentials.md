@@ -364,6 +364,26 @@ chỉ có 1 mạng duy nhất tồn tại trên bridge và đúng với physical
 
 ![read-flat-network](/Images/read-flat-network.png)
 
+Trong hình trên, eth1 được kết nối trực tiếp từ virtual switch bên trái. Lưu lượng ra và vào của bridge không được tag. eth1 interface không thể kết nối tới bridge khác nhưng sub-interface 
+đã gán nhãn của eth1 có thể được kết nối tới virtual switch khác. Điều này sẽ được giải thích trong VLAN network.
+
+Sử dụng lệnh *brctl show*, chúng ta có thể thấy được cách một flat network mô tả trong host:
+
+```sh
+# brctl show
+```
+
+Với Open vSwitch và flat network, chúng ta có thể bắt đầu thấy cách flow rule sử dụng để theo tác dữ liệu khi nó chuyển tới virtual switch. Mỗi flat network ứng với một local VLAN trên mỗi host.
+trong hình sau, local **VLAN 1** ứng với flat Neutron network:
+
+![read-flat-network](/Images/read-flat-network1.png)
+
+Trong hình trên, dữ liệu đi ra từ instance kết nối tới integration bridge ở **VLAN 1** sẽ được tag VLAN khi nó tới virtual switch và đi ra physical network. Physical switch sẽ xem xét 
+dữ liệu như bỏ tag và chuyển tiếp lưu lượng phù hợp tới thiết bị trong mạng. Ngược lại, dữ liệu chưa được tag gửi tới provider bridge từ physical network, OVS sẽ gán VLAN 1 và chuyển tới 
+host thích hợp trong **VLAN 1** tại integration bridge. OVS agent trên mỗi node chịu trách nhiệm lập trình flow rule với thông tin trong Neutron database và local OVS database.
+
+**VLAN Network**
+
 <a name="phan7"></a>
 # 7. Chương 6: Routing
 
