@@ -4,6 +4,8 @@
 * [3. Chương 2: Installing OpenStack Using RDO](#phan3)
 * [4. Chương 3: Neutron API Basic](#phan4)
 * [5. Chương 4: Interfaceing with Neutron](#phan5)
+	* [a. Sử dụng Horizon dashboard](#phan5.1)
+	* [b. Sử dụng Neutron client](#phan5.2)
 * [6. Chương 5: Switching](#phan6)
 * [7. Chương 6: Routing](#phan7)
 * [8. Chương 7: Building Network and Router](#phan8)
@@ -207,11 +209,76 @@ trong khi khởi động một instance và gắn nó vào một network:
 
 Nếu nhiều network interface được gắn vào một instance, mỗi network interface sẽ liên kết với một Neutron port duy nhất và có thể gửi DHCP request để nhận thông tin mạng tương ứng.
 
+**Làm cách nào mô hình logical được thực thi**
+
+Neutron agent là dịch vụ trên network và compute node, chịu trách nhiệm trao đổi thông tin mô tả bởi network, subnet và port; sử dụng nó để thực thi hạ tầng mạng ảo và thật.
+
+Trong Neutron database, mối quan hệ giữa network, subnet và port được nhìn thấy như sau:
+
+![read-port-network-subnet](/Images/read-port-network-subnet.png)
+
+Thông tin này khi được thực thi trên compute node trong phạm vi của network interface ảo, switch hoặc bridge ảo và địa chỉ IP, theo hình sau:
+
+![read-port-interface](/Images/read-port-interface.png)
+
+Trong ví dụ trên, instance được kết nối tới network bridge trên compute node, bridge cung cấp kết nối từ instance tới physical network. [phần 6 Switching](#phan8) sẽ đi chi tiết về 
+hạ tầng virtual switch được quản lý bởi Neutron. Bây giờ, chỉ cần biết cách thức mô hình dữ liệu được thực thi khi có vài thứ được sử dụng.
+
+### Deleting an instance
+
+Đoạn sau mô tả các bước liên quan khi xóa một instance
+1. Người dùng xóa instance
+2. Nova interface với Neutron xóa port liên kết với instance
+3. Nova xóa dữ liệu instance
+4. Địa chỉ IP và MAC đã cấp phát được trả về cho pool
+
+Khi instance được xóa, Neutron gỡ tất cả các kết nối virtual network từ compute node liên quan và gỡ thông tin port liên quan từ database.
+
 <a name="phan5"></a>
 # 5. Chương 4: Interfaceing with Neutron
 
+Trong chương trước, chúng ta đã khám phá về core element của network, subnet và port tạo nên mô hình Neutron API. Trong chương này, chúng ta sẽ xem cách người dùng giao tiếp với Neutron 
+để xây dựng và quản lý các tài nguyên virtual network.
+
+- Người dùng có thể giao tiếp với Neutron để tạo và quản lý tài nguyên mạng theo các cách sau:
+	- The Horizon dashboard
+	- The Neutron client
+	- The Nova client
+	- cURL
+	- Software Development Kits (SDKs)
+	
+Phụ thuộc vào cách vận hành, không phải tất cả các phương thức cung cấp khả năng giống nhau và truy cập các đặc tính Neutron khác nhau. Nhìn người dùng thích tương tác với OpenStack thông 
+qua **Horizon** dashboard hoặc command-line client, trong khi developer có thể dựa vào SDKs để tác động. Tài nguyên mạng có thể được quản lý trong dashboard một cách hạn chế, trong khi 
+Neutron client có nhiều đặc tính vẫn chưa có hoặc không bao giờ có cho Horizon. Thông tin sử dụng SDKs có thể xem tại [đây](https://wiki.openstack.org/wiki/SDKs). Trong chương này, chúng 
+ta xem xét 2 cách thường dùng tương tác với Neutrong và OpenStack: **Horizon** dashboard và **Neutron command-line** client.
+
+<a name="phan5.1"></a>
+## a. Sử dụng Horizon dashboard
+
+Người dùng sử dụng Horizon dashboad có thể quản lý tài nguyên mạng trong project của họ. Nếu người dùng có admin role, họ có thể quản lý tài nguyên của tất cả các project.
+
+Phần này tham khảo thêm tại [đây](https://github.com/congto/OpenStack-Mitaka-Scripts/blob/master/DOCS-OPS-Mitaka/Caidat-OpenStack-Mitaka.md) để tạo máy ảo sau khi cài xong OpenStack bằng Horizon.
+
+<a name="phan5.2"></a>
+## b. Sử dụng Neutron client
+
+Neutron cung cấp command-line client để giao tiếp với các API của nó. Nó được cài sẵn như một thành phần của bản phân phối OpenStack.
+
+**Note**: Neutron client có thể được cài trên máy trạm, cung cấp cho bạn công cụ hỗ trợ hệ điều hành. Thông tin về cài đặt có thể tham khảo tại [đây](http://docs.openstack.org/user-guide/common/cli-install-openstack-command-line-clients.html)
+
+Khi đã xác thực, Neutron command có thể chạy trực tiếp từ Linux command line hoặc Neutron shell.
+
+Neutron shell cung cấp các câu lệnh sử dụng tạo, đọc, cập nhật và xóa cấu hình mạng trong OpenStack cloud. Gõ ? hoặc help trong Neutron shell, danh sách các câu lệnh có sẵn cho client 
+có thể được tìm thấy.
+
+![read-neutron-command](/Images/read-neutron-command.png)
+
+Phần này sẽ tìm hiểu thêm sau này, bắt đầu từ trang 131. Giờ phải focus vào các thành phần chính. :)
+
 <a name="phan6"></a>
 # 6. Chương 5: Switching
+
+
 
 <a name="phan7"></a>
 # 7. Chương 6: Routing
