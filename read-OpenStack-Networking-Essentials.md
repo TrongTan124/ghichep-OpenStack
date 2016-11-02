@@ -278,7 +278,53 @@ Phần này sẽ tìm hiểu thêm sau này, bắt đầu từ trang 131. Giờ 
 <a name="phan6"></a>
 # 6. Chương 5: Switching
 
+Trong chương này, chúng ta sẽ xem xét sâu hơn cách Neutron thực thi hạ tầng virtual network để phân luồng lưu lượng trong cloud.
 
+Khi người dùng tạo và kết nối instance tới network, Neutron tự động tạo và cấu hình virtual switch trên các node hạ tầng vật lý. Thông thường người dùng OpenStack sẽ không thấy được 
+hạ tầng phía dưới, biết được nó là ảo hay thật, và phải dựa vào Neutron để đảm bảo lưu lượng tới đúng nơi cần tới. Người vận hành, theo cách thủ công, phải truy cập vào hạ tầng để 
+xử lý gỡ lỗi nhiều lần. Hiểu về cách thức Neutron vận hành mọi thứ là yêu cầu cơ bản cho vận hành và hỗ trợ OpenStack cloud.
+
+
+**Cơ bản về switching trong OpenStack**
+
+Trong nội dung về mạng máy tính, một switch được định nghĩa như một thiết bị kết nối xác thiết bị khác và sử dụng công nghệ chuyển mạch gói để nhận, xử lý và chuyển tiếp dữ liệu 
+từ một thiết bị tới một thiết bị khác. Thông thường, các switch là vật lý trong thực tế và trải dài từ một thiết bị vậy lý rất lớn tới switch cho các hộ gia đình. Theo một cách tham chiếu, 
+Neutron dựa vào việc sử dụng virtual switch để chuyển tiếp gói tới instance và các thiết bị ảo hóa khác trong hạ tầng node. Những node đó, được kết nối tới physical switch và chuyển tiếp 
+lưu lượng giữa node và thiết bị vật lý như router, firewall. Làm cách nào Neutron cấu hình các switch ảo phụ thuộc vào hạ tầng switch ảo trong môi trường mạng được yêu cấu bởi người dùng. 
+Trong phần sau, chúng ta sẽ xem xét tới 02 switch ảo phổ biến nhất là **Open vSwitch** và **Linux Bridge**
+
+**Using Linux Bridge**
+
+Một linux bridge là một virtual switch, thuật ngữ này được sử dụng thay thế xuyên suốt quyển sách này và các tài liệu OpenStack khác. Nó có port, một **Forwading Database (FDB)** table, cái này 
+hơi giống với **CAM** hoặc **MAC** address table, vận hành ở Layer 2 của mô hình OSI. 
+
+Khi Neutron được cấu hình để sử dụng **Modular Layer 2 (ML2)** plugin và LinuxBridge driver, một dịch vụ được biết như **LinuxBridge agent** chạy trên mỗi host và chịu trách nhiệm 
+sử dụng kernel module 802.1q và vxlan. Lệnh *brctl*, *bridge* tạo và kết nối switch ảo tới instance hay mạng vật lý.
+
+**Using Open vSwitch** 
+
+Open vSwitch được biết như OVS là một multilayer switch mã nguồn mở. Như một physical switch, một virtual switch sử dụng Open vSwitch thực thi các chức năng của switch: port, uplink, cross-connect,... 
+Các switch ảo này hỗ trợ các công nghệ như 802.1q, SPAN, RSPAN, sFlow,... nhưng không phải tất cả các đặc tính được hỗ trợ hay tác dụng bởi Neutron.
+
+Open vSwitch có thể vận hành theo 2 mode: **normal mode** và **flow mode**. 
+
+Trong normal mode, một OVS đóng vai trò như một Layer 2. Khi frame được chuyển tiếp thông qua virtual switch, 
+switch dựng một table lưu mối quan hệ giữa địa chỉ source MAC và port để tìm kiếm trong tương lai. Nếu một địa chỉ MAC đích chưa có trong bảng, switch đẩy ra tất cả các port cho tới khi khám phá 
+ra đúng port.
+
+Trong flow mode, một flow table được sử dụng bao gồm tập hợp các rule và action để thực thi một package. Hành động là kết quả thao tác package theo nhiều loại như bóc tách hay chỉnh sửa 
+các VLAN đã gán để chuyển tiếp gói tin tới port cụ thể. Neutron, là nguồn gốc của trạng thái mạng trong cloud, chịu trách nhiệm lập trình flow rule trên virtual switch khi biết virtual 
+machine instance tồn tại trên node cụ thể, và biết về tất cả các ánh xạ mạng ảo và mạng thật. có rất nhiều dịch vụ Neutron nâng cao được xử lý bằng cách thao tác dữ liệu sử dụng 
+flow rule trên OVS. Sử dụng phần mềm để lập trình forwarding và thao tác dữ liệu là chìa khóa cho ý tưởng **Software-Defined Networking (SDN)**
+
+Với OVS, Neutron thực thi một hoặc nhiểu virtual machine trên mỗi host, phụ thuộc vào loại network sử dụng. Hầu hết các trường hợp, một virtual switch đơn, được gọi là integration bridge, được 
+sử dụng để kết nối tất cả các instance trong mạng. Các thành phần mạng xử lý bằng cách tạo một local VLAN duy nhất/network/mọi host. Integration bridge thì kết nối chéo tới một hoặc nhiều virtual 
+switch, được biết như **provider bridge**. Một provider bridge được kết nối tới một physical interface và cung cấp kết nối tới physical network. Kết nối chéo giữa các switch nghĩa là 
+lưu lượng có thể chuyển từ instance tới physical network, và ngược lại, thông qua tập các switch. Neutron tạo và vận hành flow rule để xác định cách thức và vị trí lưu lượng được chuyển 
+tiếp; lưu lượng có thể được gán nhãn, gỡ nhãn, xóa bỏ,...
+
+- Khi network được cấu hình để sử dụng ML2 plugin và Open vSwitch, một service được biết như Open vSwitch agent chạy trên mỗi host. Agent chịu trách nhiệu sử dụng openvswitch kernel modules với
+tiện ích userspace như ovs-vsctl, ovs-ofctl để quản lý Open vSwitch database và flow table để kết nối instance hoặc tài nguyên mạng khác tới virtual switch và physical switch
 
 <a name="phan7"></a>
 # 7. Chương 6: Routing
