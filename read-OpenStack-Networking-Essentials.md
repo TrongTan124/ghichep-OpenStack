@@ -14,10 +14,10 @@
 
 <a name="phan1"></a>
 # 1. Sơ lược
-OpenStack là một hệ điều hành cloud nguồn mở, được thiết kế để điều khiển chung tài nguyên của các thành phần compute, storage, networking. 
-Hệ thống này tăng trưởng mạnh mẽ để giảm chi phí vận hành và vốn. OpenStack đã bùng nổ trong vài năm trở lại đây nhờ các tính năng, linh hoạt và độ trưởng thành.
+OpenStack là một hệ điều hành cloud nguồn mở, được thiết kế để điều khiển tài nguyên chung của các thành phần compute, storage, networking. 
+OpenStack ngày càng tăng trưởng mạnh mẽ để giảm chi phí vận hành và vốn. OpenStack đã bùng nổ trong vài năm trở lại đây nhờ các tính năng, linh hoạt và độ hoàn thiện của nó.
 
-Trong sách này, chúng ta sẽ khám phá về thành phần networking của OpenStack, được biết như Neutron. Neutron cung cấp một API cho người dùng xây dựng tài nguyên mạng ảo như 
+Trong sách này, chúng ta sẽ khám phá về thành phần networking của OpenStack, được biết đến như Neutron. Neutron cung cấp một API cho người dùng xây dựng tài nguyên mạng ảo như 
 switch, router, load balancer, firewall. Chúng ta sẽ đi qua việc cài đặt OpenStack sử dụng RDO để xem các thành phần cốt lõi của API, tạo nên network, subnet, port. 
 Kết thúc quyển sách này, bạn sẽ khai khác được sức mạnh của OpenStack và Neutron khi tạo và truy cập tài nguyên mạng ảo của bạn.
 
@@ -26,25 +26,25 @@ Kết thúc quyển sách này, bạn sẽ khai khác được sức mạnh củ
 # 2. Chương 1: OpenStack Networking Components
 **Các đặc tính của OpenStack Networking**
 
-Rất nhiều môi trường cloud dựa vào các công nghệ ảo hóa có sẵn bởi hypervisors như: KVM, Xen, Hyper-V,... Mục đích cốt lõi của Neutron là kết nối các máy ảo tới mạng ảo của cloud và 
+Rất nhiều môi trường cloud dựa vào các công nghệ ảo hóa có sẵn bởi các hypervisor như: KVM, Xen, Hyper-V,... Mục đích cốt lõi của Neutron là kết nối các máy ảo tới mạng ảo của cloud và 
 kết nối mạng ảo tới hạ tầng mạng vật lý.
 
 Neutron dựa vào các thành phần gắn vào nó hoặc kiến trúc mở rộng để cấu hình tài nguyên mạng ảo và vật lý. Rất nhiều thiết bị như switch, router, firewall, load balancer được thực thi 
 trong phần mềm được tham chiếu (reference implementation). Một tham chiếu được đề cập khi sử dụng là plugin và agent có sẵn trong Neutron. Plugin phổ biến là **Modular Layer 2 (ML2)** plugin,
-được sử dụng xác định tổ chức (framework) mạng vật lý để agent có thể xây dựng mạng ảo. Agent phổ biến gồm **Open vSwitch (OVS)** và **Linux bridge** agent được sử dụng để xây dựng hạ tầng 
-switch ảo tương ứng dựa trên mạn được người dùng định nghĩa với Neutron API.
+được sử dụng để xác định tổ chức (framework) mạng vật lý cho agent có thể xây dựng mạng ảo. Agent phổ biến gồm **Open vSwitch (OVS)** và **Linux bridge** agent được sử dụng để xây dựng hạ tầng 
+switch ảo tương ứng dựa trên mạng được người dùng định nghĩa với Neutron API.
 
 **Switching**
 
-Trong một thành phần tham chiếu, Neutron dựa vòa virtual bridge và switch để kết nối virtual instance, container và các tài nguyên mạng khác tới network. Neutron hỗ trợ các chuẩn 
+Trong một thành phần tham chiếu, Neutron dựa vào virtual bridge và switch để kết nối virtual instance, container và các tài nguyên mạng khác tới network. Neutron hỗ trợ các chuẩn 
 Linux bridges và virtual switch tạo bởi OVS. OVS là một switch ảo mã nguồn mở hỗ trợ nhiều công nghệ và giao thức như: NetFlow, SPAN, RSPAN, LACP, 802.1q Vlan tagging. Neutron hỗ trợ việc sử dụng 
-nhiều công nghệ overlay networking như GRE, VXLAN để kết nối virtual bridge và switch thông qua node tới node khác. tham khảo thêm tại [phần 6](#phan6)
+nhiều công nghệ overlay networking như GRE, VXLAN để kết nối virtual bridge và switch từ node tới node khác. tham khảo thêm tại [phần 6 Switching](#phan6)
 
 **Routing**
 
-Neutron cung cấp routing và NAT để cho phép instance và thiết bị mạng ảo khác truy cập mạng. Khi người dùng tạo một mạng ảo, mạng này được tách biết với các mạng khác. Người dùng 
-có thể tạo router và gắn một hoặc nhiều mạng ảo vào. Khi được gắc, các thiết bị trong mạng có thể kết nối với nhau, một vài trường hợp có thể kết nối ra ngoài internet Neutron cũng 
-cung cấp kết nối đi vào thông qua floating IP. Một floating IP là 1 liên kết 1-1 từ instance trong mạng ảo tới địa chỉ IP trên mạng thực. Tham khảo thêm tại [phần 7](#phan7)
+Neutron cung cấp routing và NAT để cho phép instance và thiết bị mạng ảo khác truy cập mạng Internet. Khi người dùng tạo một mạng ảo, mạng này được tách biết với các mạng khác. Người dùng 
+có thể tạo router và gắn một hoặc nhiều mạng ảo vào. Khi được gắn, các thiết bị trong mạng có thể kết nối với nhau, một vài trường hợp có thể kết nối ra ngoài internet. Neutron cũng 
+cung cấp kết nối đi vào thông qua floating IP. Một floating IP là 1 liên kết 1-1 từ instance trong mạng ảo tới địa chỉ IP trên mạng thực. Tham khảo thêm tại [phần 7 Routing](#phan7)
 
 **Các đặc tính nâng cao khác**
 
@@ -81,11 +81,11 @@ ML2 plugin dựa vào các loại khác nhau của driver để xác định lo�
 Neutron server là controller tập trung cảu mạng, chịu trách nhiệm cung cấp API cho người dùng lưu trữ thông tin về mạng trong database. Tuy nhiên, lệnh thực thi mạng được thực hiện tại
 compute và network node bởi các agent. Neutron agent nhận message và chỉ dận từ Neutron server trong message bus và thực thi.
 
-	- **DHCP agent**:
+- **DHCP agent**:
 	
-	- **metadata agent**:
+- **metadata agent**:
 	
-	- **network plugin agent**:
+- **network plugin agent**:
 	
 ![read-flow-agent](/Images/read-flow-agent.png)
 
@@ -105,22 +105,24 @@ compute và network node bởi các agent. Neutron agent nhận message và ch�
 Neutron là một virtual networking service cho phép người dùng định nghĩa kết nối mạng, địa chỉ IP cho các instance và tài nguyên cloud khác sử dụng **application programmable interface 
 (API)**. 
 
-Hình dưới giải thích ở mức higt level về cách mà Neutron API server tương tác với các plugin và agent chịu trách nhiệm cấu thành mạng ảo và mạng vật lý trên cloud
+Hình dưới giải thích ở mức high level về cách mà Neutron API server tương tác với các plugin và agent chịu trách nhiệm cấu thành mạng ảo và mạng vật lý trên cloud
 
 ![read-core-neutron](/Images/read-core-neutron.png)
 
-Trong hình giải thích tương tác giữa Neutron API service, Neutron plugin, dirver, service như L2 và L3 agent. Khi một tác động mạng được thực thi bởi người dùng thông qua API, 
-Neutron server đưa ra message và message queue để agent sử dụng. L2 agent xây dựng và vận hành hạ tầng mạng ảo, trong khi L3 agent chịu trách nhiệm xây dựng và vận hành Neutron router cùng 
+Trong hình giải thích tương tác giữa Neutron API service, Neutron plugin, driver, service như L2 và L3 agent. Khi một tác động mạng được thực thi bởi người dùng thông qua API, 
+Neutron server đưa ra message và gửi vào message queue để agent sử dụng. L2 agent xây dựng và vận hành hạ tầng mạng ảo, trong khi L3 agent chịu trách nhiệm xây dựng và vận hành Neutron router cùng 
 các chức năng liên quan.
 
 Đặc tả Neutron API có thể tìm thấy tại OpenStack wiki ở [đây](https://wiki.openstack.org/wiki/Neutron/APIv2-specification). Trong phần tiếp, chúng ta sẽ tìm hiểu về các core element của 
 API và mô hình dữ liệu sử dụng bởi các element này.
 
+----
+
 ## Networks
 
 Network là đối tượng trung tâm của Neutron v2.0 API data model và chỉ ra một **Layer 2** segment riêng biệt. Trong hạ tầng truyền thống, máy tính được kết nối tới switch port 
-và nhóm cùng nhau thành **Virtual Local Area Networks (VLANs)** định danh bởi IDs duy nhất. Các máy tính trong một mạng hay VLAN có thể kế nối với nhau và không thể kết nối ra mạng khác 
-trong các VLAN khác khi thiếu router. Hình sau giải thích cách mà network được tách biệt với nhau trong hạ tầng mạng truyền thống.
+và nhóm cùng nhau thành **Virtual Local Area Networks (VLANs)** định danh bởi IDs duy nhất. Các máy tính trong một mạng hay VLAN có thể kế nối với nhau và không thể kết nối ra 
+các VLAN khác khi thiếu router. Hình sau giải thích cách mà network được tách biệt với nhau trong hạ tầng mạng truyền thống.
 
 ![read-vlan.png](/Images/read-vlan.png)
 
@@ -342,6 +344,8 @@ network, có hay không đó là ý tưởng và thực tế có thể hỗ tr�
 
 **Note**: Khi chúng ta nói về network type và kiến trúc khác nhau khi triển khai giữa Open vSwitch và LinuxBrige, giữ tay bạn xa khỏi bàn phím, Không có gì để làm trong khi bạn vẫn chưa kiểm tra.
 
+----
+
 **Local Networks**
 
 Một **local network** là một network mà Neutron không kết nối tới physical network theo bấy kỳ cách nào. Theo cách rất tự nhiên, nó đơn giản là loại network để thực thi. Trên host sử dụng LinuxBridge 
@@ -355,6 +359,8 @@ Trong sơ đồ trên, virtual switch không được kết nối tới physical
 
 Trong hình trên, instance trong cùng local VLAN có thể kết nối với nhau, thiếu flow rule trên virtual switch port đồng nghĩa với việc lưu lượng từ các port bị chia tách với virtual switch 
 và sẽ không chuyển tiếp tới provider bridge để ra hạ tầng physical network.
+
+----
 
 **Flat network**
 
@@ -381,6 +387,8 @@ trong hình sau, local **VLAN 1** ứng với flat Neutron network:
 Trong hình trên, dữ liệu đi ra từ instance kết nối tới integration bridge ở **VLAN 1** sẽ được tag VLAN khi nó tới virtual switch và đi ra physical network. Physical switch sẽ xem xét 
 dữ liệu như bỏ tag và chuyển tiếp lưu lượng phù hợp tới thiết bị trong mạng. Ngược lại, dữ liệu chưa được tag gửi tới provider bridge từ physical network, OVS sẽ gán VLAN 1 và chuyển tới 
 host thích hợp trong **VLAN 1** tại integration bridge. OVS agent trên mỗi node chịu trách nhiệm lập trình flow rule với thông tin trong Neutron database và local OVS database.
+
+----
 
 **VLAN Network**
 
