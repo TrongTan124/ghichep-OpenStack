@@ -392,6 +392,40 @@ host thích hợp trong **VLAN 1** tại integration bridge. OVS agent trên m�
 
 **VLAN Network**
 
+Một **VLAN network** thì tương tự một tagged network. Nghĩa là Neutron sẽ tag traffic khi nó rời virtual switch và đi vào physical switch network. Khi traffic được tag, physical switch port kết 
+nối tới interface của server phải được cấu hình trunk port.
+
+Trên 1 host sử dụng Linux Bridge driver, khi 1 VLAN network được tạo, một tagged interface được gắn vào virtual switch hoặc bridge, xem hình sau:
+
+![read-vlan-network](/Images/read-vlan-network.png)
+
+Trong sơ đồ trên, sub-interface eth1.100 được kết nối tới virtual switch bên trái. Khi traffic rời bridge, một VLAN tag 100 được thêm vào mỗi packet và gửi ra eth1 tới physical network. 
+Ngược lại, khi traffic được tag đi vào interface eth1 và virtual switch tương ứng từ physical network, kernel bóc tách tag và chuyển traffic tới instance thích hợp kết nối tới bridge.
+
+Sử dụng lệnh *brctl show*, chúng ta sẽ thấy một VLAN network thể hiện ra sao trên host.
+
+```sh
+# brctl show
+```
+Với Open vSwitch và VLAN network, mọi VLAN thực tương ứng với local VLAN trên mỗi host. Trong sơ đồ sau, local **VLAN 1** tương tứng với VLAN 100 thực, và local **VLAN 2** tương ứng với VLAN 200:
+
+![read-vlan-network1](/Images/read-vlan-network1.png)
+
+Trong lưu đồ trên, lưu lượng đi ra từ instance kết nối tới integration bridge ở **VLAN 1** sẽ được tag VLAN khi đi vào virtual switch và ra physical network. Physical switch sẽ xem xét traffic 
+được gán và chuyển tiếp tới nơi phù hợp. Ngược lại, khi lưu lượng được tag gửi vào provider bridge từ physical network, OVS sẽ sửa VLAN ID thực tới local VLAN ID và chuyển tiếp lưu lượng 
+tới host tương ứng kết nối tới integration bridge.
+
+----
+
+**VXLAN network**
+
+**Virtual eXtensible Local Area Network (VXLAN)**, là một công nghệ overlay network, giúp khả năng mở rộng các vấn đề địa chỉ thấy trong VLANs. Số lượng tối đa của VLAN network là 4096 cho 
+một single switching layer, lên tới 16 triệu VXLAN network có thể với **VXLAN Tunnel End Point (VTEP)**. VXLAN đóng gói **Layer 2 Ethernet** frame vào **Layer 4 UDP** packet để có thể 
+chuyển tiếp hoặc định tuyến giữa các host. Điều này nghĩa là một virtual network có thể mở rộng một cách trong suốt, như Internet, mà không có bất cứ thay đổi nào tới end host. Tuy nhiên,
+trong trường hợp của Neutron, một VXLAN mesh network chỉ phổ biến giữa các node tồn tại trong cùng vị trí.
+
+
+
 <a name="phan7"></a>
 # 7. Chương 6: Routing
 
