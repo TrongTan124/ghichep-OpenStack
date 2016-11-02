@@ -79,11 +79,11 @@ ML2 plugin dựa vào các loại khác nhau của driver để xác định lo�
 Neutron server là controller tập trung cảu mạng, chịu trách nhiệm cung cấp API cho người dùng lưu trữ thông tin về mạng trong database. Tuy nhiên, lệnh thực thi mạng được thực hiện tại
 compute và network node bởi các agent. Neutron agent nhận message và chỉ dận từ Neutron server trong message bus và thực thi.
 
-	- **DHCP agent**:
+	- **DHCP agent**
 	
-	- **metadata agent**:
+	- **metadata agent**
 	
-	- **network plugin agent**:
+	- **network plugin agent**
 	
 ![read-flow-agent](/Images/read-flow-agent.png)
 
