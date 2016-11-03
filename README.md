@@ -89,3 +89,7 @@ Tôi chia sẻ các kiến thức mà tôi phải tích lũy, trau dồi, bù đ
 
 Nói thì ngắn gọn nhưng để lĩnh hội được mớ kiến thức trên cũng không phải chỉ vài ngày ngắn ngủi là xong.
 
+----
+Mọi ý kiến đóng góp có thể phản hồi theo địa chỉ sau:
+- Skype: crazyman12487
+- Gmail: nguyentrongtan124@gmail.com
