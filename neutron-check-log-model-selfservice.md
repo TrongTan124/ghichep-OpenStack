@@ -34,6 +34,9 @@ Tại thư mục */var/log/openvswitch* sẽ có các file log sau:
 ```
 
 Bây giờ ta sẽ lần lượt kiểm tra log của các file trong thư mục */var/log/neutron*
+
+----
+
 - Đối với file **dhcp-agent.log**, ta sẽ kiểm tra trường hợp restart dhcp agent để xem log nào sẽ được xuất ra
 ```sh
 root@controller1:/var/log/neutron# service neutron-dhcp-agent restart
@@ -41,7 +44,7 @@ stop: Unknown instance:
 neutron-dhcp-agent start/running, process 23122
 ```
 
-	Log được xuất ra sau lệnh restart trên như sau:
+Log được xuất ra sau lệnh restart trên như sau:
 ```sh
 2016-11-03 12:12:40.168 27203 ERROR neutron.agent.dhcp.agent     message = self.waiters.get(msg_id, timeout=timeout)
 2016-11-03 12:12:40.168 27203 ERROR neutron.agent.dhcp.agent   File "/usr/lib/python2.7/dist-packages/oslo_messaging/_drivers/amqpdriver.py", line 244, in get
@@ -86,6 +89,8 @@ Log:
 2016-11-03 14:28:26.662 24274 INFO neutron.agent.dhcp.agent [req-939d3edf-4e78-46d3-becd-0a1ec0a9f51f - - - - -] Synchronizing state complete
 ```
 
+----
+
 - Ta kiểm tra log của file **l3-agent.log** trong trường hợp restart l3 sẽ xuất ra như sao:
 ```sh
 root@controller1:/var/log/neutron# service neutron-l3-agent restart
@@ -93,7 +98,7 @@ stop: Unknown instance:
 neutron-l3-agent start/running, process 23943
 ```
 
-	Log được xuất ra sau lệnh restart trên như sau:
+Log được xuất ra sau lệnh restart trên như sau:
 ```sh
 2016-11-03 12:13:07.391 27256 ERROR neutron.agent.l3.agent   File "/usr/lib/python2.7/dist-packages/oslo_messaging/_drivers/amqpdriver.py", line 459, in _send
 2016-11-03 12:13:07.391 27256 ERROR neutron.agent.l3.agent     result = self._waiter.wait(msg_id, timeout)
@@ -112,7 +117,7 @@ neutron-l3-agent start/running, process 23943
 2016-11-03 14:26:52.124 23943 INFO neutron.agent.l3.agent [-] L3 agent started
 ```
 
-	Cũng tương tự như lệnh restart dhcp, lệnh này cũng báo là l3 chưa được chạy, và chạy lần đầu, giờ ta thực hiện restart lại l3 agent.
+Cũng tương tự như lệnh restart dhcp, lệnh này cũng báo là l3 chưa được chạy, và chạy lần đầu, giờ ta thực hiện restart lại l3 agent.
 ```sh
 root@controller1:/var/log/neutron# service neutron-l3-agent restart
 neutron-l3-agent stop/waiting
@@ -125,6 +130,8 @@ Log:
 2016-11-03 14:32:19.057 25054 INFO neutron.agent.l3.agent [-] L3 agent started
 ```
 
+----
+
 - Ta kiểm tra log của file **neutron-metadata-agent.log** khi thực hiện lệnh restart metadata agent.
 ```sh
 root@controller1:/var/log/neutron# service neutron-metadata-agent restart
@@ -132,7 +139,7 @@ neutron-metadata-agent stop/waiting
 neutron-metadata-agent start/running, process 25374
 ```
 
-	Log được xuất ra như sau:
+Log được xuất ra như sau:
 ```sh
 2016-11-03 12:44:19.559 1318 ERROR neutron.agent.metadata.agent     retry=retry)
 2016-11-03 12:44:19.559 1318 ERROR neutron.agent.metadata.agent   File "/usr/lib/python2.7/dist-packages/oslo_messaging/_drivers/amqpdriver.py", line 459, in _send
@@ -154,7 +161,7 @@ neutron-metadata-agent start/running, process 25374
 2016-11-03 14:33:50.364 25390 INFO eventlet.wsgi.server [-] (25390) wsgi starting up on http:/var/lib/neutron/metadata_proxy
 ```
 
-	Ta cũng thực hiện restat lại metadata agent lần 2 để kiểm tra log:
+Ta cũng thực hiện restat lại metadata agent lần 2 để kiểm tra log:
 ```sh
 root@controller1:/var/log/neutron# service neutron-metadata-agent restart
 neutron-metadata-agent stop/waiting
@@ -169,6 +176,13 @@ Log:
 2016-11-03 14:35:11.950 25662 INFO neutron.common.config [-] /usr/bin/neutron-metadata-agent version 8.2.0
 2016-11-03 14:35:12.019 25662 INFO oslo_service.service [req-5004a601-d563-43cf-97b4-bab141f1d51e - - - - -] Starting 1 workers
 2016-11-03 14:35:12.038 25680 INFO eventlet.wsgi.server [-] (25680) wsgi starting up on http:/var/lib/neutron/metadata_proxy
+```
+
+----
+
+- Ta kiểm tra log của file **openvswitch-agent.log** sau lệnh restart OVS agent:
+```sh
+
 ```
 
 # Tham khảo
