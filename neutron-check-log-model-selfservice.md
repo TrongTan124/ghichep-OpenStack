@@ -346,10 +346,20 @@ Event tạo network
 ```
 
 #### Phân tích dòng log trên:
-- Thời gian request API: "2016-11-03 14:58:55.580"
-- 
-
-
+- Thời gian nhận request trên neutron API: "2016-11-03 14:58:55.580"
+- Không chắc chắn giá trị này nhưng có thể là ID được sinh ra cho session Dashboard làm việc: 28497.
+- Tiếp đến là mức độ cảnh báo: Debug - info - warning - error - critical: INFO
+- Nguồn gửi log, trong dòng trên thì nguồn log là neutron webservice: neutron.wsgi
+- Toàn bộ trong ngoặc vuông tiếp theo là request ID, có các thông tin được chia cách bằng khoảng trắng: [req-dd02ca0a-55bd-421a-9ca3-970d07db42ff fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -]
+	- req-dd02ca0a-55bd-421a-9ca3-970d07db42ff : là ID của request, sinh ra ngẫu nhiên
+	- fc0becc74871437581d1b3bb74cc6404 : 
+	- 3262c9a75a494be288b4d77608334e0d : tenant_id của project network
+- IP gọi tới Neutron API: 10.10.10.80
+- Thời gian sinh ra request từ nguồn gửi: [03/Nov/2016 14:58:55]
+- Nội dung của request: "GET /v2.0/extensions.json HTTP/1.1"
+- Trạng thái trả từ neutron api sau khi xử lý request: 200 
+- Chưa rõ: 6007 
+- Không chắc chắn nhưng có thể đoán là thời gian xử lý của request, cần xác nhận lại: 19.240536
 
 - Log trong file **/var/log/neutron/neutron-server.log** khi có các thao tác qua Dashboard:
 	- tạo security group; click *Access & Security*
@@ -372,6 +382,7 @@ Event tạo network
 ```
 
 	- khi click vào *Manage Security Group Rules: default*
+	
 ```sh
 2016-11-03 15:06:28.902 28496 INFO neutron.wsgi [req-de78f91e-dfa3-490f-a496-ff2d26f7173d fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:06:28] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.024917
 2016-11-03 15:06:29.095 28496 INFO neutron.wsgi [req-7e0be8ca-25ee-4661-9b21-cdf5ef806355 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:06:29] "GET /v2.0/security-groups/35a92ab4-ed7c-4917-82f6-67a4b70db22e.json HTTP/1.1" 200 1838 0.129792
@@ -379,12 +390,14 @@ Event tạo network
 ```
 
 	- click *Add Rule*
+	
 ```sh
 2016-11-03 15:08:10.126 28497 INFO neutron.wsgi [req-7edc3b63-93be-48d3-b42c-ed71e3d7cca7 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:08:10] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.013524
 2016-11-03 15:08:10.342 28496 INFO neutron.wsgi [req-4db48cbe-f3f6-49ef-80eb-21082e7bbb56 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:08:10] "GET /v2.0/security-groups.json?tenant_id=3262c9a75a494be288b4d77608334e0d HTTP/1.1" 200 1841 0.190224
 ```
 
 	- add ingress any 0/0
+	
 ```sh
 2016-11-03 15:12:23.359 28496 INFO neutron.wsgi [req-9dcd9bf7-983b-41c6-9264-5ef9921e675f fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:12:23] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 3.836252
 2016-11-03 15:12:23.560 28496 INFO neutron.wsgi [req-2b19fdee-b752-44a5-93ac-ff3f16270c56 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:12:23] "GET /v2.0/security-groups.json?tenant_id=3262c9a75a494be288b4d77608334e0d HTTP/1.1" 200 1841 0.179114
@@ -397,16 +410,19 @@ Event tạo network
 ```
 
 	Ngoài ra xuất hiện log tại các file **/var/log/neutron/openvswitch-agent.log** trên Controller node
+	
 ```sh
 2016-11-03 15:12:24.314 27907 INFO neutron.agent.securitygroups_rpc [req-69e8bd0d-7df4-461e-a4c7-3fb9985f7867 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] Security group rule updated [u'35a92ab4-ed7c-4917-82f6-67a4b70db22e']
 ```
 
 	Và log tại file **/var/log/neutron/openvswitch-agent.log** trên Compute node:
+	
 ```sh
 2016-10-27 15:18:18.812 65813 INFO neutron.agent.securitygroups_rpc [req-69e8bd0d-7df4-461e-a4c7-3fb9985f7867 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] Security group rule updated [u'35a92ab4-ed7c-4917-82f6-67a4b70db22e']
 ```
 
 	- click *Networks* trong tab Admin:
+	
 ```sh
 2016-11-03 15:15:52.006 28496 INFO neutron.wsgi [req-8cc934a7-9a51-49ef-b0ae-7cfb4f2e279d fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:15:52] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.044681
 2016-11-03 15:15:52.228 28497 INFO neutron.wsgi [req-ae7c80e6-3936-4da3-8231-73c86247e3c9 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:15:52] "GET /v2.0/networks.json HTTP/1.1" 200 229 0.197492
@@ -414,6 +430,7 @@ Event tạo network
 ```
 
 	- click *Create network*:
+	
 ```sh
 2016-11-03 15:17:30.606 28496 INFO neutron.wsgi [req-8ca0cf6d-f991-4cbe-807f-481a4da70730 fc0becc74871437581d1b3bb74cc6404 3262c9a75a494be288b4d77608334e0d - - -] 10.10.10.80 - - [03/Nov/2016 15:17:30] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 1.210543
 ```
