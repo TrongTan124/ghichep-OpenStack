@@ -1331,17 +1331,468 @@ LOG tại neutron-server
 ```
 
 
+## Test trường hợp tạo 1 user tannt trên Horizon và gán vào group demo
+- Tạo một tenant network
+Log tại neutron khi click create
+```sh
+2016-11-04 10:31:30.952 17167 INFO neutron.wsgi [req-e5a5cfa4-0971-4aad-a610-f245e63ad045 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:31:30] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 1.465379
+2016-11-04 10:31:31.048 17166 INFO neutron.wsgi [req-34707c0c-ff95-4d57-b089-98e9997af7e0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:31:31] "GET /v2.0/subnetpools.json HTTP/1.1" 200 232 0.078819
+```
 
+click tab subnet:
+```sh
+2016-11-04 10:32:21.335 17167 INFO neutron.wsgi [req-360b7bbc-cb83-4638-a536-b2e8396cace5 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:32:21] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.020349
+2016-11-04 10:32:21.429 17167 INFO neutron.wsgi [req-e0602519-2e87-4c79-a4a4-30c6ac15280f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:32:21] "GET /v2.0/subnetpools.json HTTP/1.1" 200 232 0.071527
+```
+click subnet detail:
+```sh
+2016-11-04 10:33:31.094 17166 INFO neutron.wsgi [req-d1bdb0e5-20ce-492f-9102-2ec3ed273b30 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:33:31] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.025352
+2016-11-04 10:33:31.164 17167 INFO neutron.wsgi [req-8034ac73-4422-4a22-9220-a0f586783e01 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:33:31] "GET /v2.0/subnetpools.json HTTP/1.1" 200 232 0.060056
+```
+click create:
+```sh
+2016-11-04 10:34:24.744 17167 INFO neutron.wsgi [req-d0d7dc0d-67ef-4001-a37f-09cbf4852128 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:24] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.020762
+2016-11-04 10:34:24.825 17166 INFO neutron.wsgi [req-4dfa0f98-7480-43c8-baad-292cceebc0ab b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:24] "GET /v2.0/subnetpools.json HTTP/1.1" 200 232 0.060677
+2016-11-04 10:34:25.102 17167 INFO neutron.plugins.ml2.db [req-626de132-423c-48a0-aefc-2ae2529d25d8 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] Added segment 0d40a42b-f9e6-411c-b72e-9a0276823af7 of type gre for network e9a14ace-1fa6-427c-98d2-1174ec03507c
+2016-11-04 10:34:25.315 17167 INFO neutron.wsgi [req-626de132-423c-48a0-aefc-2ae2529d25d8 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:25] "POST /v2.0/networks.json HTTP/1.1" 201 716 0.471076
+2016-11-04 10:34:27.292 17167 INFO neutron.wsgi [req-59765e57-d70e-449a-8abf-39761c7827aa b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:27] "POST /v2.0/subnets.json HTTP/1.1" 201 786 1.939122
+2016-11-04 10:34:27.706 17167 INFO neutron.wsgi [req-c766e02b-e9cb-4b75-81ca-6f025e2c79c1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:27] "GET /v2.0/networks.json?shared=False&tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 758 0.323761
+2016-11-04 10:34:27.957 17166 INFO neutron.wsgi [req-7ee65788-11d8-4705-a502-b7c0bc5a0039 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:27] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.248050
+2016-11-04 10:34:28.159 17166 INFO neutron.wsgi [req-9faaf85d-f983-4e6f-99aa-b691d46d3c10 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:28] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.191808
+2016-11-04 10:34:28.290 17167 INFO neutron.wsgi [req-2e73adf0-c88a-45e4-85b4-de019f79a9ee b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:28] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.129306
+2016-11-04 10:34:28.648 17166 INFO neutron.wsgi [req-d3c9a296-e94c-4377-9e28-2dcc30a1c12e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:28] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.343105
+2016-11-04 10:34:29.031 17167 INFO neutron.wsgi [req-15185461-0a0f-47ab-94e0-6f4b533678bd b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:29] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.376186
+2016-11-04 10:34:29.670 17167 INFO neutron.wsgi [req-46bccbf8-3424-4bab-b7cf-7915adbd0792 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:29] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.046947
+2016-11-04 10:34:30.259 17167 INFO neutron.wsgi [req-d5ab39c0-5e4a-495d-b64c-766429fae94b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:30] "GET /v2.0/quotas/bfb67b8eaead4f1684710db4608d1c48.json HTTP/1.1" 200 385 0.057295
+2016-11-04 10:34:30.663 17166 INFO neutron.wsgi [req-a4cd5336-0051-4198-8789-95edf6d1d90f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:30] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.046404
+2016-11-04 10:34:31.266 17167 INFO neutron.wsgi [req-11cdd103-fc4e-429b-821e-6a11ba1650f6 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:31] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 941 0.602557
+2016-11-04 10:34:31.665 17166 INFO neutron.wsgi [req-3ac7fa1a-c1ee-4234-871f-881febbce4c0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:31] "GET /v2.0/security-groups.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 1841 0.373487
+2016-11-04 10:34:32.077 17167 INFO neutron.wsgi [req-38c17d1e-cc27-47e0-9939-2f684c113cd9 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:32] "GET /v2.0/networks.json?shared=False HTTP/1.1" 200 758 0.396495
+2016-11-04 10:34:32.266 17166 INFO neutron.wsgi [req-62c019f1-04a7-430b-bcb0-7e70debff91d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:32] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.195847
+2016-11-04 10:34:32.402 17167 INFO neutron.wsgi [req-4d8dd5fe-66f3-466c-b376-6d1fc181619c b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:32] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.143687
+2016-11-04 10:34:32.541 17166 INFO neutron.wsgi [req-ba924d28-1d70-452c-84b4-a2c4438bde59 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:32] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.134139
+2016-11-04 10:34:32.665 17167 INFO neutron.wsgi [req-e583c0a0-2f45-43d7-8c90-d8cd30a6dccc b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:32] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.130581
+2016-11-04 10:34:32.784 17166 INFO neutron.wsgi [req-b6c791f7-28c6-4a34-9f53-e6d699363e4d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:34:32] "GET /v2.0/routers.json HTTP/1.1" 200 228 0.126241
+```
+Phát sinh Log tại /var/log/neutron/openvswitch-agent.log trên controller
+```sh
+2016-11-04 10:34:29.999 2214 INFO neutron.agent.securitygroups_rpc [req-2e042440-cfdd-4959-98a0-c21fb11d0a7c - - - - -] Provider rule updated
+2016-11-04 10:34:32.602 2214 INFO neutron.agent.securitygroups_rpc [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Refresh firewall rules
+2016-11-04 10:34:33.943 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Configuration for devices up [] and devices down [] completed.
+2016-11-04 10:34:35.545 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Port 095b13c7-6e91-4ddb-b8d6-124279eaf327 updated. Details: {u'profile': {}, u'network_qos_policy_id': None, u'qos_policy_id': None, u'allowed_address_pairs': [], u'admin_state_up': True, u'network_id': u'e9a14ace-1fa6-427c-98d2-1174ec03507c', u'segmentation_id': 379, u'device_owner': u'network:dhcp', u'physical_network': None, u'mac_address': u'fa:16:3e:f6:40:e0', u'device': u'095b13c7-6e91-4ddb-b8d6-124279eaf327', u'port_security_enabled': False, u'port_id': u'095b13c7-6e91-4ddb-b8d6-124279eaf327', u'fixed_ips': [{u'subnet_id': u'9aa3a9b4-9ee0-41ee-b778-b0e1f403b446', u'ip_address': u'192.168.2.50'}], u'network_type': u'gre', u'security_groups': []}
+2016-11-04 10:34:35.550 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Assigning 5 as local vlan for net-id=e9a14ace-1fa6-427c-98d2-1174ec03507c
+2016-11-04 10:34:37.109 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Skipping ARP spoofing rules for port 'tap095b13c7-6e' because it has port security disabled
+2016-11-04 10:34:39.107 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Configuration for devices up [u'095b13c7-6e91-4ddb-b8d6-124279eaf327'] and devices down [] completed.
+```
+Log tại /var/log/openvswitch/ovs-vswitchd.log trên controller
+```sh
+2016-11-04T03:34:31.929Z|00361|bridge|INFO|bridge br-int: added interface tap095b13c7-6e on port 15
+2016-11-04T03:34:34.078Z|00362|netdev_linux|WARN|tap095b13c7-6e: removing policing failed: No such device
+2016-11-04T03:34:34.116Z|00363|netdev_linux|INFO|ioctl(SIOCGIFHWADDR) on tap095b13c7-6e device failed: No such device
+2016-11-04T03:34:34.133Z|00364|netdev_linux|WARN|ioctl(SIOCGIFINDEX) on tap095b13c7-6e device failed: No such device
+2016-11-04T03:34:35.752Z|00365|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 modifications)
+2016-11-04T03:34:35.933Z|00366|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:34:36.375Z|00367|netdev_linux|WARN|tap095b13c7-6e: removing policing failed: No such device
+2016-11-04T03:34:37.286Z|00368|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:34:37.582Z|00369|ofp_util|INFO|normalization changed ofp_match, details:
+2016-11-04T03:34:37.582Z|00370|ofp_util|INFO| pre: in_port=15,nw_proto=58,tp_src=136
+2016-11-04T03:34:37.582Z|00371|ofp_util|INFO|post: in_port=15
+2016-11-04T03:34:37.584Z|00372|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:34:37.850Z|00373|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:34:38.108Z|00374|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:34:38.382Z|00375|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+```
+Log tại /var/log/neutron/openvswitch-agent.log trên compute
+```sh
+2016-11-04 10:34:29.957 1900 INFO neutron.agent.securitygroups_rpc [req-2e042440-cfdd-4959-98a0-c21fb11d0a7c - - - - -] Provider rule updated
+2016-11-04 10:34:31.050 1900 INFO neutron.agent.securitygroups_rpc [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Refresh firewall rules
+2016-11-04 10:34:32.388 1900 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Configuration for devices up [] and devices down [] completed.
+```
 
+Create router
+Log tại neutron server:
+```sh
+2016-11-04 10:39:55.893 17166 INFO neutron.wsgi [req-fe9ff939-9618-4573-9dfa-e9cdbd035715 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:39:55] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.356640
+2016-11-04 10:39:56.103 17167 INFO neutron.wsgi [req-032a3d2c-3ee5-4591-a7f0-a45c74513de2 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:39:56] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.214767
+```
+create complete:
+```sh
+2016-11-04 10:41:00.017 17166 INFO neutron.wsgi [req-7aff6460-bf5f-4d12-8c59-cd11d5b923e6 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:00] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.183589
+2016-11-04 10:41:00.334 17166 INFO neutron.wsgi [req-5b851524-c89f-4f7c-b7b3-6ae8315d398e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:00] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.298018
+2016-11-04 10:41:00.697 17166 INFO neutron.wsgi [req-3f765703-2f02-4623-88d5-8f780c812413 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:00] "POST /v2.0/routers.json HTTP/1.1" 201 516 0.354952
+2016-11-04 10:41:04.191 17166 INFO neutron.wsgi [req-faddeb89-2ca2-4e47-99ee-199710fb0c3a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:04] "PUT /v2.0/routers/e47ef1e7-3709-4cef-bb0c-8c55acba97ea.json HTTP/1.1" 200 692 3.462640
+2016-11-04 10:41:04.783 17166 INFO neutron.wsgi [req-5f76e251-45d4-45a7-ba56-98c4b1ac77f5 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:04] "GET /v2.0/routers.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&search_opts=None HTTP/1.1" 200 701 0.348896
+2016-11-04 10:41:04.970 17166 INFO neutron.wsgi [req-9c3ee6c8-97ee-476a-bb57-7575aa16722c b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:04] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.179424
+2016-11-04 10:41:05.096 17167 INFO neutron.wsgi [req-6d5e4788-f3ed-4d10-9372-fb67013852a8 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:05] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.118254
+2016-11-04 10:41:05.906 17166 INFO neutron.wsgi [req-80fba74d-3e89-42b0-9111-1da81448c119 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:05] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.047429
+2016-11-04 10:41:06.617 17167 INFO neutron.wsgi [req-48cc8f46-d76b-4bd5-a9f9-50e73b403f88 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:06] "GET /v2.0/quotas/bfb67b8eaead4f1684710db4608d1c48.json HTTP/1.1" 200 385 0.066481
+2016-11-04 10:41:07.270 17166 INFO neutron.wsgi [req-2d24dd85-0360-4fdf-9c6f-001b835db1e1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:07] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.051349
+2016-11-04 10:41:07.417 17167 INFO neutron.wsgi [req-b6353293-ad76-4bb1-ab1c-a242df529cfb b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:07] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 943 0.133038
+2016-11-04 10:41:07.674 17166 INFO neutron.wsgi [req-f65ff8cc-65ad-4afe-9fca-beb01d788b3a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:07] "GET /v2.0/security-groups.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 1841 0.240116
+2016-11-04 10:41:07.905 17167 INFO neutron.wsgi [req-c45be7d3-2b1e-4b9e-9fb4-0a61f7199c54 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:07] "GET /v2.0/networks.json?shared=False HTTP/1.1" 200 758 0.198007
+2016-11-04 10:41:08.122 17166 INFO neutron.wsgi [req-33485b4b-e5c8-4d7b-a139-31ab557d4f9a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:08] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.222501
+2016-11-04 10:41:08.572 17167 INFO neutron.wsgi [req-243b478d-5cde-4189-8e98-e7516b050439 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:08] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.443616
+2016-11-04 10:41:09.146 17166 INFO neutron.wsgi [req-30d86525-2140-4784-b1fb-2b0c4384d77e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:09] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.553750
+2016-11-04 10:41:09.459 17167 INFO neutron.wsgi [req-b2053bc5-4dea-45a0-bd74-df0c0486163a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:09] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.284128
+2016-11-04 10:41:09.669 17166 INFO neutron.wsgi [req-2166fcb5-a2f0-4a2d-a0c4-0e3bd46f8380 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:41:09] "GET /v2.0/routers.json HTTP/1.1" 200 701 0.198350
+```
+Thêm log tại /var/log/neutron/openvswitch-agent.log controller
+```sh
+2016-11-04 10:41:14.116 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Port 4ed640a1-de89-4fc2-a744-f99e652a4fe6 updated. Details: {u'profile': {}, u'network_qos_policy_id': None, u'qos_policy_id': None, u'allowed_address_pairs': [], u'admin_state_up': True, u'network_id': u'd3107881-083f-4bf7-a8b5-d8f0b3a46388', u'segmentation_id': None, u'device_owner': u'network:router_gateway', u'physical_network': u'external', u'mac_address': u'fa:16:3e:c4:16:d9', u'device': u'4ed640a1-de89-4fc2-a744-f99e652a4fe6', u'port_security_enabled': False, u'port_id': u'4ed640a1-de89-4fc2-a744-f99e652a4fe6', u'fixed_ips': [{u'subnet_id': u'cf7096d2-5a2f-40d6-b462-3ed605a677ff', u'ip_address': u'172.16.69.206'}], u'network_type': u'flat', u'security_groups': []}
+2016-11-04 10:41:15.673 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Skipping ARP spoofing rules for port 'qg-4ed640a1-de' because it has port security disabled
+2016-11-04 10:41:17.776 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Configuration for devices up [u'4ed640a1-de89-4fc2-a744-f99e652a4fe6'] and devices down [] completed.
+```
+Và log tại /var/log/openvswitch/ovs-vswitchd.log controller
+```sh
+2016-11-04T03:41:11.641Z|00376|bridge|INFO|bridge br-int: added interface qg-4ed640a1-de on port 16
+2016-11-04T03:41:12.691Z|00377|netdev_linux|INFO|ioctl(SIOCGIFHWADDR) on qg-4ed640a1-de device failed: No such device
+2016-11-04T03:41:12.702Z|00378|netdev_linux|WARN|ioctl(SIOCGIFINDEX) on qg-4ed640a1-de device failed: No such device
+2016-11-04T03:41:14.776Z|00379|netdev_linux|WARN|qg-4ed640a1-de: removing policing failed: No such device
+2016-11-04T03:41:16.078Z|00380|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:41:16.366Z|00381|ofp_util|INFO|normalization changed ofp_match, details:
+2016-11-04T03:41:16.366Z|00382|ofp_util|INFO| pre: in_port=16,nw_proto=58,tp_src=136
+2016-11-04T03:41:16.366Z|00383|ofp_util|INFO|post: in_port=16
+2016-11-04T03:41:16.370Z|00384|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:41:16.580Z|00385|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:41:16.834Z|00386|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:41:17.090Z|00387|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+```
+Click vào router vừa tạo, log tại neutron-server
+```sh
+2016-11-04 10:44:36.396 17166 INFO neutron.wsgi [req-38f8fca0-d05f-4d70-bf1b-54bb8667f782 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:44:36] "GET /v2.0/routers/e47ef1e7-3709-4cef-bb0c-8c55acba97ea.json HTTP/1.1" 200 698 2.461569
+2016-11-04 10:44:36.575 17167 INFO neutron.wsgi [req-a1f2707a-e775-4454-869d-7752b9e75676 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:44:36] "GET /v2.0/networks/d3107881-083f-4bf7-a8b5-d8f0b3a46388.json HTTP/1.1" 200 769 0.168532
+2016-11-04 10:44:36.708 17166 INFO neutron.wsgi [req-af277d89-9a4f-4b2b-86a6-b9bdb41afe65 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:44:36] "GET /v2.0/ports.json?device_id=e47ef1e7-3709-4cef-bb0c-8c55acba97ea HTTP/1.1" 200 226 0.124130
+2016-11-04 10:44:36.744 17166 INFO neutron.wsgi [req-dc92f9cd-3934-4715-958f-dff24269c458 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:44:36] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.017455
+```
+Chuyển tab interface và add interface:
+```sh
+2016-11-04 10:45:31.410 17167 INFO neutron.wsgi [req-68d5c91d-82be-4e9b-a4b5-53320e08e0ab b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:45:31] "GET /v2.0/routers/e47ef1e7-3709-4cef-bb0c-8c55acba97ea.json HTTP/1.1" 200 698 0.192074
+2016-11-04 10:45:31.634 17166 INFO neutron.wsgi [req-0befb502-a718-4542-8733-c88a1e8cfc08 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:45:31] "GET /v2.0/networks.json?shared=False&tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 758 0.207151
+2016-11-04 10:45:32.166 17167 INFO neutron.wsgi [req-535ba0a7-97b3-4b7c-aa80-faeb32222e2c b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:45:32] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.519662
+2016-11-04 10:45:32.492 17166 INFO neutron.wsgi [req-c466b7b6-b1c7-4581-9889-30d57132e57d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:45:32] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.317236
+2016-11-04 10:45:32.776 17166 INFO neutron.wsgi [req-7aeb566d-c92a-429c-b780-70628a91b726 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:45:32] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.256988
+2016-11-04 10:45:32.935 17167 INFO neutron.wsgi [req-f2890705-212a-461b-bef4-3721f113235b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:45:32] "GET /v2.0/ports.json?device_id=e47ef1e7-3709-4cef-bb0c-8c55acba97ea HTTP/1.1" 200 226 0.106298
+```
+Chọn subnet ở network vừa tạo và submit:
+```sh
+2016-11-04 10:46:25.989 17166 INFO neutron.wsgi [req-6b97ad16-9bc1-4af7-85a0-2e36526250b2 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:25] "GET /v2.0/routers/e47ef1e7-3709-4cef-bb0c-8c55acba97ea.json HTTP/1.1" 200 698 0.302907
+2016-11-04 10:46:26.488 17166 INFO neutron.wsgi [req-d93ddb77-c220-474a-8a4a-f0b0c58384ff b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:26] "GET /v2.0/networks.json?shared=False&tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 758 0.461310
+2016-11-04 10:46:26.748 17167 INFO neutron.wsgi [req-dd57f64d-9685-4efe-bda7-a1c397c80ab1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:26] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.259550
+2016-11-04 10:46:27.049 17166 INFO neutron.wsgi [req-a06a27b8-abf8-4b76-bacd-04ccb3281bcf b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:27] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.282939
+2016-11-04 10:46:27.198 17167 INFO neutron.wsgi [req-038bba7b-bea5-474e-a3be-f60a411fadb2 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:27] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.135362
+2016-11-04 10:46:27.395 17166 INFO neutron.wsgi [req-617b0523-546f-4298-ab99-53933cdb1eb7 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:27] "GET /v2.0/ports.json?device_id=e47ef1e7-3709-4cef-bb0c-8c55acba97ea HTTP/1.1" 200 226 0.173236
+2016-11-04 10:46:30.687 17167 INFO neutron.wsgi [req-d85c8060-8bd7-426a-9586-afb617b25689 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:30] "PUT /v2.0/routers/e47ef1e7-3709-4cef-bb0c-8c55acba97ea/add_router_interface.json HTTP/1.1" 200 523 3.280122
+2016-11-04 10:46:31.154 17166 INFO neutron.wsgi [req-b1e7d240-5825-4c8d-bbff-696acb52603e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:31] "GET /v2.0/ports/92465b41-0555-4d5a-91e4-e7b3653e21f3.json HTTP/1.1" 200 908 0.450501
+2016-11-04 10:46:31.517 17167 INFO neutron.wsgi [req-5e87fcf0-b261-430f-9556-4397e7c9bfca b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:31] "GET /v2.0/routers/e47ef1e7-3709-4cef-bb0c-8c55acba97ea.json HTTP/1.1" 200 698 0.257662
+2016-11-04 10:46:31.910 17166 INFO neutron.wsgi [req-26581cf3-98b2-4a53-b46c-30372bba1bce b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:31] "GET /v2.0/networks/d3107881-083f-4bf7-a8b5-d8f0b3a46388.json HTTP/1.1" 200 769 0.371708
+2016-11-04 10:46:32.144 17167 INFO neutron.wsgi [req-6c742320-8cf0-408c-b3b0-307ebee98d57 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:32] "GET /v2.0/ports.json?device_id=e47ef1e7-3709-4cef-bb0c-8c55acba97ea HTTP/1.1" 200 911 0.230232
+2016-11-04 10:46:32.167 17166 INFO neutron.wsgi [req-d87a6590-4ec1-4df8-af59-13d57ca2ca48 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:46:32] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.016205
+```
+Có thêm log tại /var/log/neutron/l3-agent.log controller
+```sh
+2016-11-04 10:46:38.254 2219 INFO neutron.agent.linux.interface [-] Device qg-4ed640a1-de already exists
+```
+thêm tại /var/log/neutron/openvswitch-agent.log controller
+```sh
+2016-11-04 10:46:36.624 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Port 92465b41-0555-4d5a-91e4-e7b3653e21f3 updated. Details: {u'profile': {}, u'network_qos_policy_id': None, u'qos_policy_id': None, u'allowed_address_pairs': [], u'admin_state_up': True, u'network_id': u'e9a14ace-1fa6-427c-98d2-1174ec03507c', u'segmentation_id': 379, u'device_owner': u'network:router_interface', u'physical_network': None, u'mac_address': u'fa:16:3e:a4:89:1b', u'device': u'92465b41-0555-4d5a-91e4-e7b3653e21f3', u'port_security_enabled': False, u'port_id': u'92465b41-0555-4d5a-91e4-e7b3653e21f3', u'fixed_ips': [{u'subnet_id': u'9aa3a9b4-9ee0-41ee-b778-b0e1f403b446', u'ip_address': u'192.168.2.1'}], u'network_type': u'gre', u'security_groups': []}
+2016-11-04 10:46:38.366 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Skipping ARP spoofing rules for port 'qr-92465b41-05' because it has port security disabled
+2016-11-04 10:46:40.632 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Configuration for devices up [u'92465b41-0555-4d5a-91e4-e7b3653e21f3'] and devices down [] completed.
+```
+thêm tại /var/log/neutron/dhcp-agent.log controller
+```sh
+2016-11-04 10:46:30.436 2218 INFO neutron.agent.dhcp.agent [req-d85c8060-8bd7-426a-9586-afb617b25689 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] Trigger reload_allocations for port admin_state_up=True, allowed_address_pairs=[], binding:host_id=, binding:profile=, binding:vif_details=, binding:vif_type=unbound, binding:vnic_type=normal, created_at=2016-11-04T03:46:28, description=, device_id=e47ef1e7-3709-4cef-bb0c-8c55acba97ea, device_owner=network:router_interface, dns_name=None, extra_dhcp_opts=[], fixed_ips=[{u'subnet_id': u'9aa3a9b4-9ee0-41ee-b778-b0e1f403b446', u'ip_address': u'192.168.2.1'}], id=92465b41-0555-4d5a-91e4-e7b3653e21f3, mac_address=fa:16:3e:a4:89:1b, name=, network_id=e9a14ace-1fa6-427c-98d2-1174ec03507c, port_security_enabled=False, security_groups=[], status=DOWN, tenant_id=bfb67b8eaead4f1684710db4608d1c48, updated_at=2016-11-04T03:46:28
+```
+thêm tại /var/log/openvswitch/ovs-vswitchd.log controller
+```sh
+2016-11-04T03:46:34.182Z|00388|bridge|INFO|bridge br-int: added interface qr-92465b41-05 on port 17
+2016-11-04T03:46:35.113Z|00389|netdev_linux|INFO|ioctl(SIOCGIFHWADDR) on qr-92465b41-05 device failed: No such device
+2016-11-04T03:46:35.173Z|00390|netdev_linux|WARN|ioctl(SIOCGIFINDEX) on qr-92465b41-05 device failed: No such device
+2016-11-04T03:46:37.173Z|00391|netdev_linux|WARN|qr-92465b41-05: removing policing failed: No such device
+2016-11-04T03:46:38.614Z|00392|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:46:38.921Z|00393|ofp_util|INFO|normalization changed ofp_match, details:
+2016-11-04T03:46:38.921Z|00394|ofp_util|INFO| pre: in_port=17,nw_proto=58,tp_src=136
+2016-11-04T03:46:38.921Z|00395|ofp_util|INFO|post: in_port=17
+2016-11-04T03:46:38.923Z|00396|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:46:39.123Z|00397|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:46:39.376Z|00398|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:46:39.685Z|00399|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+```
 
+- Các log khi create instance cho user tannt:
+	- neutron-server
+```sh
+2016-11-04 10:56:24.657 17167 INFO neutron.wsgi [req-6d141691-8110-4e47-bb27-42244b4e49bf b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:24] "GET /v2.0/security-groups.json?fields=id&id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 282 0.069635
+2016-11-04 10:56:24.719 17167 INFO neutron.wsgi [req-2b030b23-2fff-44a7-916a-5ff170b1dbfe b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:24] "GET /v2.0/security-groups/b8a9970e-4c41-4b35-a109-e45368a94a34.json HTTP/1.1" 200 2184 0.051862
+2016-11-04 10:56:24.991 17167 INFO neutron.wsgi [req-fcd750ea-ff35-4ed6-aaed-32a50fcb5162 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:24] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 758 0.264609
+2016-11-04 10:56:25.020 17167 INFO neutron.wsgi [req-965f32a3-443a-41fc-b81d-6cf7c36d458f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:25] "GET /v2.0/quotas/bfb67b8eaead4f1684710db4608d1c48.json HTTP/1.1" 200 385 0.021657
+2016-11-04 10:56:25.096 17167 INFO neutron.wsgi [req-9f9fe82e-7eed-48fa-a88d-d21e935f2d54 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:25] "GET /v2.0/ports.json?fields=id&tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 321 0.069662
+2016-11-04 10:56:26.383 17166 INFO neutron.wsgi [req-3f0127fb-de89-4630-9d1f-c46ff20ea520 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:26] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 226 0.164523
+2016-11-04 10:56:27.032 17167 INFO neutron.wsgi [req-80901aaa-2e1d-4b36-b05a-80adcce99caa b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:27] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 226 0.163671
+2016-11-04 10:56:27.173 17166 INFO neutron.wsgi [req-dd7ea3ac-dd47-4525-8496-4298f8e4be34 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:27] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 226 0.129120
+2016-11-04 10:56:27.261 17167 INFO neutron.wsgi [req-2bb7e1a2-9f80-435c-9922-3643e8f47b08 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:27] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.078782
+2016-11-04 10:56:27.434 17166 INFO neutron.wsgi [req-e8f2d79a-827b-4989-aa4f-48e1fb61d419 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:27] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 1632 0.166086
+2016-11-04 10:56:27.681 17167 INFO neutron.wsgi [req-be2b62d3-afad-4f76-8b3d-e73eec5cf8b4 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:27] "GET /v2.0/networks.json HTTP/1.1" 200 1303 0.235848
+2016-11-04 10:56:27.866 17166 INFO neutron.wsgi [req-adf6364d-6cfe-498b-8e5f-3cd0683b7cc9 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:27] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.180830
+2016-11-04 10:56:28.381 17167 INFO neutron.wsgi [req-ccf90198-e4c1-4aed-abf1-8012c43b5ee0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:28] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.026398
+2016-11-04 10:56:28.806 17166 INFO neutron.wsgi [req-ed228799-96a9-4e19-8c14-78a496719547 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:28] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.043847
+2016-11-04 10:56:28.894 17167 INFO neutron.wsgi [req-ca65e166-0999-476f-b6f6-298615a5c5f0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:28] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 758 0.500983
+2016-11-04 10:56:29.040 17167 INFO neutron.wsgi [req-e597ad8c-355c-45e2-9b8a-659077f34217 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:29] "GET /v2.0/security-groups.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2187 0.134713
+2016-11-04 10:56:31.001 17167 INFO neutron.wsgi [req-02321621-1a7c-4db2-abac-b59c2a9e39d2 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:31] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 226 0.113434
+2016-11-04 10:56:31.156 17166 INFO neutron.wsgi [req-ebacd693-c5a0-48c4-888f-25131aa26245 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:31] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 226 0.085006
+2016-11-04 10:56:31.231 17167 INFO neutron.wsgi [req-b2a876fa-d5ca-4afe-8aec-490820fc6222 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:31] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.040602
+2016-11-04 10:56:31.360 17166 INFO neutron.wsgi [req-8bbeeb7b-94e1-45a5-9461-ada2a4a4ad31 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:31] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2344 0.108649
+2016-11-04 10:56:31.524 17166 INFO neutron.wsgi [req-d19cf55f-c813-463f-9b35-14521c02bd6b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:31] "GET /v2.0/networks.json HTTP/1.1" 200 1303 0.155943
+2016-11-04 10:56:31.637 17167 INFO neutron.wsgi [req-957407a2-830a-4eb4-9cf9-eacbe42083be 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:31] "POST /v2.0/ports.json HTTP/1.1" 201 1091 1.646361
+2016-11-04 10:56:31.803 17166 INFO neutron.wsgi [req-e8aee4d5-6a44-4904-8c33-26e541dd220d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:31] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.272018
+2016-11-04 10:56:31.958 17166 INFO neutron.wsgi [req-60172c06-daf8-4841-898b-192b76c848b4 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:31] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.023503
+2016-11-04 10:56:31.966 17167 INFO neutron.wsgi [req-17e07a83-1cc8-47b3-8d8f-ea243cacc30e 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:31] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 1089 0.189272
+2016-11-04 10:56:32.039 17167 INFO neutron.wsgi [req-cc166c86-8e57-4a11-a066-e6f00e407a12 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:32] "GET /v2.0/floatingips.json?fixed_ip_address=192.168.2.51&port_id=6f8508dc-a880-4c69-81d0-3a9f77d3082d HTTP/1.1" 200 232 0.027602
+2016-11-04 10:56:32.260 17167 INFO neutron.wsgi [req-1d7f62a6-a3b3-4de6-8fbd-9a17cefb2ca1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:32] "GET /v2.0/subnets.json?id=9aa3a9b4-9ee0-41ee-b778-b0e1f403b446 HTTP/1.1" 200 784 0.204346
+2016-11-04 10:56:32.730 17167 INFO neutron.wsgi [req-809c1a4e-1be7-4a18-90f5-62d2aceaf515 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.81 - - [04/Nov/2016 10:56:32] "GET /v2.0/ports.json?network_id=e9a14ace-1fa6-427c-98d2-1174ec03507c&device_owner=network%3Adhcp HTTP/1.1" 200 943 0.461209
+2016-11-04 10:56:35.752 17166 INFO neutron.wsgi [req-19c5aa92-03de-4be8-96e7-7aedfb7c065e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:35] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 937 0.092978
+2016-11-04 10:56:35.861 17166 INFO neutron.wsgi [req-260fe14d-dc9b-44a1-984b-d75409a6f27d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:35] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.094056
+2016-11-04 10:56:36.005 17166 INFO neutron.wsgi [req-abdfd3ed-2a8b-4ccd-8fbf-24b001d7d30a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:36] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 937 0.065175
+2016-11-04 10:56:36.053 17167 INFO neutron.wsgi [req-cf0a4f30-5f59-45ee-9aec-9e43b9fbd45f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:36] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&port_id=6f8508dc-a880-4c69-81d0-3a9f77d3082d HTTP/1.1" 200 232 0.038691
+2016-11-04 10:56:36.124 17166 INFO neutron.wsgi [req-93495bf6-6e77-4b0c-97df-ea36e95d33be b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:36] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2344 0.065154
+2016-11-04 10:56:36.243 17166 INFO neutron.wsgi [req-9a60ff98-b74c-4401-aa0c-9a3eb65ef8e1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:36] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 758 0.112606
+2016-11-04 10:56:36.394 17167 INFO neutron.wsgi [req-1bcac796-bb9c-4bfc-8eaf-536aa8f46475 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:36] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.149414
+2016-11-04 10:56:36.487 17167 INFO neutron.wsgi [req-efa012c2-c562-4832-9f69-9b72f4925cd0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:36] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.005654
+2016-11-04 10:56:44.108 17167 INFO neutron.wsgi [req-2a7f4ed4-bc58-4b12-93ac-6f5b2ee6510c b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:44] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 938 0.068198
+2016-11-04 10:56:44.205 17167 INFO neutron.wsgi [req-71d8c160-7580-4ad2-af18-4ead5776174a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:44] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.086472
+2016-11-04 10:56:44.519 17166 INFO neutron.wsgi [req-224f8915-16e3-400b-ac35-2fdb965adf67 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:44] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 938 0.230215
+2016-11-04 10:56:44.559 17167 INFO neutron.wsgi [req-4636761b-0400-4a4a-a5b9-146478fb79d0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:44] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&port_id=6f8508dc-a880-4c69-81d0-3a9f77d3082d HTTP/1.1" 200 232 0.034862
+2016-11-04 10:56:44.619 17166 INFO neutron.wsgi [req-52bff830-5387-4480-9099-1d5a372cb399 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:44] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2345 0.051364
+2016-11-04 10:56:44.771 17167 INFO neutron.wsgi [req-39839a93-a87b-4b17-b775-547fe1e0837d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:44] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 758 0.146935
+2016-11-04 10:56:44.976 17166 INFO neutron.wsgi [req-376e960c-f5d9-4663-a884-b0502c634414 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:44] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.171004
+2016-11-04 10:56:45.101 17167 INFO neutron.wsgi [req-4191f494-543b-4547-a920-7f1a3f17d6ac b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:45] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.012845
+2016-11-04 10:56:52.503 17168 INFO neutron.notifiers.nova [-] Nova event response: {u'status': u'completed', u'tag': u'6f8508dc-a880-4c69-81d0-3a9f77d3082d', u'name': u'network-vif-plugged', u'server_uuid': u'35608eb1-bb21-4a02-9c75-01f16be58100', u'code': 200}
+2016-11-04 10:56:53.809 17167 INFO neutron.wsgi [req-45158338-13ca-408f-968d-bf5fdbfbf3b7 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:53] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.325658
+2016-11-04 10:56:53.938 17167 INFO neutron.wsgi [req-585024ad-3b42-43b0-9da7-b87d28d54e02 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:53] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.119029
+2016-11-04 10:56:54.117 17166 INFO neutron.wsgi [req-4ebe6ec6-9018-461c-adf8-31130d26ca42 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:54] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.084715
+2016-11-04 10:56:54.173 17167 INFO neutron.wsgi [req-056b1df5-30f0-4f8b-9a7a-a84032df84b1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:54] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&port_id=6f8508dc-a880-4c69-81d0-3a9f77d3082d HTTP/1.1" 200 232 0.044694
+2016-11-04 10:56:54.278 17166 INFO neutron.wsgi [req-78553499-ec81-4af8-9ca0-d890123a07ee b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:54] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.096862
+2016-11-04 10:56:54.443 17167 INFO neutron.wsgi [req-05d7acbb-e5bf-4830-b407-ec84193f9501 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:54] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 758 0.140187
+2016-11-04 10:56:54.556 17167 INFO neutron.wsgi [req-6bcd0139-bc01-4c71-bb8d-cb58b4cd189b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:56:54] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.105862
+2016-11-04 10:57:03.223 17166 INFO neutron.wsgi [req-844bde2b-6e22-4659-9cee-7fb3280ee6ce b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:57:03] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.008387
+2016-11-04 10:57:09.666 17166 INFO neutron.wsgi [req-43302a08-61a0-43ac-9416-fcf3d63b9ab1 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.80 - - [04/Nov/2016 10:57:09] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 1091 0.923050
+2016-11-04 10:57:09.806 17166 INFO neutron.wsgi [req-c8505e2c-a506-4ec8-8cb9-85eb2b4c41e5 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.80 - - [04/Nov/2016 10:57:09] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.103110
+2016-11-04 10:57:12.355 17167 INFO neutron.wsgi [req-b0b6527a-14d8-4fbc-9b8c-9c85522eccb9 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.80 - - [04/Nov/2016 10:57:12] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 1091 1.013557
+2016-11-04 10:57:12.506 17167 INFO neutron.wsgi [req-3730dc8b-883d-4e13-9dea-8ee1ec484fa6 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.80 - - [04/Nov/2016 10:57:12] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.140629
+```
+	- /var/log/neutron/dhcp-agent.log controller
+```sh
+2016-11-04 10:56:31.612 2218 INFO neutron.agent.dhcp.agent [req-957407a2-830a-4eb4-9cf9-eacbe42083be 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] Trigger reload_allocations for port admin_state_up=True, allowed_address_pairs=[], binding:host_id=compute1, binding:profile=, binding:vif_details=ovs_hybrid_plug=True, port_filter=True, binding:vif_type=ovs, binding:vnic_type=normal, created_at=2016-11-04T03:56:30, description=, device_id=35608eb1-bb21-4a02-9c75-01f16be58100, device_owner=compute:nova, dns_name=None, extra_dhcp_opts=[], fixed_ips=[{u'subnet_id': u'9aa3a9b4-9ee0-41ee-b778-b0e1f403b446', u'ip_address': u'192.168.2.51'}], id=6f8508dc-a880-4c69-81d0-3a9f77d3082d, mac_address=fa:16:3e:79:db:d3, name=, network_id=e9a14ace-1fa6-427c-98d2-1174ec03507c, port_security_enabled=True, security_groups=[u'b8a9970e-4c41-4b35-a109-e45368a94a34'], status=DOWN, tenant_id=bfb67b8eaead4f1684710db4608d1c48, updated_at=2016-11-04T03:56:31
+```
+	- /var/log/neutron/neutron-metadata-agent.log controller
+```sh
+2016-11-04 10:57:09.863 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:09] "GET /2009-04-04/meta-data/instance-id HTTP/1.1" 200 127 3.029244
+2016-11-04 10:57:09.959 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:09] "GET /2009-04-04/meta-data/public-keys HTTP/1.1" 404 176 0.045171
+2016-11-04 10:57:12.536 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/meta-data/instance-id HTTP/1.1" 200 127 2.525567
+2016-11-04 10:57:12.753 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/meta-data/ami-launch-index HTTP/1.1" 200 117 0.166626
+2016-11-04 10:57:12.781 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/meta-data/instance-type HTTP/1.1" 200 123 0.007676
+2016-11-04 10:57:12.810 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/meta-data/local-ipv4 HTTP/1.1" 200 129 0.007228
+2016-11-04 10:57:12.846 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/meta-data/public-ipv4 HTTP/1.1" 200 116 0.006554
+2016-11-04 10:57:12.875 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/meta-data/hostname HTTP/1.1" 200 132 0.008162
+2016-11-04 10:57:12.918 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/meta-data/local-hostname HTTP/1.1" 200 132 0.017128
+2016-11-04 10:57:12.966 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:12] "GET /2009-04-04/user-data HTTP/1.1" 404 176 0.007689
+2016-11-04 10:57:13.000 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:13] "GET /2009-04-04/meta-data/block-device-mapping HTTP/1.1" 200 124 0.006561
+2016-11-04 10:57:13.046 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:13] "GET /2009-04-04/meta-data/block-device-mapping/ami HTTP/1.1" 200 119 0.027849
+2016-11-04 10:57:13.071 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:13] "GET /2009-04-04/meta-data/block-device-mapping/root HTTP/1.1" 200 124 0.008173
+2016-11-04 10:57:13.098 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:13] "GET /2009-04-04/meta-data/public-hostname HTTP/1.1" 200 132 0.006084
+2016-11-04 10:57:13.129 2124 INFO eventlet.wsgi.server [-] 192.168.2.51,<local> - - [04/Nov/2016 10:57:13] "GET /2009-04-04/meta-data/placement/availability-zone HTTP/1.1" 200 120 0.007582
+```
+	- /var/log/neutron/openvswitch-agent.log controller
+```sh
+2016-11-04 10:56:31.261 2214 INFO neutron.agent.securitygroups_rpc [req-957407a2-830a-4eb4-9cf9-eacbe42083be 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] Security group member updated [u'b8a9970e-4c41-4b35-a109-e45368a94a34']
+```
+	- /var/log/openvswitch/ovs-vswitchd.log controller
+```sh
+2016-11-04T03:56:48.381Z|00400|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:48.570Z|00401|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 modifications)
+```
+	- /var/log/neutron/openvswitch-agent.log compute
+```sh
+2016-11-04 10:56:31.302 1900 INFO neutron.agent.securitygroups_rpc [req-957407a2-830a-4eb4-9cf9-eacbe42083be 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] Security group member updated [u'b8a9970e-4c41-4b35-a109-e45368a94a34']
+2016-11-04 10:56:39.972 1900 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Port 6f8508dc-a880-4c69-81d0-3a9f77d3082d updated. Details: {u'profile': {}, u'network_qos_policy_id': None, u'qos_policy_id': None, u'allowed_address_pairs': [], u'admin_state_up': True, u'network_id': u'e9a14ace-1fa6-427c-98d2-1174ec03507c', u'segmentation_id': 379, u'device_owner': u'compute:nova', u'physical_network': None, u'mac_address': u'fa:16:3e:79:db:d3', u'device': u'6f8508dc-a880-4c69-81d0-3a9f77d3082d', u'port_security_enabled': True, u'port_id': u'6f8508dc-a880-4c69-81d0-3a9f77d3082d', u'fixed_ips': [{u'subnet_id': u'9aa3a9b4-9ee0-41ee-b778-b0e1f403b446', u'ip_address': u'192.168.2.51'}], u'network_type': u'gre', u'security_groups': [u'b8a9970e-4c41-4b35-a109-e45368a94a34']}
+2016-11-04 10:56:39.975 1900 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Assigning 4 as local vlan for net-id=e9a14ace-1fa6-427c-98d2-1174ec03507c
+2016-11-04 10:56:41.690 1900 INFO neutron.agent.securitygroups_rpc [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Preparing filters for devices set([u'6f8508dc-a880-4c69-81d0-3a9f77d3082d'])
+2016-11-04 10:56:48.241 1900 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Configuration for devices up [u'6f8508dc-a880-4c69-81d0-3a9f77d3082d'] and devices down [] completed.
+```
+	- /var/log/openvswitch/ovs-vswitchd.log compute
+```sh
+2016-11-04T03:56:37.390Z|00096|bridge|INFO|bridge br-int: added interface qvo6f8508dc-a8 on port 6
+2016-11-04T03:56:40.202Z|00097|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 modifications)
+2016-11-04T03:56:40.466Z|00098|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:45.634Z|00099|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:56:45.823Z|00100|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:46.368Z|00101|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:46.621Z|00102|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:46.784Z|00103|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:47.001Z|00104|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:47.230Z|00105|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 adds)
+2016-11-04T03:56:48.361Z|00106|connmgr|INFO|br-tun<->unix: 2 flow_mods in the last 0 s (2 adds)
+2016-11-04T03:56:48.551Z|00107|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 modifications)
+```
 
+- Log khi thêm floating IP cho instance vừa tạo:
+	- Neutron-server
+		- click associate IP
+```sh
+2016-11-04 11:03:07.053 17167 INFO neutron.wsgi [req-46cc3c40-3858-47c4-8c8c-6fa42c16ad49 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:07] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 1.244240
+2016-11-04 11:03:07.124 17166 INFO neutron.wsgi [req-c78351ef-3633-4988-90c7-4e139bf33d28 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:07] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.057293
+2016-11-04 11:03:07.282 17167 INFO neutron.wsgi [req-44c35184-79e3-473b-97a8-8333f12445d5 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:07] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.142701
+2016-11-04 11:03:07.376 17166 INFO neutron.wsgi [req-540faf0e-8112-470f-a207-047addbc4c3b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:07] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.082107
+2016-11-04 11:03:07.711 17166 INFO neutron.wsgi [req-52d521e0-036e-4839-aeed-b4a206116bb1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:07] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.121229
+2016-11-04 11:03:07.885 17166 INFO neutron.wsgi [req-c6106ae1-295a-4563-9b46-954003f65f8f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:07] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.159413
+2016-11-04 11:03:08.079 17167 INFO neutron.wsgi [req-a468342c-af03-44b6-ae81-2bed52c99006 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:08] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.159720
+2016-11-04 11:03:08.280 17166 INFO neutron.wsgi [req-7288dc9b-ebc3-496f-959d-9f1f9af5a19f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:08] "GET /v2.0/routers.json HTTP/1.1" 200 701 0.180383
+2016-11-04 11:03:08.535 17167 INFO neutron.wsgi [req-2834e16b-6ba6-4760-83e1-cbbdbcafad34 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:08] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.240129
+2016-11-04 11:03:08.743 17166 INFO neutron.wsgi [req-4b2d2218-25f6-447c-98ef-d13ced0a6168 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:03:08] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.182288
+```
+		- click button +
+```sh
+2016-11-04 11:04:52.001 17167 INFO neutron.wsgi [req-3c38567c-7fcb-4a06-97cf-8fe00f96f5e1 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:52] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.034749
+2016-11-04 11:04:52.222 17166 INFO neutron.wsgi [req-b541ba91-36ca-46b9-b03f-bd59dbbffdab b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:52] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.206981
+2016-11-04 11:04:52.359 17167 INFO neutron.wsgi [req-72b521fc-f4fb-4d4e-9e5a-ee148ba9ab81 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:52] "GET /v2.0/quotas/bfb67b8eaead4f1684710db4608d1c48.json HTTP/1.1" 200 385 0.023521
+2016-11-04 11:04:52.790 17166 INFO neutron.wsgi [req-1e12ccc0-27eb-4618-8ab0-8e5d161295fe b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:52] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.102926
+2016-11-04 11:04:52.999 17166 INFO neutron.wsgi [req-16caa7f9-7f97-4af3-86b1-b3844c416d40 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:52] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.206359
+2016-11-04 11:04:53.189 17166 INFO neutron.wsgi [req-6ba0f49e-3fc9-41f1-8c1f-e384aae02c10 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:53] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.054343
+2016-11-04 11:04:53.338 17167 INFO neutron.wsgi [req-4513bf56-203d-477a-87ba-b9ef2def2aa0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:53] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.134042
+2016-11-04 11:04:53.497 17166 INFO neutron.wsgi [req-4b4268b0-5dac-4208-bb8c-23f4ec9cdf8f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:53] "GET /v2.0/security-groups.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2187 0.140984
+2016-11-04 11:04:53.923 17167 INFO neutron.wsgi [req-dcdbf559-3b4a-47e8-9d6c-ad765fb5a0f0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:53] "GET /v2.0/networks.json?shared=False HTTP/1.1" 200 758 0.411465
+2016-11-04 11:04:54.112 17166 INFO neutron.wsgi [req-3dbf8854-fead-4925-aab5-cfbb468595ea b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:54] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.165274
+2016-11-04 11:04:54.328 17167 INFO neutron.wsgi [req-98c219f9-a248-4027-9e44-cc975c30b349 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:54] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.199107
+2016-11-04 11:04:54.506 17166 INFO neutron.wsgi [req-89281c50-0433-41f7-95d4-e1f43f692003 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:54] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.165807
+2016-11-04 11:04:54.709 17167 INFO neutron.wsgi [req-56faaa7f-f83c-4e89-94c5-93e9157409c0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:54] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.188963
+2016-11-04 11:04:54.892 17167 INFO neutron.wsgi [req-a8ad8d0b-e62a-4308-9c83-6ac4e5b2c76d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:04:54] "GET /v2.0/routers.json HTTP/1.1" 200 701 0.171498
+```
+		- chọn provider và allocate IP
+```sh
+2016-11-04 11:05:39.963 17166 INFO neutron.wsgi [req-cec7cfb7-6307-492b-926f-a6a710fbee63 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:39] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.012190
+2016-11-04 11:05:40.191 17167 INFO neutron.wsgi [req-884bc392-3673-40e4-8d1b-4532979eef36 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:40] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.210541
+2016-11-04 11:05:40.334 17166 INFO neutron.wsgi [req-7a467bd6-9290-416f-9438-30799ca0fb4d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:40] "GET /v2.0/quotas/bfb67b8eaead4f1684710db4608d1c48.json HTTP/1.1" 200 385 0.030674
+2016-11-04 11:05:40.827 17166 INFO neutron.wsgi [req-c8347b5f-0916-41fa-8a9c-8e18a75bc8d7 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:40] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.195248
+2016-11-04 11:05:40.952 17166 INFO neutron.wsgi [req-931e24df-e697-47b7-ad00-25113490c525 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:40] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.122948
+2016-11-04 11:05:41.065 17167 INFO neutron.wsgi [req-4aadda0c-f50e-4f06-b261-188c03259594 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:41] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.032503
+2016-11-04 11:05:41.161 17166 INFO neutron.wsgi [req-12fa4e86-0981-459b-bed6-529decd568a5 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:41] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.094415
+2016-11-04 11:05:41.320 17167 INFO neutron.wsgi [req-30fd4e9f-eeb5-4bb7-8248-79bf22aecc79 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:41] "GET /v2.0/security-groups.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2187 0.138011
+2016-11-04 11:05:41.580 17166 INFO neutron.wsgi [req-3adddac2-7e55-4b11-865b-0eba74e45a9e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:41] "GET /v2.0/networks.json?shared=False HTTP/1.1" 200 758 0.241712
+2016-11-04 11:05:41.828 17167 INFO neutron.wsgi [req-0826b31e-5eec-4438-9e6b-ac874ca68e96 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:41] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.220238
+2016-11-04 11:05:42.519 17166 INFO neutron.wsgi [req-49f8b6bf-3240-48c3-9779-238e9a16593f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:42] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.659806
+2016-11-04 11:05:42.773 17167 INFO neutron.wsgi [req-3e8a79b6-2701-4422-9962-fefa8d85582a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:42] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.213484
+2016-11-04 11:05:42.929 17166 INFO neutron.wsgi [req-727b7fc9-6995-4d79-b69a-a9179a39245e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:42] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.151919
+2016-11-04 11:05:43.045 17167 INFO neutron.wsgi [req-f5505011-7efc-4e1d-af5f-cedccab34c36 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:43] "GET /v2.0/routers.json HTTP/1.1" 200 701 0.124425
+2016-11-04 11:05:44.284 17166 INFO neutron.wsgi [req-1173a05a-c4ca-4518-a20b-8922e6831daf b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:05:44] "POST /v2.0/floatingips.json HTTP/1.1" 201 566 1.219184
+```
+		- Sau khi có IP, chọn Associate:
+```sh
+2016-11-04 11:06:36.059 17166 INFO neutron.wsgi [req-68b3c644-add0-4f1a-84cc-6c4145056787 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:36] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.034098
+2016-11-04 11:06:36.148 17167 INFO neutron.wsgi [req-8aaf864d-6577-448c-bc59-724351cfd2fa b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:36] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 564 0.069061
+2016-11-04 11:06:36.395 17166 INFO neutron.wsgi [req-4f8ff3d1-bd20-44c9-aa64-93f778582fe3 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:36] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.214720
+2016-11-04 11:06:36.816 17167 INFO neutron.wsgi [req-2083187d-c47a-4fc4-ae16-9b76649bdd21 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:36] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.392505
+2016-11-04 11:06:37.146 17166 INFO neutron.wsgi [req-8cb7d837-864b-40fd-b453-ff34974de561 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:37] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.083892
+2016-11-04 11:06:37.338 17166 INFO neutron.wsgi [req-0a318bca-54f8-468f-b9d2-b82a557d14b6 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:37] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.171473
+2016-11-04 11:06:37.657 17166 INFO neutron.wsgi [req-03dd659b-31c4-4942-a47d-926eeed7dccf b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:37] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.264890
+2016-11-04 11:06:38.134 17167 INFO neutron.wsgi [req-171d3837-978f-4b22-8f41-5a17ba7f5850 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:38] "GET /v2.0/routers.json HTTP/1.1" 200 701 0.453103
+2016-11-04 11:06:38.450 17166 INFO neutron.wsgi [req-65194fbd-1b54-4789-b937-7d8e8e1aed8f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:38] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.309637
+2016-11-04 11:06:38.885 17167 INFO neutron.wsgi [req-2d29d38c-f119-46cb-8990-211c44f377f2 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:38] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.419013
+2016-11-04 11:06:40.918 17166 INFO neutron.wsgi [req-020cbf91-66a6-4fd4-916b-37fc3906cd1a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:40] "PUT /v2.0/floatingips/a4fe5109-20d8-46b4-8d9d-f6e036fa82cc.json HTTP/1.1" 200 639 2.019817
+2016-11-04 11:06:41.904 17167 INFO neutron.wsgi [req-0ebfdea9-47c2-4b8d-bbec-28e4fdb8e6c6 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:41] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.307505
+2016-11-04 11:06:42.605 17167 INFO neutron.wsgi [req-557a553d-5bb7-4931-aa13-c7d060311da8 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:42] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.389160
+2016-11-04 11:06:42.964 17166 INFO neutron.wsgi [req-b5077060-1332-4fc5-a673-26178d0993ad b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:42] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.189300
+2016-11-04 11:06:43.493 17167 INFO neutron.wsgi [req-b01cae2a-b033-4c70-8771-d0d0a9e8c21e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:43] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&port_id=6f8508dc-a880-4c69-81d0-3a9f77d3082d HTTP/1.1" 200 642 0.498149
+2016-11-04 11:06:44.138 17166 INFO neutron.wsgi [req-583026a7-d98a-4862-bcd1-c888606c3356 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:44] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.592069
+2016-11-04 11:06:45.143 17167 INFO neutron.wsgi [req-bf148996-5abf-468b-9255-d99b366d1650 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:45] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 758 0.905099
+2016-11-04 11:06:46.247 17166 INFO neutron.wsgi [req-d703bd42-981f-4fbe-b217-988dc88d1443 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:46] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 1.058615
+2016-11-04 11:06:46.833 17166 INFO neutron.wsgi [req-b2138ff2-a16f-4318-a399-be7ef58fb20b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:46] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.065932
+2016-11-04 11:06:47.100 17166 INFO neutron.notifiers.nova [-] Nova event response: {u'status': u'completed', u'code': 200, u'name': u'network-changed', u'server_uuid': u'35608eb1-bb21-4a02-9c75-01f16be58100'}
+2016-11-04 11:06:47.337 17167 INFO neutron.wsgi [req-261dd43b-b7c8-404b-bec4-a21da277e5cc 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 11:06:47] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 1091 0.169771
+2016-11-04 11:06:47.571 17167 INFO neutron.wsgi [req-75cef106-4519-46be-9802-8f28baca30ee 51358268cc894066a5876114769ac86e 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 11:06:47] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 858 0.181079
+2016-11-04 11:06:47.697 17167 INFO neutron.wsgi [req-f8b2e109-d385-431e-8777-15814298adc8 3dc74eecdd0b42f0a6c3e37f95d1075b 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 11:06:47] "GET /v2.0/floatingips.json?fixed_ip_address=192.168.2.51&port_id=6f8508dc-a880-4c69-81d0-3a9f77d3082d HTTP/1.1" 200 642 0.058667
+2016-11-04 11:06:48.318 17167 INFO neutron.wsgi [req-8a26c40b-a586-4a86-a6ce-cd9d9bd4b03e 51358268cc894066a5876114769ac86e 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 11:06:48] "GET /v2.0/subnets.json?id=9aa3a9b4-9ee0-41ee-b778-b0e1f403b446 HTTP/1.1" 200 784 0.568003
+2016-11-04 11:06:48.878 17167 INFO neutron.wsgi [req-f7826a52-4087-4c28-897a-82da5ed6d7b7 51358268cc894066a5876114769ac86e 4a62dba1952f4d18a8b635aeaed655b3 - - -] 10.10.10.81 - - [04/Nov/2016 11:06:48] "GET /v2.0/ports.json?network_id=e9a14ace-1fa6-427c-98d2-1174ec03507c&device_owner=network%3Adhcp HTTP/1.1" 200 1098 0.516191
+2016-11-04 11:06:49.860 17166 INFO neutron.wsgi [req-ba5365c4-ba46-4825-95bb-386b20e48a1f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:49] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.159906
+2016-11-04 11:06:50.053 17166 INFO neutron.wsgi [req-d27e51d5-f0bf-4837-a7e3-7a7e2eee7c23 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:50] "GET /v2.0/security-groups.json?id=b8a9970e-4c41-4b35-a109-e45368a94a34 HTTP/1.1" 200 2187 0.179178
+2016-11-04 11:06:50.219 17167 INFO neutron.wsgi [req-a3feb419-4087-494e-a932-2e2450a5a4ea b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:50] "GET /v2.0/ports.json?device_id=35608eb1-bb21-4a02-9c75-01f16be58100 HTTP/1.1" 200 939 0.131007
+2016-11-04 11:06:50.406 17166 INFO neutron.wsgi [req-aecb2f6a-e2b6-4703-93e9-fad1080d0423 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:50] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48&port_id=6f8508dc-a880-4c69-81d0-3a9f77d3082d HTTP/1.1" 200 642 0.149775
+2016-11-04 11:06:50.582 17167 INFO neutron.wsgi [req-4c33c7cd-4190-4449-a693-25b5140311a2 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:50] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 2346 0.148202
+2016-11-04 11:06:50.943 17166 INFO neutron.wsgi [req-77f7a566-6f7d-429e-80a5-30e2f13d86bb b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:50] "GET /v2.0/networks.json?id=e9a14ace-1fa6-427c-98d2-1174ec03507c HTTP/1.1" 200 758 0.316560
+2016-11-04 11:06:51.202 17167 INFO neutron.wsgi [req-4f21fbe6-d44e-4e13-863b-af7d7233ebb5 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 11:06:51] "GET /v2.0/subnets.json HTTP/1.1" 200 1344 0.245128
+```
+===> Xong: tạo network, subnet, router, instance, floating IP đối với một tenant network của user tannt
 
+- Xóa một tenant network đã có
+Log tại neutron:
+```sh
+2016-11-04 10:27:37.869 17167 INFO neutron.wsgi [req-d456138c-bf4a-4dae-9c1e-242afce14874 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:37] "GET /v2.0/networks.json?shared=False&tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 752 0.153553
+2016-11-04 10:27:38.060 17166 INFO neutron.wsgi [req-444308b4-fdd2-4295-9028-0f93647a3b2d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:38] "GET /v2.0/subnets.json HTTP/1.1" 200 1337 0.175520
+2016-11-04 10:27:38.319 17167 INFO neutron.wsgi [req-c698750a-cf63-4110-83bf-c0d341a458c5 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:38] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.253085
+2016-11-04 10:27:38.513 17166 INFO neutron.wsgi [req-a472360e-f1c6-4297-9f7a-75eb949b5457 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:38] "GET /v2.0/subnets.json HTTP/1.1" 200 1337 0.158070
+2016-11-04 10:27:38.733 17167 INFO neutron.wsgi [req-ae7255b2-2b89-40a0-acb7-dfcde139f71a b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:38] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.210105
+2016-11-04 10:27:38.913 17166 INFO neutron.wsgi [req-d6b9dbfd-718a-4b0d-b8c3-6520d5e0ff8e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:38] "GET /v2.0/subnets.json HTTP/1.1" 200 1337 0.170232
+2016-11-04 10:27:39.099 17167 INFO neutron.wsgi [req-b924ab2b-8ed7-4374-bc53-e5740e5ed19d b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:39] "GET /v2.0/networks/02ccb907-2980-49e8-a45d-857973263a98.json HTTP/1.1" 200 749 0.171592
+2016-11-04 10:27:41.349 17166 INFO neutron.wsgi [req-71a137af-e51d-4488-bf30-38ce21a5a869 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:41] "DELETE /v2.0/subnets/02a27717-a902-4830-9e09-eeefd6515bfd.json HTTP/1.1" 204 173 2.233861
+2016-11-04 10:27:43.075 17167 INFO neutron.wsgi [req-1313b06d-4524-4c1a-9267-665463ad6df3 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:43] "DELETE /v2.0/networks/02ccb907-2980-49e8-a45d-857973263a98.json HTTP/1.1" 204 173 1.744097
+2016-11-04 10:27:43.298 17167 INFO neutron.wsgi [req-2b2e49f0-255a-4ffa-8700-b6253f8af9c6 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:43] "GET /v2.0/networks.json?shared=False&tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 229 0.151712
+2016-11-04 10:27:43.473 17166 INFO neutron.wsgi [req-37ee86c4-c218-4eb0-a885-c770bf4c63ce b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:43] "GET /v2.0/subnets.json HTTP/1.1" 200 786 0.158021
+2016-11-04 10:27:43.601 17167 INFO neutron.wsgi [req-d8ae1863-2f6c-4e17-ba4a-2598e389bb2b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:43] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.126595
+2016-11-04 10:27:43.730 17166 INFO neutron.wsgi [req-a717686b-f1e7-4712-b90f-a4878a50b490 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:43] "GET /v2.0/subnets.json HTTP/1.1" 200 786 0.134496
+2016-11-04 10:27:43.835 17167 INFO neutron.wsgi [req-ead343c5-c18c-43fc-8479-189f6bdfccbc b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:43] "GET /v2.0/networks.json?router%3Aexternal=True HTTP/1.1" 200 772 0.114313
+2016-11-04 10:27:43.923 17166 INFO neutron.wsgi [req-0baf5274-4f82-484a-b5ee-338aa1b7501c b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:43] "GET /v2.0/subnets.json HTTP/1.1" 200 786 0.096411
+2016-11-04 10:27:44.093 17167 INFO neutron.wsgi [req-00e552ab-bc8e-4244-8888-a38795fb7d9b b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:44] "GET /v2.0/extensions.json HTTP/1.1" 200 6007 0.011362
+2016-11-04 10:27:44.322 17166 INFO neutron.wsgi [req-a0583c65-b2b1-475c-a5df-0159b560ab3f b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:44] "GET /v2.0/quotas/bfb67b8eaead4f1684710db4608d1c48.json HTTP/1.1" 200 385 0.025068
+2016-11-04 10:27:45.810 17167 INFO neutron.wsgi [req-e6fb0311-80a1-4b00-a275-88aebbae77e7 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:45] "GET /v2.0/floatingips.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 232 0.062468
+2016-11-04 10:27:45.920 17166 INFO neutron.wsgi [req-a124137e-f79d-452f-b879-823e62fbbdbd b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:45] "GET /v2.0/ports.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 226 0.106608
+2016-11-04 10:27:46.022 17166 INFO neutron.wsgi [req-61a86320-1051-4510-8137-a1da988b2462 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:46] "GET /v2.0/security-groups.json?tenant_id=bfb67b8eaead4f1684710db4608d1c48 HTTP/1.1" 200 1841 0.098214
+2016-11-04 10:27:46.282 17167 INFO neutron.wsgi [req-e456f8f9-4618-4e56-8d48-f7ff74acc831 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:46] "GET /v2.0/networks.json?shared=False HTTP/1.1" 200 229 0.259603
+2016-11-04 10:27:46.505 17166 INFO neutron.wsgi [req-5b623720-25ec-4740-b05b-f094f224d8b0 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:46] "GET /v2.0/subnets.json HTTP/1.1" 200 786 0.209470
+2016-11-04 10:27:46.643 17167 INFO neutron.wsgi [req-f526ed3d-12ee-4493-b40d-e1a28469c4cf b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:46] "GET /v2.0/networks.json?shared=True HTTP/1.1" 200 772 0.144331
+2016-11-04 10:27:46.840 17166 INFO neutron.wsgi [req-7fbe1e60-d67c-43d3-814c-12e9d0b35145 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:46] "GET /v2.0/subnets.json HTTP/1.1" 200 786 0.159869
+2016-11-04 10:27:47.073 17167 INFO neutron.wsgi [req-615445a4-bd64-40d0-a391-8c5eab4f791e b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:47] "GET /v2.0/subnets.json HTTP/1.1" 200 786 0.223172
+2016-11-04 10:27:47.239 17166 INFO neutron.wsgi [req-ea24253f-858f-41f3-8c47-211680368d35 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] 10.10.10.80 - - [04/Nov/2016 10:27:47] "GET /v2.0/routers.json HTTP/1.1" 200 228 0.148854
+```
 
+Log tại /var/log/neutron/openvswitch-agent.log tren controller
+```sh
+2016-11-04 10:27:40.852 2214 INFO neutron.agent.securitygroups_rpc [req-71a137af-e51d-4488-bf30-38ce21a5a869 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] Provider rule updated
+2016-11-04 10:27:42.558 2214 INFO neutron.agent.securitygroups_rpc [req-1313b06d-4524-4c1a-9267-665463ad6df3 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] Provider rule updated
+2016-11-04 10:27:43.292 2214 INFO neutron.agent.common.ovs_lib [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Port 2ba12505-9b3c-4d88-b463-5676344a32ec not present in bridge br-int
+2016-11-04 10:27:43.294 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Reclaiming vlan = 4 from net-id = 02ccb907-2980-49e8-a45d-857973263a98
+2016-11-04 10:27:43.887 2214 INFO neutron.agent.securitygroups_rpc [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Remove device filter for [u'2ba12505-9b3c-4d88-b463-5676344a32ec']
+2016-11-04 10:27:46.761 2214 INFO neutron.agent.securitygroups_rpc [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Refresh firewall rules
+2016-11-04 10:27:48.083 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Configuration for devices up [] and devices down [] completed.
+2016-11-04 10:27:50.169 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Configuration for devices up [] and devices down [] completed.
+2016-11-04 10:27:50.172 2214 INFO neutron.agent.securitygroups_rpc [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Remove device filter for set([u'2ba12505-9b3c-4d88-b463-5676344a32ec'])
+2016-11-04 10:27:50.548 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] Ports set([u'2ba12505-9b3c-4d88-b463-5676344a32ec']) removed
+2016-11-04 10:27:50.580 2214 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-8d7a733f-a6b1-494d-9597-929855ef51a7 - - - - -] port_unbound(): net_uuid None not in local_vlan_map
+```
 
+Log tại /var/log/openvswitch/ovs-vswitchd.log trên controller
+```sh
+2016-11-04T03:27:43.447Z|00349|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:43.613Z|00350|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:43.743Z|00351|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:43.872Z|00352|connmgr|INFO|br-tun<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:44.949Z|00353|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:45.420Z|00354|ofp_util|INFO|normalization changed ofp_match, details:
+2016-11-04T03:27:45.420Z|00355|ofp_util|INFO| pre: in_port=14,nw_proto=58,tp_src=136
+2016-11-04T03:27:45.420Z|00356|ofp_util|INFO|post: in_port=14
+2016-11-04T03:27:45.424Z|00357|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:45.816Z|00358|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:46.047Z|00359|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+2016-11-04T03:27:46.318Z|00360|connmgr|INFO|br-int<->unix: 1 flow_mods in the last 0 s (1 deletes)
+```
 
-
-
-
+Log tại /var/log/neutron/openvswitch-agent.log trên compute
+```sh
+2016-11-04 10:27:40.841 1900 INFO neutron.agent.securitygroups_rpc [req-71a137af-e51d-4488-bf30-38ce21a5a869 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] Provider rule updated
+2016-11-04 10:27:42.556 1900 INFO neutron.agent.securitygroups_rpc [req-1313b06d-4524-4c1a-9267-665463ad6df3 b56c4988c2e9491b8c9364e3b0d00b5a bfb67b8eaead4f1684710db4608d1c48 - - -] Provider rule updated
+2016-11-04 10:27:42.798 1900 INFO neutron.agent.securitygroups_rpc [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Refresh firewall rules
+2016-11-04 10:27:43.559 1900 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Configuration for devices up [] and devices down [] completed.
+2016-11-04 10:27:44.135 1900 INFO neutron.agent.common.ovs_lib [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Port 2ba12505-9b3c-4d88-b463-5676344a32ec not present in bridge br-int
+2016-11-04 10:27:44.139 1900 INFO neutron.plugins.ml2.drivers.openvswitch.agent.ovs_neutron_agent [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] port_unbound(): net_uuid None not in local_vlan_map
+2016-11-04 10:27:44.140 1900 INFO neutron.agent.securitygroups_rpc [req-f244f227-08d8-4c86-b75d-495e3e8486ed - - - - -] Remove device filter for [u'2ba12505-9b3c-4d88-b463-5676344a32ec']
+```
 
 # Khi Compute node restart
 
@@ -1359,7 +1810,15 @@ LOG tại neutron-server
 
 ![error-create-instance](/Images/error-create-instance.png)
 
+**Nguyên nhân**: Do khi tạo network Admin không chọn đúng tên đã khai báo trong cấu hình ml2. 
+```sh
+[ml2_type_flat]
+flat_networks = external
+```
 
+![error-create-instance-fix](/Images/error-create-instance-fix.png)
+
+Phần khung đỏ phải điền đúng với interface khai báo trong file config
 
 
 
