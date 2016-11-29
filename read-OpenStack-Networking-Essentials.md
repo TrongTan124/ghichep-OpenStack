@@ -15,7 +15,7 @@
 <a name="phan1"></a>
 # 1. Sơ lược
 OpenStack là một hệ điều hành cloud nguồn mở, được thiết kế để điều khiển tài nguyên chung của các thành phần compute, storage, networking. 
-OpenStack ngày càng tăng trưởng mạnh mẽ để giảm chi phí vận hành và vốn. OpenStack đã bùng nổ trong vài năm trở lại đây nhờ các tính năng, linh hoạt và độ hoàn thiện của nó.
+OpenStack ngày càng tăng trưởng mạnh mẽ để giảm chi phí vận hành và chi phí. OpenStack đã bùng nổ trong vài năm trở lại đây nhờ các tính năng, linh hoạt và độ hoàn thiện của nó.
 
 Trong sách này, chúng ta sẽ khám phá về thành phần networking của OpenStack, được biết đến như Neutron. Neutron cung cấp một API cho người dùng xây dựng tài nguyên mạng ảo như 
 switch, router, load balancer, firewall. Chúng ta sẽ đi qua việc cài đặt OpenStack sử dụng RDO để xem các thành phần cốt lõi của API, tạo nên network, subnet, port. 
@@ -78,7 +78,7 @@ ML2 plugin dựa vào các loại khác nhau của driver để xác định lo�
 
 - **Neutron agents**
 
-Neutron server là controller tập trung cảu mạng, chịu trách nhiệm cung cấp API cho người dùng lưu trữ thông tin về mạng trong database. Tuy nhiên, lệnh thực thi mạng được thực hiện tại
+Neutron server là controller tập trung của mạng, chịu trách nhiệm cung cấp API cho người dùng lưu trữ thông tin về mạng trong database. Tuy nhiên, lệnh thực thi mạng được thực hiện tại
 compute và network node bởi các agent. Neutron agent nhận message và chỉ dận từ Neutron server trong message bus và thực thi.
 
 - **DHCP agent**:
