@@ -94,7 +94,7 @@ bridge_mappings = external:br-ex
 # neutron router-port-list MyRouter -c fixed_ips
 ```
 
-- view router
+- view namespace router
 ```sh
 # ip netns show
 ```
