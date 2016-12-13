@@ -279,4 +279,41 @@ NXST_FLOW reply (xid=0x4):
 
 - Để ý sẽ thấy các gói tin có tag 1 sẽ được bóc tách và gắn vlan ban đầu 101, sau đó gửi ra ngoài.
 
+- Tiếp đến gói tin sẽ gửi sang node controller. Kiểm tra flow table trên ovs br-vlan node controller
+```sh
+root@controller1:~/scripts# ovs-ofctl dump-flows br-vlan
+NXST_FLOW reply (xid=0x4):
+ cookie=0x8e4eca27fd0db218, duration=4410.639s, table=0, n_packets=93, n_bytes=12356, idle_age=4214, priority=4,in_port=2,dl_vlan=3 actions=mod_vlan_vid:101,NORMAL
+ cookie=0x8e4eca27fd0db218, duration=4522.518s, table=0, n_packets=22, n_bytes=1804, idle_age=4404, priority=2,in_port=2 actions=drop
+ cookie=0x8e4eca27fd0db218, duration=4524.364s, table=0, n_packets=1380, n_bytes=200616, idle_age=3, priority=0 actions=NORMAL
+```
+
+- Để ý sẽ thấy vlan 101 được bóc tách và gắn tag 3 khi đi vào.
+
+- Đến đây, việc kiểm tra traffic có vẻ không còn đơn giản. ví kết nối giữa các ovs bằng patch, kết nối ovs và namespace bằng tap. Kiểm tra tap interface kết nối từ br-int tới namespace 
+dhcp
+```sh
+root@controller1:~/scripts# ovs-vsctl show
+...
+Bridge br-int
+        ...
+        Port "tap69a39669-e5"
+            tag: 3
+            Interface "tap69a39669-e5"
+                type: internal
+        ...
+...
+```
+
+- Tại sao tôi biết tap interface này, vì tôi nhìn vào openflow table ở br-vlan, với vlan 101 sẽ được bóc tách và tag 3.
+
+- Bắt gói tin để phân tích. Thực hiện bắt gói tin trên interface eth2 mà ta gắn vào ovs br-vlan trên node compute để xem gói tin đi qua đây.
+```sh
+root@compute1:~# tcpdump -e -n -i eth2 -s 0 -w /tmp/eth2.pcap
+```
+
+- Ta sẽ thấy goi tin gửi qua được đóng gói 802.1q
+
+![lab-vlan-16](/Images/lab-vlan-16.png)
+
 ## tham khảo
