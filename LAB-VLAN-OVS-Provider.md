@@ -22,6 +22,31 @@
 
 ### Thiết lập Interface Loopback
 
-- Vì LAB trường hợp kết nối VLAN nên interface trên switch phải thiết lập trunk và kết nối tới interface trên HOST
+- Vì LAB trường hợp kết nối VLAN nên interface trên switch phải thiết lập trunk. Ta không có môi trường switch vật lý thật nên sẽ tạo một card Loopback trên máy cài Vmware workstation. 
+Cấu hình card Loopback như một bridge trên Linux (switch Layer2).
+
+- Trên windows server 2012 gõ lệnh cửa sổ run
+
+![lab-vlan-1](/Images/lab-vlan-1.png)
+
+- Sẽ hiển thị cửa sổ add hardware như dưới
+
+![lab-vlan-1](/Images/lab-vlan-1.png)
+
+- Thực hiện tiếp các bước sau
+
+![lab-vlan-3](/Images/lab-vlan-3.png)
+
+![lab-vlan-4](/Images/lab-vlan-4.png)
+
+![lab-vlan5](/Images/lab-vlan-5.png)
+
+![lab-vlan-6](/Images/lab-vlan-6.png)
+
+![lab-vlan-7](/Images/lab-vlan-7.png)
+
+### Cấu hình bridge
+
+- Sau khi tạo được Interface Loopback
 
 ## tham khảo
