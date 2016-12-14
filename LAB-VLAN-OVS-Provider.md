@@ -76,7 +76,7 @@ trên Vmnet0
 
 - Sau khi cài đặt xong, ta thực hiện tạo máy ảo theo Vlan được khai báo lúc tạo network.
 
-### Phân tích traffic
+### Phân tích traffic giữa VM và namespace DHCP
 
 - Mô hình các thành phần sau khi cài đặt xong OpenStack
 
@@ -315,5 +315,19 @@ root@compute1:~# tcpdump -e -n -i eth2 -s 0 -w /tmp/eth2.pcap
 - Ta sẽ thấy goi tin gửi qua được đóng gói 802.1q
 
 ![lab-vlan-16](/Images/lab-vlan-16.png)
+
+### Phân tích traffic giữa VM1 trên Node1 và VM2 trên Node2
+
+- Tôi thực hiện kiểm tra traffic giữa 02 VM nằm trên 02 Node khác nhau. Nhận thấy traffic di chuyển như sau:
+
+![lab-vlan-18-vm1-vm2](/Images/lab-vlan-18-vm1-vm2.png)
+
+- Gói tin đi ra đến eth2 của mỗi compute được đóng gói 802.1Q trước khi gửi ra ngoài. 
+
+![lab-vlan-17-vm1-vm2](/Images/lab-vlan-17-vm1-vm2.png)
+
+- Dữ liệu được gỡ bỏ tag Vlan 101 sau khi đi vào OVS dựa theo flow table đã mô tả bên trên.
+
+- Các flow table được Neutron điều khiển khai báo.
 
 ## tham khảo
