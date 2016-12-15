@@ -337,7 +337,7 @@ root@compute1:~# tcpdump -e -n -i eth2 -s 0 -w /tmp/eth2.pcap
 
 - Các flow table được Neutron điều khiển khai báo, nên nếu khai báo sai sẽ dẫn tới lỗi switch
 
-### Phân tích traffic giữa VM1 trên Node1 và VM2 trên cùng Node
+### Phân tích traffic giữa VM1 và VM2 trên cùng Node
 ----
 
 - Kiểm tra gói tin thì chỉ thấy duy nhất một gói tin broadcast được gửi trước khi thiết lập kết nối giữa 2 VM. Bắt gói trên eth2:

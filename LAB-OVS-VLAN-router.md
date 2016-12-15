@@ -59,3 +59,4 @@ up /sbin/ifconfig $IFACE up || /bin/true
 
 - [http://net.doit.wisc.edu/~dwcarder/captivator/linux_trunking_bridging.txt](http://net.doit.wisc.edu/~dwcarder/captivator/linux_trunking_bridging.txt)
 - [http://blog.frosty-geek.net/2011/02/ubuntu-tagged-vlan-interfaces-and.html](http://blog.frosty-geek.net/2011/02/ubuntu-tagged-vlan-interfaces-and.html)
+- [http://blog.davidvassallo.me/2012/05/05/kvm-brctl-in-linux-bringing-vlans-to-the-guests/](http://blog.davidvassallo.me/2012/05/05/kvm-brctl-in-linux-bringing-vlans-to-the-guests/)
