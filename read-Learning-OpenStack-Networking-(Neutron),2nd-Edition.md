@@ -60,14 +60,40 @@ Theo kiến trúc của OpenStack Networking, có ít nhất 4 loại traffic c�
 
 ![read-v2-2](/Images/read-v2-2.png)
 
+#### Multiple Interfaces
+
+- 
+
 
 <a name="phan2"></a>
 # Chương 2: Installing OpenStack
 
-![read-flow-agent](/Images/read-flow-agent.png)
-
 <a name="phan3"></a>
 # Chương 3: Installing Neutron
+
+#### Basic networking elements in Neutron.
+
+- Sử dụng Neutron API, người dùng có thể tạo network với các thành phần sau:
+	- Network
+	- Subnet
+	- Port
+	
+#### Extending functionality with plugins
+
+Có 2 loại plugin trong kiến trúc Neutron
+- Core plugin
+	- ml2
+- Service plugin
+	- router
+	- load balancer
+	- firewall
+	- virtual private network
+	
+#### ML2 architecture
+
+Mô hình ở mức high level cách thức tương tác giữa các thành phần trong Neutron
+
+![read-v2-3](/Images/read-v2-3.png)
 
 <a name="phan4"></a>
 # Chương 4: Building a Virtual Switching Infrastructure
