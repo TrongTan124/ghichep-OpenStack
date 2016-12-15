@@ -95,6 +95,24 @@ Mô hình ở mức high level cách thức tương tác giữa các thành ph�
 
 ![read-v2-3](/Images/read-v2-3.png)
 
+#### Configuring the Neutron metadata agent
+
+- OpenStack cung cấp metadata service để người dùng nhận các thông tin về instance. Các thông tin này được sử dụng để cấu hình hoặc quản lý instance. 
+Metadata gồm nhiều thông tin như hostname, fixed, floating IP, public keys,...
+
+- Instance truy cập vào metadata thông qua HTTP tại địa chỉ http://169.254.169.254 trong suốt quá trình khởi động
+
+![read-v2-4](/Images/read-v2-4.png)
+
+1. Instance gửi yêu cầu metadata tới 169.254.169.254 thông qua HTTP khi khởi động
+2. Yêu cầu metadata gửi tới router hoặc DHCP namespace
+3. metadata proxy service trong namespace gửi yêu cầu tới Neutron metadata thông qua Unix socket
+4. Neutron metadata gửi yêu cầu tới Nova metadata API service
+5. Nova metadata API service phản hồi lại yêu cầu tới Neutron metadata
+6. Neutron metadata gửi trả lại phản hồi tới metadata proxy trong namespace
+7. metadata proxy service gửi trả lại phản hồi tới instance thông qua HTTP
+8. Instance nhận thông tin metadata và tiếp tục khởi động
+
 <a name="phan4"></a>
 # Chương 4: Building a Virtual Switching Infrastructure
 
