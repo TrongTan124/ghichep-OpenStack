@@ -21,6 +21,7 @@
 ## Cài đặt
 
 ### Thiết lập Interface Loopback
+----
 
 - Vì LAB trường hợp kết nối VLAN nên interface trên switch phải thiết lập trunk. Ta không có môi trường switch vật lý thật nên sẽ tạo một card Loopback trên máy cài Vmware workstation. 
 Cấu hình card Loopback như một bridge trên Linux (switch Layer2).
@@ -46,6 +47,7 @@ Cấu hình card Loopback như một bridge trên Linux (switch Layer2).
 ![lab-vlan-7](/Images/lab-vlan-7.png)
 
 ### Cấu hình bridge
+----
 
 - Sau khi tạo được Interface Loopback, ta thiết lập một card bridge cho VMware workstation. Gắn card bridge này vào các Node để LAB Vlan. Đầu tiên bỏ interface loopback 
 trên Vmnet0
@@ -57,6 +59,7 @@ trên Vmnet0
 ![lab-vlan-9](/Images/lab-vlan-9.png)
 
 ### Thiết lập cấu hình interface node
+----
 
 - Cài đặt các máy ảo Ubuntu với một card mạng mặc định
 
@@ -70,6 +73,8 @@ trên Vmnet0
 
 ### Cài đặt OpenStack
 
+----
+
 - Việc cài đặt tham khảo script tại [đây](https://github.com/congto/OpenStack-Mitaka-Scripts/tree/vlan/Ubuntu-OVS-VLAN)
 
 - Vì Controller tôi để 3GB RAM nên không cần cài đặt Horizon, giao tiếp mọi thứ qua CLI (command line interface).
@@ -77,6 +82,7 @@ trên Vmnet0
 - Sau khi cài đặt xong, ta thực hiện tạo máy ảo theo Vlan được khai báo lúc tạo network.
 
 ### Phân tích traffic giữa VM và namespace DHCP
+----
 
 - Mô hình các thành phần sau khi cài đặt xong OpenStack
 
@@ -317,6 +323,7 @@ root@compute1:~# tcpdump -e -n -i eth2 -s 0 -w /tmp/eth2.pcap
 ![lab-vlan-16](/Images/lab-vlan-16.png)
 
 ### Phân tích traffic giữa VM1 trên Node1 và VM2 trên Node2
+----
 
 - Tôi thực hiện kiểm tra traffic giữa 02 VM nằm trên 02 Node khác nhau. Nhận thấy traffic di chuyển như sau:
 
@@ -328,6 +335,17 @@ root@compute1:~# tcpdump -e -n -i eth2 -s 0 -w /tmp/eth2.pcap
 
 - Dữ liệu được gỡ bỏ tag Vlan 101 sau khi đi vào OVS dựa theo flow table đã mô tả bên trên.
 
-- Các flow table được Neutron điều khiển khai báo.
+- Các flow table được Neutron điều khiển khai báo, nên nếu khai báo sai sẽ dẫn tới lỗi switch
+
+### Phân tích traffic giữa VM1 trên Node1 và VM2 trên cùng Node
+----
+
+- Kiểm tra gói tin thì chỉ thấy duy nhất một gói tin broadcast được gửi trước khi thiết lập kết nối giữa 2 VM. Bắt gói trên eth2:
+
+![lab-vlan-21-vm1-vm2](/Images/lab-vlan-21-vm1-vm2-1host.png)
+
+- Sau đó gói tin được truyền giữa 02 VM thông qua ovs br-int. không có gói tin nào đi qua eth2 nữa.
+
+###
 
 ## tham khảo
