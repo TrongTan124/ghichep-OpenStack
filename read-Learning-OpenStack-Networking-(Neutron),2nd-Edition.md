@@ -19,6 +19,48 @@
 
 #### OpenStack Networking là gì?
 
+- OpenStack Networking là một pluggable, scalable và API-driven system để quản lý mạng và địa chỉ IP trong một OpenStack-based cloud. Như các thành phần core khác trong OpenStack, OpenStack Networking được sử dụng bởi
+người quản trị và user để tăng value và maximize đối với tài nguyên có sẵn tại data center.
+
+- Neutron - code name OpenStack Networking, là một standalone services giống như Nova (compute service), Glance (image service), Keystone (identity service), Cinder (block storage) và Horizon (dashboard). 
+OpenStack Networking services có thể được tách ra nhiều host để cung cấp khả năng đàn hồi và dự phòng. Hoặc có thể được cài đặt trên một node đơn.
+
+- OpenStack Networking cung cấp một application programmable interface (API), để người dùng hay các yêu cầu chuyển tới thực thi cấu hình network và xử lý khác. 
+Người dùng có thể định nghĩa các kết nối mạng riêng trong cloud.
+
+#### Các đặc tính của OpenStack Networking.
+
+- OpenStack Networking bao gồm rất nhiều công nghệ trong datacenter, như switching, routing, load balancing, firewalling, và VPN.
+
+##### Switching
+
+##### Routing
+
+##### Load balacing
+
+##### Firewalling
+
+#### Preparing the physical infrastructure
+
+Khi thiết kế một network, quan trọng nhất là xác định cách thức cloud sẽ làm việc. Có yêu cầu về việc mở rộng, dự phòng không? 
+
+![read-v2-1](/Images/read-v2-1.png)
+
+#### Các loại network traffic
+
+Theo kiến trúc của OpenStack Networking, có ít nhất 4 loại traffic có thể được nhìn thấy:
+- Management
+- API
+- External
+- Guest
+
+#### Single Interface
+
+- Trong trường hợp triển khai Cloud với 1 interface. Cả 4 loại traffic có thể đi chung vào một interface của HOST. 
+
+![read-v2-2](/Images/read-v2-2.png)
+
+
 <a name="phan2"></a>
 # Chương 2: Installing OpenStack
 
