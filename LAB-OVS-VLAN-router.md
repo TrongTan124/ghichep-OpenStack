@@ -151,37 +151,37 @@ root@compute1:/etc/libvirt/qemu# ovs-vsctl show
 
 #### Kiểm tra bằng lệnh tcpdump trên Node compute
 
-1. Thực hiện lệnh ping từ VM
+1 Thực hiện lệnh ping từ VM
 
 ![lab-vlan-24](/Images/lab-vlan-24.png)
 
-2. Gói tin gửi ra tap interface
+2 Gói tin gửi ra tap interface
 
 ![lab-vlan-25](/Images/lab-vlan-25.png)
 
-3. Gói tin qua linux bridge
+3 Gói tin qua linux bridge
 
 ![lab-vlan-26](/Images/lab-vlan-26.png)
 
-4. Gói tin qua veth pair
+4 Gói tin qua veth pair
 
 ![lab-vlan-27](/Images/lab-vlan-27.png)
 
 ![lab-vlan-28](/Images/lab-vlan-28.png)
 
-5. Kiểm tra flow table trên switch br-int. gói tin được gán tag vlan 101 sẽ được bóc tách và gán tag 1
+5 Kiểm tra flow table trên switch br-int. gói tin được gán tag vlan 101 sẽ được bóc tách và gán tag 1
 
 ![lab-vlan-31](/Images/lab-vlan-31.png)
 
-6. Kiểm tra flow table trên switch br-vlan. Gói tin đi ra được gán tag 1 sẽ bóc tách và gán tag vlan 101
+6 Kiểm tra flow table trên switch br-vlan. Gói tin đi ra được gán tag 1 sẽ bóc tách và gán tag vlan 101
 
 ![lab-vlan-32](/Images/lab-vlan-32.png)
 
-7. Gói tin ra eth2
+7 Gói tin ra eth2
 
 ![lab-vlan-29](/Images/lab-vlan-29.png)
 
-8. Gói tin được đóng gói 802.1q với vlan 101. Vlan này dc tạo để gắn VM vào bởi người quản trị.
+8 Gói tin được đóng gói 802.1q với vlan 101. Vlan này dc tạo để gắn VM vào bởi người quản trị.
 
 ![lab-vlan-30](/Images/lab-vlan-30.png)
 
@@ -191,9 +191,9 @@ Gói tin được đi qua các thành phần trên node controller
 
 ![lab-vlan-33](/Images/lab-vlan-33.png)
 
-1. Dữ liệu đi qua port eth2 (trunk)
+1 Dữ liệu đi qua port eth2 (trunk)
 
-2. Dữ liệu tới switch br-vlan
+2 Dữ liệu tới switch br-vlan
 ```sh
 root@controller1:~# ovs-vsctl show
 ...
@@ -252,6 +252,10 @@ root@controller1:~# ovs-vsctl show
 4. Dữ liệu đi vào tap interface tới DHCP namespace
 
 ![lab-vlan-34](/Images/lab-vlan-34.png)
+
+- Tôi thấy lệnh tcpdump chạy trong namespace ko tốt, gói tin ko hiển thị tức thời. nên tôi sử dụng lệnh tshark để bắt gói
+
+![lab-vlan-38](/Images/lab-vlan-38.png)
 
 ## Tham khảo
 
