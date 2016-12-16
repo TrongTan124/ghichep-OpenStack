@@ -257,6 +257,33 @@ root@controller1:~# ovs-vsctl show
 
 ![lab-vlan-38](/Images/lab-vlan-38.png)
 
+
+### Traffic DHCP
+----
+
+#### Create VM
+
+Khi có một request tạo VM, có một loạt các giao tiếp giữa nova tới glance, neutron để thực hiện tìm kiếm host, lấy IP, ... Sau khi các hành động trên thực thi xong, nova sẽ gọi tới hypervisor để khởi tạo. 
+VM thực hiện khởi tạo sẽ xin cấp phát IP, ở bước này, DHCP namespace cấp IP cho VM và ghi lại thông tin. 
+
+![lab-traffic-2-dhcp-create-vm](/Images/lab-traffic-2-dhcp-create-vm.png)
+
+#### Restart VM
+
+Ở lần khởi động lại VM, VM vẫn thực hiện gửi gói tin DHCP, nhưng lần này kèm theo một gói tin release để cấp lại IP cũ
+
+![lab-traffic-2-dhcp-restart-vm](/Images/lab-traffic-2-dhcp-restart-vm.png)
+
+- Các gói tin DHCP đi từ VM tới DHCP namespace theo flow đã phân tích ở trên.
+
+### Traffice metadata
+
+Sau khi gửi gói tin DHCP xong, VM sẽ thực hiện gửi request để lấy thông tin metadata từ nova. Mỗi lần VM khởi động đều gửi gói tin yêu cầu này.
+
+![lab-traffic-1-metadata](/Images/lab-traffic-1-metadata.png)
+
+
+
 ## Tham khảo
 
 - [http://net.doit.wisc.edu/~dwcarder/captivator/linux_trunking_bridging.txt](http://net.doit.wisc.edu/~dwcarder/captivator/linux_trunking_bridging.txt)
