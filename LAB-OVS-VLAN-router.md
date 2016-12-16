@@ -211,7 +211,7 @@ root@controller1:~# ovs-vsctl show
 ...
 ```
 
-3. Dữ liệu đi tiếp tới switch br-int
+3 Dữ liệu đi tiếp tới switch br-int
 ```sh
 root@controller1:~# ovs-vsctl show
 ...
@@ -233,23 +233,23 @@ root@controller1:~# ovs-vsctl show
 ...
 ```
 
-4. Dữ liệu tới tap interface của DHCP namespace
+4 Dữ liệu tới tap interface của DHCP namespace
 
 #### Bắt gói tin bằng tcpdump trên Node Controller
 
-1. Dữ liệu đóng gói 802.1q khi vào eth2
+1 Dữ liệu đóng gói 802.1q khi vào eth2
 
 ![lab-vlan-35](/Images/lab-vlan-35.png)
 
-2. Dữ liệu qua br-vlan, dump flow table trên switch br-vlan ta thấy gói tin khi đi ra mà có tag là 1 sẽ được bóc tách và gán tag vlan 101
+2 Dữ liệu qua br-vlan, dump flow table trên switch br-vlan ta thấy gói tin khi đi ra mà có tag là 1 sẽ được bóc tách và gán tag vlan 101
 
 ![lab-vlan-36](/Images/lab-vlan-36.png)
 
-3. Dữ liệu qua br-int, dump flow table trên br-int. ta thấy dữ liệu đi vào dc tag vlan 101 sẽ tách và gán vlan 1
+3 Dữ liệu qua br-int, dump flow table trên br-int. ta thấy dữ liệu đi vào dc tag vlan 101 sẽ tách và gán vlan 1
 
 ![lab-vlan-37](/Images/lab-vlan-37.png)
 
-4. Dữ liệu đi vào tap interface tới DHCP namespace
+4 Dữ liệu đi vào tap interface tới DHCP namespace
 
 ![lab-vlan-34](/Images/lab-vlan-34.png)
 
