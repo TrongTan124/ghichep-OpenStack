@@ -68,7 +68,7 @@ Mô hình kết nối
 
 ![lab-vlan-22](/Images/lab-vlan-22.png)
 
-#### Ta thực hiện ping từ VM tới DHCP và sẽ phân tích traffice trên node Compute trước.
+#### Ta thực hiện ping từ VM tới DHCP và sẽ phân tích traffic trên node Compute trước.
 
 ![lab-vlan-23](/Images/lab-vlan-23.png)
 
