@@ -1,12 +1,17 @@
 ﻿## Chuẩn bị
 
-- Cài đặt OpenStack OVS distro ubuntu 14.04 trước.
+- Cài đặt OpenStack OVS với distro ubuntu 14.04 trước. theo tài liệu [này](https://github.com/congto/OpenStack-Mitaka-Scripts/tree/vlan/Ubuntu-OVS-VLAN/scripts)
 
 - Tạo network với vlan 101, tạo VM gắn vào network.
 
-- Cài đặt một host với linux bridge (không có openstack)
+- Cài đặt một host với linux bridge (không có openstack).
 
 ## Cài đặt
+
+- Cài đặt linux bridge
+```sh
+apt-get -y install qemu-kvm libvirt-bin virtinst bridge-utils
+```
 
 - Yêu cầu cài đặt thêm gói vlan trên host cài linux bridge
 ```sh
@@ -67,7 +72,7 @@ Mô hình kết nối
 
 ![lab-vlan-23](/Images/lab-vlan-23.png)
 
-1. Xem port tap của VM bằng cách:
+1 Xem port tap của VM bằng cách:
 ```sh
 root@compute1:/etc/libvirt/qemu# vi instance-00000002.xml
 ...
@@ -81,7 +86,7 @@ root@compute1:/etc/libvirt/qemu# vi instance-00000002.xml
 ...
 ```
 
-2. Linux bridge dc tạo gắn tap của VM vào
+2 Linux bridge dc tạo gắn tap của VM vào
 ```sh
 root@compute1:/etc/libvirt/qemu# brctl show
 bridge name	bridge id		STP enabled	interfaces
@@ -89,7 +94,7 @@ qbrccdf123f-97		8000.22e693574fdb	no		qvbccdf123f-97
 							tapccdf123f-97
 ```
 
-3. Kết nối qvo-qvb là veth pair
+3 Kết nối qvo-qvb là veth pair
 ```sh
 root@compute1:/etc/libvirt/qemu# ip -d link show
 ...
@@ -102,7 +107,7 @@ root@compute1:/etc/libvirt/qemu# ip -d link show
 ...
 ```
 
-4. Kiểm tra switch br-int bằng lệnh ovs-vsctl
+4 Kiểm tra switch br-int bằng lệnh ovs-vsctl
 ```sh
 root@compute1:/etc/libvirt/qemu# ovs-vsctl show
 ...
@@ -117,7 +122,7 @@ root@compute1:/etc/libvirt/qemu# ovs-vsctl show
 ...
 ```
 
-5. Kiểm tra switch br-vlan bằng lệnh ovs-vsctl
+5 Kiểm tra switch br-vlan bằng lệnh ovs-vsctl
 ```sh
 root@compute1:/etc/libvirt/qemu# ovs-vsctl show
 ...
@@ -142,7 +147,7 @@ root@compute1:/etc/libvirt/qemu# ovs-vsctl show
 ...
 ```
 
-6. Dữ liệu được đóng gói và gửi ra ngoài qua interface eth2
+6 Dữ liệu được đóng gói và gửi ra ngoài qua interface eth2
 
 #### Kiểm tra bằng lệnh tcpdump trên Node compute
 
