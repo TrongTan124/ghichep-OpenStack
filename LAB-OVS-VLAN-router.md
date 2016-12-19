@@ -20,6 +20,7 @@ apt-get install vlan
 
 ## Cấu hình
 
+### Cách 1: Sử dụng linux bridge
 - Sử dụng một Host cài Linux bridge, cấu hình sub interface eth2.101
 
 - Tạo linux bridge br-vlan101
@@ -59,6 +60,56 @@ up /sbin/ifconfig $IFACE up || /bin/true
 ```sh
 # ifdown -a && ifup -a
 ```
+
+### Cách 2: Chỉ sử dụng sub-interface
+
+- Tôi chỉ khai báo sub-interface cho eth2 và gán ip cho sub-interface này:
+```sh
+auto eth2.101
+iface eth2.101 inet static
+address 192.168.101.1
+netmask 255.255.255.0
+```
+
+- Từ các VM cấu hình ip với gateway là `192.168.101.1`
+
+- Thực hiện ping từ VM tới ip gateway. kết quả OK
+
+![lab-traffic-4-router](/Images/lab-traffic-4-router.png)
+
+- Trên router có 2 interface, eth1 dc gán vào NAT của vmware. và sub-interface eth2.101
+```sh
+auto eth1
+iface eth1 inet static
+address 172.16.69.70
+netmask 255.255.255.0
+gateway 172.16.69.1
+dns-nameservers 8.8.8.8
+
+auto eth2
+iface eth2 inet manual
+
+auto eth2.101
+iface eth2.101 inet static
+address 192.168.101.1
+netmask 255.255.255.0
+```
+
+- Thực hiện forward gói tin từ eth2.101 sang eth1 để các VM có thể kết nối ra ngoài internet.
+	- Set up IP FORWARDing and Masquerading
+	```sh
+	iptables --table nat --append POSTROUTING --out-interface eth1 -j MASQUERADE
+	iptables --append FORWARD --in-interface eth2.101 -j ACCEPT
+	```
+	
+	-  Enables packet forwarding by kernel 
+	```sh
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	```
+	
+- Trên VM thực hiện ping ra internet OK
+
+![lab-traffic-5-vm-ping-internet](/Images/lab-traffic-5-vm-ping-internet.png)
 
 ## Phân tích traffic
 
@@ -276,7 +327,7 @@ VM thực hiện khởi tạo sẽ xin cấp phát IP, ở bước này, DHCP na
 
 - Các gói tin DHCP đi từ VM tới DHCP namespace theo flow đã phân tích ở trên.
 
-### Traffice metadata
+### Traffic metadata
 
 Sau khi gửi gói tin DHCP xong, VM sẽ thực hiện gửi request để lấy thông tin metadata từ nova. Mỗi lần VM khởi động đều gửi gói tin yêu cầu này.
 
@@ -289,3 +340,4 @@ Sau khi gửi gói tin DHCP xong, VM sẽ thực hiện gửi request để lấ
 - [http://net.doit.wisc.edu/~dwcarder/captivator/linux_trunking_bridging.txt](http://net.doit.wisc.edu/~dwcarder/captivator/linux_trunking_bridging.txt)
 - [http://blog.frosty-geek.net/2011/02/ubuntu-tagged-vlan-interfaces-and.html](http://blog.frosty-geek.net/2011/02/ubuntu-tagged-vlan-interfaces-and.html)
 - [http://blog.davidvassallo.me/2012/05/05/kvm-brctl-in-linux-bringing-vlans-to-the-guests/](http://blog.davidvassallo.me/2012/05/05/kvm-brctl-in-linux-bringing-vlans-to-the-guests/)
+- [https://www.howtoforge.com/nat_iptables](https://www.howtoforge.com/nat_iptables)
