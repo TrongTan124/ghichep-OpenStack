@@ -240,32 +240,32 @@ cấu hình Neutron.
 
 **Cấu hình host route trong neutron**
 	- Tạo một network, copy lại ID để sử dụng cho việc tạo subnet và khởi động instance:
-	```sh
-	# neutron net-create Test
-	```
+```sh
+# neutron net-create Test
+```
 	
 	- Kết quả trả về của lệnh trên
 	![read-v2-5](/Images/read-v2-5.png)
 	
 	- Tạo một subnet với host route:
-	```sh
-	# neutron subnet-create \
-     --ip-version 4 \
-     --allocation-pool start=192.168.5.3,end=192.168.5.100 \
-     --allocation-pool start=192.168.5.103,end=192.168.5.254 \
-     --host-route destination=1.1.1.0/24,nexthop=192.168.5.254 \
-     --tenant-id f36c5ad3e860402d84275eff4e3418c4 \
-     34d3f31f-64e8-4d38-9417-f7f9d0e037d9 192.168.5.0/24
-	```
+```sh
+# neutron subnet-create \
+ --ip-version 4 \
+ --allocation-pool start=192.168.5.3,end=192.168.5.100 \
+ --allocation-pool start=192.168.5.103,end=192.168.5.254 \
+ --host-route destination=1.1.1.0/24,nexthop=192.168.5.254 \
+ --tenant-id f36c5ad3e860402d84275eff4e3418c4 \
+ 34d3f31f-64e8-4d38-9417-f7f9d0e037d9 192.168.5.0/24
+```
 	
 	- Kết quả trả về của lệnh trên
 	![read-v2-6](/Images/read-v2-6.png)
 	
 	- Tạo một server, cần các thông tin sau: tên instance, image ID, flavor ID, network ID
-	```sh
-	openstack server create --flavor m1.tiny --image cirros \
-  --nic net-id=34d3f31f-64e8-4d38-9417-f7f9d0e037d9 --security-group default VM3
-	```
+```sh
+openstack server create --flavor m1.tiny --image cirros \
+--nic net-id=34d3f31f-64e8-4d38-9417-f7f9d0e037d9 --security-group default VM3
+```
 	
 	- Kết quả của lệnh trên
 	![read-v2-7](/Images/read-v2-7.png)
