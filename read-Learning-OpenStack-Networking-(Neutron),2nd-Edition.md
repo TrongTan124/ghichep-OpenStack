@@ -239,15 +239,15 @@ Số route mặc định lớn nhất trên một subnet là 20 và có thể đ
 cấu hình Neutron.
 
 **Cấu hình host route trong neutron**
-	- Tạo một network, copy lại ID để sử dụng cho việc tạo subnet và khởi động instance:
+- Tạo một network, copy lại ID để sử dụng cho việc tạo subnet và khởi động instance:
 ```sh
 # neutron net-create Test
 ```
 	
-	- Kết quả trả về của lệnh trên
+- Kết quả trả về của lệnh trên
 	![read-v2-5](/Images/read-v2-5.png)
 	
-	- Tạo một subnet với host route:
+- Tạo một subnet với host route:
 ```sh
 # neutron subnet-create \
  --ip-version 4 \
@@ -258,19 +258,19 @@ cấu hình Neutron.
  34d3f31f-64e8-4d38-9417-f7f9d0e037d9 192.168.5.0/24
 ```
 	
-	- Kết quả trả về của lệnh trên
+- Kết quả trả về của lệnh trên
 	![read-v2-6](/Images/read-v2-6.png)
 	
-	- Tạo một server, cần các thông tin sau: tên instance, image ID, flavor ID, network ID
+- Tạo một server, cần các thông tin sau: tên instance, image ID, flavor ID, network ID
 ```sh
 openstack server create --flavor m1.tiny --image cirros \
 --nic net-id=34d3f31f-64e8-4d38-9417-f7f9d0e037d9 --security-group default VM3
 ```
 	
-	- Kết quả của lệnh trên
+- Kết quả của lệnh trên
 	![read-v2-7](/Images/read-v2-7.png)
 	
-	- Kiểm tra route của instance vừa tạo, ta thấy có một route static được DHCP gửi xuống.
+- Kiểm tra route của instance vừa tạo, ta thấy có một route static được DHCP gửi xuống.
 	![read-v2-8](/Images/read-v2-8.png)
 
 - Thuộc tính `dns-nameserver` thiết lập nameserver cho subnet. Số lượng mặc định lớn nhất của nameserver là 5/subnet và có thể được sửa đổi trong `/etc/neutron/neutron.conf`
