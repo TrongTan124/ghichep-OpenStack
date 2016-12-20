@@ -178,6 +178,29 @@ qua Neutron router khi kết nối ra ngoài được yêu cầu.
 
 ## Managing networks in the CLI
 
+Để tạo network sử dụng Neutron client, dụng lệnh `net-create`
+```sh
+usage:	net-create [--tenant-id TENANT_ID]
+		[--admin-state-down] [--shared] [--router:external]
+		[--provider:network_type <network_type>]
+		[--provider:physical_network <physical_network_name>]
+		[--provider:segmentation_id <segmentation_id>]
+		NAME
+```
+
+Có 3 thuộc tính provider khai báo một network:
+- provider:network_type
+- provider: physical_network
+- provider: segmentation_id
+
+Các thuộc tính khác có thể được thiết lập cho provider network
+- router: external
+- shared
+
+Tùy chọn được thiết lập cho cả provider và tenant network là:
+- admin-state-down
+- tenant-id
+
 ### Creating a flat network in the CLI
 
 ### Creating a VLAN network in the CLI
