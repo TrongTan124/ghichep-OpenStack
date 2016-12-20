@@ -245,7 +245,8 @@ cấu hình Neutron.
 ```
 	
 - Kết quả trả về của lệnh trên
-	![read-v2-5](/Images/read-v2-5.png)
+
+![read-v2-5](/Images/read-v2-5.png)
 	
 - Tạo một subnet với host route:
 ```sh
@@ -260,7 +261,7 @@ cấu hình Neutron.
 	
 - Kết quả trả về của lệnh trên
 
-	![read-v2-6](/Images/read-v2-6.png)
+![read-v2-6](/Images/read-v2-6.png)
 	
 - Tạo một server, cần các thông tin sau: tên instance, image ID, flavor ID, network ID
 ```sh
@@ -270,11 +271,11 @@ openstack server create --flavor m1.tiny --image cirros \
 	
 - Kết quả của lệnh trên
 
-	![read-v2-7](/Images/read-v2-7.png)
+![read-v2-7](/Images/read-v2-7.png)
 	
 - Kiểm tra route của instance vừa tạo, ta thấy có một route static được DHCP gửi xuống.
 
-	![read-v2-8](/Images/read-v2-8.png)
+![read-v2-8](/Images/read-v2-8.png)
 
 - Thuộc tính `dns-nameserver` thiết lập nameserver cho subnet. Số lượng mặc định lớn nhất của nameserver là 5/subnet và có thể được sửa đổi trong `/etc/neutron/neutron.conf`
 
