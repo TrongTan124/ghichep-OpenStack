@@ -178,11 +178,11 @@ qua Neutron router khi kết nối ra ngoài được yêu cầu.
 
 ## Managing networks in the CLI
 
-## Creating a flat network in the CLI
+### Creating a flat network in the CLI
 
-## Creating a VLAN network in the CLI
+### Creating a VLAN network in the CLI
 
-## Creating a local network in the CLI
+### Creating a local network in the CLI
 
 ## Listing network in the CLI
 
@@ -234,9 +234,44 @@ các hành vi này, tham khảo chương 7. Nếu gateway không được chỉ 
 
 - Thuộc tính `allocation-pool` khai báo một khoảng địa chỉ IP bên trong subnet có thể được gán cho instance hoặc như floating IPs.
 
-- Thuộc tính `host-route` khai báo một hoặc nhiều static route được xen vào DHCP. Nhiều router được liệt kê như cặp *destination* và *nexthop*, có thể được phân tách bằng khoảng trắng.
+- Thuộc tính `host-route` khai báo một hoặc nhiều static route được đưa vào DHCP. Nhiều route được liệt kê theo cặp *destination* và *nexthop*, có thể được chia tách bằng khoảng trắng.
 Số route mặc định lớn nhất trên một subnet là 20 và có thể được sửa đổi trong `/etc/neutron/neutron.conf`. Số lượng lớn nhất của route trong router là 30 và có thể được sửa đổi trong file 
 cấu hình Neutron.
+
+**Cấu hình host route trong neutron**
+	- Tạo một network, copy lại ID để sử dụng cho việc tạo subnet và khởi động instance:
+	```sh
+	# neutron net-create Test
+	```
+	
+	- Kết quả trả về của lệnh trên
+	![read-v2-5](/Images/read-v2-5.png)
+	
+	- Tạo một subnet với host route:
+	```sh
+	# neutron subnet-create \
+     --ip-version 4 \
+     --allocation-pool start=192.168.5.3,end=192.168.5.100 \
+     --allocation-pool start=192.168.5.103,end=192.168.5.254 \
+     --host-route destination=1.1.1.0/24,nexthop=192.168.5.254 \
+     --tenant-id f36c5ad3e860402d84275eff4e3418c4 \
+     34d3f31f-64e8-4d38-9417-f7f9d0e037d9 192.168.5.0/24
+	```
+	
+	- Kết quả trả về của lệnh trên
+	![read-v2-6](/Images/read-v2-6.png)
+	
+	- Tạo một server, cần các thông tin sau: tên instance, image ID, flavor ID, network ID
+	```sh
+	openstack server create --flavor m1.tiny --image cirros \
+  --nic net-id=34d3f31f-64e8-4d38-9417-f7f9d0e037d9 --security-group default VM3
+	```
+	
+	- Kết quả của lệnh trên
+	![read-v2-7](/Images/read-v2-7.png)
+	
+	- Kiểm tra route của instance vừa tạo, ta thấy có một route static được DHCP gửi xuống.
+	![read-v2-8](/Images/read-v2-8.png)
 
 - Thuộc tính `dns-nameserver` thiết lập nameserver cho subnet. Số lượng mặc định lớn nhất của nameserver là 5/subnet và có thể được sửa đổi trong `/etc/neutron/neutron.conf`
 
@@ -266,6 +301,15 @@ Giải thích lệnh bằng ví dụ, tạo một subnet trong *MyFlatNetwork* n
 # neutron subnet-create MyFlatNetwork 192.168.100.0/24 --name MyFlatSubnet --ip-version=4 --dns-nameservers 8.8.8.8 8.8.4.4
 ```
 
+### Listing subnets in the CLI
+
+Để liệt kê các subnet trong Neutron, sử dụng lệnh `subnet-list`
+```sh
+# neutron subnet-list
+```
+
+Lệnh trên in ra ID, name, CIDR và địa chỉ IP cấp phát của tất cả các subnet khi được thực thi bởi người quản trị. Với người dùng, lệnh trên trả lại subnet trong project hoặc subnet 
+gắn với network được chia sẻ.
 
 <a name="phan6"></a>
 # Chương 6: Managing Security Groups
