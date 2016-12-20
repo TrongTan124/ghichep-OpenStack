@@ -161,7 +161,7 @@ có một sự khác nhau tương đối lớn giữa chúng.
 
 ## Provider và tenant networks
 
-Có 2 loại network có thể cung cấp kết nối giữa instance và các tài nguyên mạng khác, bao gồm virtual router:
+Có 2 loại network có thể cung cấp kết nối giữa instance và các tài nguyên mạng khác:
 - Provider network
 - Tenant network
 
