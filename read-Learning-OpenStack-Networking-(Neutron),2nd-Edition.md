@@ -238,7 +238,22 @@ các hành vi này, tham khảo chương 7. Nếu gateway không được chỉ 
 Số route mặc định lớn nhất trên một subnet là 20 và có thể được sửa đổi trong `/etc/neutron/neutron.conf`. Số lượng lớn nhất của route trong router là 30 và có thể được sửa đổi trong file 
 cấu hình Neutron.
 
-**Cấu hình host route trong neutron**
+- Thuộc tính `dns-nameserver` thiết lập nameserver cho subnet. Số lượng mặc định lớn nhất của nameserver là 5/subnet và có thể được sửa đổi trong `/etc/neutron/neutron.conf`
+
+- Thuộc tính `disable-dhcp` loại bỏ dịch vụ DHCP cho subnet.
+
+- `enable-dhcp` cho phép dịch vụ DHCP chạy với subnet. Mặc định DHCP là enable
+
+- Thuộc tính `ip-version` khai báo phiên bản của Internet protocol được sử dụng trong subnet. IPv4 được thiết lập mặc định khi version không được cấu hình.
+
+- Thuộc tính `ipv6-ra-mode` và `ipv6-address-mode` sử dụng cho IPv6.
+
+- Biến `NETWORK` khai báo network mà subnet được kết hợp cùng. Nhiều subnet có thể được kết hợp cùng với một network miễn là subnet không ghi đè nhau. Biến `NETWORK` có thể 
+là UUID hoặc tên của network.
+
+- Biến `CIDR` khai báo CIDR của subnet được tạo.
+
+**Cấu hình host route trong Neutron**
 - Tạo một network, copy lại ID để sử dụng cho việc tạo subnet và khởi động instance:
 ```sh
 # neutron net-create Test
@@ -276,21 +291,6 @@ openstack server create --flavor m1.tiny --image cirros \
 - Kiểm tra route của instance vừa tạo, ta thấy có một route static được DHCP gửi xuống.
 
 ![read-v2-8](/Images/read-v2-8.png)
-
-- Thuộc tính `dns-nameserver` thiết lập nameserver cho subnet. Số lượng mặc định lớn nhất của nameserver là 5/subnet và có thể được sửa đổi trong `/etc/neutron/neutron.conf`
-
-- Thuộc tính `disable-dhcp` loại bỏ dịch vụ DHCP cho subnet.
-
-- `enable-dhcp` cho phép dịch vụ DHCP chạy với subnet. Mặc định DHCP là enable
-
-- Thuộc tính `ip-version` khai báo phiên bản của Internet protocol được sử dụng trong subnet. IPv4 được thiết lập mặc định khi version không được cấu hình.
-
-- Thuộc tính `ipv6-ra-mode` và `ipv6-address-mode` sử dụng cho IPv6.
-
-- Biến `NETWORK` khai báo network mà subnet được kết hợp cùng. Nhiều subnet có thể được kết hợp cùng với một network miễn là subnet không ghi đè nhau. Biến `NETWORK` có thể 
-là UUID hoặc tên của network.
-
-- Biến `CIDR` khai báo CIDR của subnet được tạo.
 
 ### Creating a subnet in the CLI
 
