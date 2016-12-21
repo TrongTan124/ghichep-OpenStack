@@ -315,6 +315,25 @@ openstack server create --flavor m1.tiny --image cirros \
 
 ![read-v2-8](/Images/read-v2-8.png)
 
+**NOTE2**
+
+- Thực hiện xóa bỏ các thông tin về router, subnet, network, port
+
+- Xóa bỏ các interface của router:
+```sh
+# for i in `neutron router-list |grep network_id |awk '{print $2}'`;do neutron router-gateway-clear $i; done
+```
+
+- Xóa bỏ thông tin port:
+```sh
+# for i in `neutron port-list |grep subnet_id |awk '{print $2}'`; do neutron port-delete $i; done
+```
+
+- Xóa subnet:
+```sh
+# for i in `neutron subnet-list |grep start |awk '{print $2}'`; do neutron subnet-delete $i ; done
+```
+
 ### Creating a subnet in the CLI
 
 Giải thích lệnh bằng ví dụ, tạo một subnet trong *MyFlatNetwork* network với các thuộc tính sau:
