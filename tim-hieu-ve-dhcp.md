@@ -135,10 +135,30 @@ lease 192.168.101.100 {
 }
 ```
 
-# 5. Áp dụng vào các VM trong OpenStack 
+# 5. Áp dụng vào các VM trong OpenStack
+
+Sau khi tìm hiểu quá trình VM lấy IP từ DHCP server bên ngoài, không phải DHCP neutron, tôi thấy ko được. Vì Neutron cần quản lý IP của các VM, nên kể cả tạo flat network cũng phải 
+tạo một DHCP namespace.
+
+Ngoài ra trường hợp gán IP chỉ định cho VM (thực tế là gán cho port mà VM gắn vào), ta có thể thêm option khi khởi tạo VM. nhưng vẫn phải gọi qua DHCP namespace.
+
+Tạo port với IP chỉ định
+```sh
+# neutron port-create <NETWORK-ID> --fixed-ip subnet_id=<SUBNET-ID>,ip_address=<IP> --name <PORT-NAME>
+```
+
+Gán VM vào port chỉ định:
+```sh
+# nova boot --flavor 2 --image <IMAGE> --nic port-id=<PORT-ID> <INSTANCE-NAME>
+```
+
+Có thể không cần tạo port, gán trực tiếp IP khi khởi tạo VM:
+```sh
+nova boot --flavor 2 --image <IMAGE> --nic net-id=<NET-ID>,v4-fixed-ip=<IP> <INSTANCE-NAME>
+```
 
 # Tham khảo
 - [https://linuxconfig.org/what-is-dhcp-and-how-to-configure-dhcp-server-in-linux](https://linuxconfig.org/what-is-dhcp-and-how-to-configure-dhcp-server-in-linux)
 - [https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/s1-dhcp-configuring-server.html](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/s1-dhcp-configuring-server.html)
 - [http://www.yolinux.com/TUTORIALS/DHCP-Server.html](http://www.yolinux.com/TUTORIALS/DHCP-Server.html)
-
+- [http://lists.openstack.org/pipermail/openstack/2016-August/017382.html](http://lists.openstack.org/pipermail/openstack/2016-August/017382.html)
