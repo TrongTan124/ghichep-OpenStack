@@ -5,9 +5,15 @@ DHCP namespace.
 
 # 2. Cài đặt
 
-Tôi sử dụng Server cài Ubuntu 14.04 64bit. 
+Mô hình tôi thực hiện LAB
 
-Tạo một switch bằng interface loopback
+![dhcp-2](/Images/dhcp-2.png)
+
+Tôi sử dụng 02 Server cài Ubuntu 14.04 64bit. Một server sẽ làm DHCP server, 1 server sẽ làm DHCP client.
+
+Server có 02 interface, eth0 tôi gắn vào NAT để lấy gói, eth1 tôi gắn vào switch của interface loopback
+
+Tạo một switch bằng interface loopback trên windows server 2012 bằng cách [này](https://github.com/TrongTan124/ghichep-OpenStack/blob/master/LAB-VLAN-OVS-Provider.md)
 
 - Gói cài đặt DHCP server có sẵn trong các bản phân phối Linux khác nhau, là một phiên bản mã nguồn mở duy trì bởi ISC. Có 3 phiên bản khác nhau 2, 3, 4; ở đây phiên bản 3 hỗ trợ 
 backup server, phiên bản 4 hỗ trợ IPv6. Trong lần này, chúng ta thử nghiệm ISC DHCP v3.
@@ -138,7 +144,7 @@ lease 192.168.101.100 {
 # 5. Áp dụng vào các VM trong OpenStack
 
 Sau khi tìm hiểu quá trình VM lấy IP từ DHCP server bên ngoài, không phải DHCP neutron, tôi thấy ko được. Vì Neutron cần quản lý IP của các VM, nên kể cả tạo flat network cũng phải 
-tạo một DHCP namespace.
+tạo một flat DHCP namespace.
 
 Ngoài ra trường hợp gán IP chỉ định cho VM (thực tế là gán cho port mà VM gắn vào), ta có thể thêm option khi khởi tạo VM. nhưng vẫn phải gọi qua DHCP namespace.
 
