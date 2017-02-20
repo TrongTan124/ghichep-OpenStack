@@ -123,21 +123,6 @@ Check bằng lệnh *SELECT * FROM `token` WHERE user_id = 'f8afdf4455b94bd6ba20
 type		actor_id							target_id							role_id								inherited
 UserProject	f8afdf4455b94bd6ba20bdeef05ba732	f931ad962bf444458fa5d39c7d3c8aff	ae7661eaf25f4b45ab3f1120d6b6601c	0
 ```
-	- bảng nonlocal_user:
-```sh
-domain_id	name	user_id
-default		tannt	f8afdf4455b94bd6ba20bdeef05ba732
-```
-	- Bảng project:
-```sh
-id									name			extra	description				enabled		domain_id	parent_id	is_domain
-f931ad962bf444458fa5d39c7d3c8aff	tannt_project	{}		tannt test project		1			default		default		0
-```
-	- Bảng user
-```sh
-id									extra											enabled	default_project_id	created_at			last_active_at
-f8afdf4455b94bd6ba20bdeef05ba732	{"description": "tannt openstack user account"}	\N		\N					2017-01-26 20:32:55	\N
-```
 	- Thông tin trong LDAP tree
 ```sh
 dn: cn=f8afdf4455b94bd6ba20bdeef05ba732,ou=Users,dc=openstack,dc=org
@@ -158,6 +143,8 @@ modifyTimestamp: 20170126202135Z
 
 ==> Phía trên là thông tin của user thực hiện bằng câu lệnh openstack. thông tin xử lý bởi OpenStack và ghi vào MySQL cùng LDAP.
 
+**Note**: Chỉ thực hiện thêm user vào LDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
+
 # Thêm User thủ công
 
 - Bây giờ ta thử thực hiện tạo username trên LDAP, sau đó gán assignment và role một cách thủ công.
@@ -176,6 +163,11 @@ sn: hangnt
 - Chạy lệnh sau để thêm user vào ldap, passwd LDAP tree khi cái bằng devstack là 9632
 ```sh
 ldapadd -x -D cn=Manager,dc=openstack,dc=org -W -f usernew.ldif
+```
+
+- Lệnh xóa user trong trường hợp tạo sai thông tin:
+```sh
+ldapdelete -x -W -D 'cn=Manager,dc=openstack,dc=org' "cn=hangnt,ou=Users,dc=openstack,dc=org"
 ```
 
 - Kiểm tra thông tin username vừa tạo:
