@@ -115,7 +115,103 @@ Người dùng đươc tạo trong một domain mặc định cùng với role m
 	- Thêm tên người dùng vào bảng `user` trong MySQL
 
 - Khi người dùng thực hiện đăng nhập vào horizon sẽ sinh ra một token, và token này được ghi vào bảng `token` trong MySQL. 
-Check bằng lệnh *SELECT * FROM `token` WHERE user_id = 'f8afdf4455b94bd6ba20bdeef05ba732';*
+Check bằng lệnh *SELECT * FROM `token` WHERE user_id = 'f8afdf4455b94bd6ba20bdeef05ba732';* Token có thời gian mặc định là 1 tiếng, sau đó sẽ phải gen lại.
+
+- Kiểm tra cấu trúc lưu trữ user vừa được tạo phía trên trong database MySQL
+	- bảng assignment lưu trữ: 
+```sh
+type		actor_id							target_id							role_id								inherited
+UserProject	f8afdf4455b94bd6ba20bdeef05ba732	f931ad962bf444458fa5d39c7d3c8aff	ae7661eaf25f4b45ab3f1120d6b6601c	0
+```
+	- bảng nonlocal_user:
+```sh
+domain_id	name	user_id
+default		tannt	f8afdf4455b94bd6ba20bdeef05ba732
+```
+	- Bảng project:
+```sh
+id									name			extra	description				enabled		domain_id	parent_id	is_domain
+f931ad962bf444458fa5d39c7d3c8aff	tannt_project	{}		tannt test project		1			default		default		0
+```
+	- Bảng user
+```sh
+id									extra											enabled	default_project_id	created_at			last_active_at
+f8afdf4455b94bd6ba20bdeef05ba732	{"description": "tannt openstack user account"}	\N		\N					2017-01-26 20:32:55	\N
+```
+	- Thông tin trong LDAP tree
+```sh
+dn: cn=f8afdf4455b94bd6ba20bdeef05ba732,ou=Users,dc=openstack,dc=org
+objectClass: person
+objectClass: inetOrgPerson
+description: tannt openstack user account
+cn: f8afdf4455b94bd6ba20bdeef05ba732
+userPassword:: dGFuQDEyMysr
+sn: tannt
+structuralObjectClass: inetOrgPerson
+entryUUID: c725f7b2-7850-1036-8fa0-ed18e1693809
+creatorsName: cn=Manager,dc=openstack,dc=org
+createTimestamp: 20170126202135Z
+entryCSN: 20170126202135.119130Z#000000#000#000000
+modifiersName: cn=Manager,dc=openstack,dc=org
+modifyTimestamp: 20170126202135Z
+```
+
+==> Phía trên là thông tin của user thực hiện bằng câu lệnh openstack. thông tin xử lý bởi OpenStack và ghi vào MySQL cùng LDAP.
+
+# Thêm User thủ công
+
+- Bây giờ ta thử thực hiện tạo username trên LDAP, sau đó gán assignment và role một cách thủ công.
+
+- Tạo tập tin usernew.ldif với nội dung sau:
+```sh
+dn: cn=hangnt,ou=Users,dc=openstack,dc=org
+objectClass: person
+objectClass: inetOrgPerson
+description: hangnt openstack user account
+cn: hangnt
+userPassword:: dGFuQDEyMysr
+sn: hangnt
+```
+
+- Chạy lệnh sau để thêm user vào ldap, passwd LDAP tree khi cái bằng devstack là 9632
+```sh
+ldapadd -x -D cn=Manager,dc=openstack,dc=org -W -f usernew.ldif
+```
+
+- Kiểm tra thông tin username vừa tạo:
+```sh
+# slapcat
+...
+dn: cn=hangnt,ou=Users,dc=openstack,dc=org
+objectClass: person
+objectClass: inetOrgPerson
+description: hangnt openstack user account
+cn: hangnt
+userPassword:: dGFuQDEyMysr
+sn: hangnt
+structuralObjectClass: inetOrgPerson
+entryUUID: f6dfd938-786d-1036-8fa1-ed18e1693809
+creatorsName: cn=Manager,dc=openstack,dc=org
+createTimestamp: 20170126235030Z
+entryCSN: 20170126235030.588724Z#000000#000#000000
+modifiersName: cn=Manager,dc=openstack,dc=org
+modifyTimestamp: 20170126235030Z
+```
+
+- Thực hiện thêm username vừa tạo vào database, đầu tiên là bảng user
+```sh
+INSERT INTO `keystone`.`user` (`id`, `extra`, `created_at`) VALUES ('hangnt', '{\"description:\" \"hangnt openstack user account\"}', now()); 
+```
+
+- Thực hiện thêm username vào bảng nonlocal_user bằng lệnh:
+```sh
+INSERT INTO `keystone`.`nonlocal_user` (`domain_id`, `name`, `user_id`) VALUES ('default', 'hangnt', 'hangnt');
+```
+
+- Thêm thông tin vào bảng assignment cho user vừa tạo, gán user này với project tannt và role member ứng với user tannt ở trên.
+```sh
+INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) VALUES ('UserProject', 'hangnt', 'f931ad962bf444458fa5d39c7d3c8aff', 'ae7661eaf25f4b45ab3f1120d6b6601c', '0'); 
+```
 
 # Cài đặt bằng script
 
