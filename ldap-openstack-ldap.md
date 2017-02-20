@@ -123,6 +123,21 @@ Check bằng lệnh *SELECT * FROM `token` WHERE user_id = 'f8afdf4455b94bd6ba20
 type		actor_id							target_id							role_id								inherited
 UserProject	f8afdf4455b94bd6ba20bdeef05ba732	f931ad962bf444458fa5d39c7d3c8aff	ae7661eaf25f4b45ab3f1120d6b6601c	0
 ```
+	- bảng nonlocal_user:
+```sh
+domain_id	name	user_id
+default		tannt	f8afdf4455b94bd6ba20bdeef05ba732
+```
+	- Bảng project:
+```sh
+id									name			extra	description				enabled		domain_id	parent_id	is_domain
+f931ad962bf444458fa5d39c7d3c8aff	tannt_project	{}		tannt test project		1			default		default		0
+```
+	- Bảng user
+```sh
+id									extra											enabled	default_project_id	created_at			last_active_at
+f8afdf4455b94bd6ba20bdeef05ba732	{"description": "tannt openstack user account"}	\N		\N					2017-01-26 20:32:55	\N
+```
 	- Thông tin trong LDAP tree
 ```sh
 dn: cn=f8afdf4455b94bd6ba20bdeef05ba732,ou=Users,dc=openstack,dc=org
@@ -142,8 +157,6 @@ modifyTimestamp: 20170126202135Z
 ```
 
 ==> Phía trên là thông tin của user thực hiện bằng câu lệnh openstack. thông tin xử lý bởi OpenStack và ghi vào MySQL cùng LDAP.
-
-**Note**: Chỉ thực hiện thêm user vào LDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
 
 # Thêm User thủ công
 
@@ -190,20 +203,12 @@ modifiersName: cn=Manager,dc=openstack,dc=org
 modifyTimestamp: 20170126235030Z
 ```
 
-- Thực hiện thêm username vừa tạo vào database, đầu tiên là bảng user
-```sh
-INSERT INTO `keystone`.`user` (`id`, `extra`, `created_at`) VALUES ('hangnt', '{\"description:\" \"hangnt openstack user account\"}', now()); 
-```
-
-- Thực hiện thêm username vào bảng nonlocal_user bằng lệnh:
-```sh
-INSERT INTO `keystone`.`nonlocal_user` (`domain_id`, `name`, `user_id`) VALUES ('default', 'hangnt', 'hangnt');
-```
-
 - Thêm thông tin vào bảng assignment cho user vừa tạo, gán user này với project tannt và role member ứng với user tannt ở trên.
 ```sh
 INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) VALUES ('UserProject', 'hangnt', 'f931ad962bf444458fa5d39c7d3c8aff', 'ae7661eaf25f4b45ab3f1120d6b6601c', '0'); 
 ```
+
+**Note**: Chỉ thực hiện thêm user vào LDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
 
 # Cài đặt bằng script
 
