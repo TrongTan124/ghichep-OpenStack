@@ -214,59 +214,352 @@ INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`,
 
 Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó cấu hình cho keystone sử dụng LDAP.
 
-## Cấu hình LDAP tree
+## Cấu hình LDAP tree trên LDAP server
 
-- Trước tiên cần cài đặt và cấu hình LDAP.
-	- dn: dc=vnptdata,dc=vn
+- Trước tiên cần cài đặt và cấu hình LDAP. Dưới đây là cấu hình LDAP tree mà tôi dựng cho hệ thống OpenStack sử dụng. password đăng nhập của user tannt là tan@123++
+```sh
+root@ldapserver:~# slapcat
+dn: dc=vnptdata,dc=vn
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: vnptdata.vn
+dc: vnptdata
+structuralObjectClass: organization
+entryUUID: c1f11512-756f-1036-8fc9-fbb896cd667f
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123042547Z
+entryCSN: 20170123042547.299721Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123042547Z
+
+dn: cn=admin,dc=vnptdata,dc=vn
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword:: e1NTSEF9MDdGakc4Q1oweHBIUkFpSHY1Sm1yQVFqWnZlZnl1cEQ=
+structuralObjectClass: organizationalRole
+entryUUID: c1f56716-756f-1036-8fca-fbb896cd667f
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123042547Z
+entryCSN: 20170123042547.328026Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123042547Z
+
+dn: ou=Groups,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Groups
+structuralObjectClass: organizationalUnit
+entryUUID: 3b900720-7570-1036-9634-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123042911Z
+entryCSN: 20170123042911.345695Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123042911Z
+
+dn: ou=Users,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Users
+structuralObjectClass: organizationalUnit
+entryUUID: 3b9090e6-7570-1036-9635-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123042911Z
+entryCSN: 20170123042911.349226Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123042911Z
+
+dn: ou=Roles,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Roles
+structuralObjectClass: organizationalUnit
+entryUUID: 3b90fd4c-7570-1036-9636-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123042911Z
+entryCSN: 20170123042911.352000Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123042911Z
+
+dn: ou=Projects,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Projects
+structuralObjectClass: organizationalUnit
+entryUUID: 3b928bc6-7570-1036-9637-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123042911Z
+entryCSN: 20170123042911.362201Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123042911Z
+
+dn: cn=9fe2ff9ee4384b1894a90878d3e92bab,ou=Roles,dc=vnptdata,dc=vn
+objectClass: organizationalRole
+ou: _member_
+cn: 9fe2ff9ee4384b1894a90878d3e92bab
+structuralObjectClass: organizationalRole
+entryUUID: 3b92e846-7570-1036-9638-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123042911Z
+entryCSN: 20170123042911.364569Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123042911Z
+
+dn: cn=c4f656354aa1437ba17d1275cfa84773,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+sn: admin
+cn: c4f656354aa1437ba17d1275cfa84773
+structuralObjectClass: inetOrgPerson
+entryUUID: 69e9dfe6-7594-1036-963a-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123084810Z
+userPassword:: e1NIQX1xaEtFUHpjd1hPSityTlBJemxNaCtSS3J6Nkk9
+entryCSN: 20170123085054.094626Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123085054Z
+
+dn: cn=3ae9bd7d69c84c2787649f2e9119c243,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+sn: demo
+cn: 3ae9bd7d69c84c2787649f2e9119c243
+structuralObjectClass: inetOrgPerson
+entryUUID: 69fd2fce-7594-1036-963b-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123084811Z
+entryCSN: 20170123084811.118541Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123084811Z
+
+dn: cn=a37554325f454af58a5a133ab734ccb7,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+cn: a37554325f454af58a5a133ab734ccb7
+sn: nova
+structuralObjectClass: inetOrgPerson
+entryUUID: 69fdc5ba-7594-1036-963c-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123084811Z
+entryCSN: 20170123084811.122379Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123084811Z
+
+dn: cn=3d733c4239f440c6b12e67f523c56d2d,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+cn: 3d733c4239f440c6b12e67f523c56d2d
+sn: glance
+structuralObjectClass: inetOrgPerson
+entryUUID: 69fe51b0-7594-1036-963d-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123084811Z
+userPassword:: e1NIQX1xaEtFUHpjd1hPSityTlBJemxNaCtSS3J6Nkk9
+entryCSN: 20170123085031.371224Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123085031Z
+
+dn: cn=2a22bf794cdc45d2b1408d73b58f3307,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+cn: 2a22bf794cdc45d2b1408d73b58f3307
+sn: neutron
+structuralObjectClass: inetOrgPerson
+entryUUID: 6a000e92-7594-1036-963e-9148eb18cfbc
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170123084811Z
+userPassword:: e1NIQX1xaEtFUHpjd1hPSityTlBJemxNaCtSS3J6Nkk9
+entryCSN: 20170123085123.830620Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170123085123Z
+
+dn: cn=tannt,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+description: tannt openstack user account
+cn: tannt
+userPassword:: dGFuQDEyMysr
+sn: tannt
+structuralObjectClass: inetOrgPerson
+entryUUID: 227ef85a-8ba4-1036-84cf-d3c4b4dcc487
+creatorsName: cn=admin,dc=vnptdata,dc=vn
+createTimestamp: 20170220103608Z
+entryCSN: 20170220103608.701913Z#000000#000#000000
+modifiersName: cn=admin,dc=vnptdata,dc=vn
+modifyTimestamp: 20170220103608Z
+```
+
+- Việc xây dựng LDAP tree không có khó khăn gì. Đầu tiên ta cài đặt LDAP như bình thường theo hướng dẫn 
+[sau](https://github.com/TrongTan124/ghichep-LDAP/blob/master/docs/TanNT-LDAP-OpenLDAP.md)
+
+- Tiếp đến tạo tập tin cấu trúc
+```sh
+root@ldapserver:~# cat openstack.ldif 
+dn: ou=Groups,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Groups
+
+dn: ou=Users,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Users
+
+dn: ou=Roles,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Roles
+
+dn: ou=Projects,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Projects
+
+dn: cn=9fe2ff9ee4384b1894a90878d3e92bab,ou=Roles,dc=vnptdata,dc=vn
+objectClass: organizationalRole
+ou: _member_
+cn: 9fe2ff9ee4384b1894a90878d3e92bab
+```
+
+- Thực hiện import case vào LDAP
+```sh
+ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f openstack.ldif
+```
+
+- Thực hiện thêm các user của project OpenStack vào LDAP, password là tan124 được thiết lập bằng ldapadmin, method mã hóa SHA1
+```sh
+root@ldapserver:~# cat user2.ldif 
+dn: cn=c4f656354aa1437ba17d1275cfa84773,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+userPassword:: b3BlbnN0YWNr
+sn: admin
+cn: c4f656354aa1437ba17d1275cfa84773
+
+dn: cn=3ae9bd7d69c84c2787649f2e9119c243,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+sn: demo
+cn: 3ae9bd7d69c84c2787649f2e9119c243
+
+dn: cn=a37554325f454af58a5a133ab734ccb7,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+cn: a37554325f454af58a5a133ab734ccb7
+sn: nova
+
+dn: cn=3d733c4239f440c6b12e67f523c56d2d,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+userPassword:: b3BlbnN0YWNr
+cn: 3d733c4239f440c6b12e67f523c56d2d
+sn: glance
+
+dn: cn=2a22bf794cdc45d2b1408d73b58f3307,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+userPassword:: b3BlbnN0YWNr
+cn: 2a22bf794cdc45d2b1408d73b58f3307
+sn: neutron
+```
+
+- Tạo tập tin người dùng mới như sau:
+```sh
+root@ldapserver:~# cat newuser.ldif
+dn: cn=tannt,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+description: tannt openstack user account
+cn: tannt
+userPassword:: dGFuQDEyMysr
+sn: tannt
+```
+
+- Thực hiện thêm người dùng mới vào LDAP tree. nhớ nhập password của LDAP
+```sh
+ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f newuser.ldif
+```
+
+- Mật khẩu người dùng mới có thể thay đổi bằng công cụ [ldapadmin](http://www.ldapadmin.org/)
+
+- User mới thêm vào LDAP tree, cần được gán vào role và project cụ thể mới có thể sử dụng được. lệnh insert vào database keystone
+```sh
+INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) 
+VALUES ('UserProject', 'tannt', 'b0ddb1b01ba94969b4f4bace011fa1b0', '5bde76879ca54795a48c68026b4a4dc7', '0');
+```
 
 ## Chỉnh sửa cấu hình keystone
 
+- Để keystone sử dụng được LDAP, cần cài đặt bổ sung thư viện python. Trong quá trình test tôi cài đặt khá nhiều gói, nên không rõ gói nào cần thiết nữa. 
+Cái này cần thử nghiệm lại để loại bớt gói không cần thiết.
+```sh
+root@controller1:/etc/keystone# dpkg -l | grep ldap
+ii  erlang-eldap                       1:16.b.3-dfsg-1ubuntu2.1              amd64        Erlang/OTP LDAP library
+ii  ldap-auth-client                   0.5.3                                 all          meta-package for LDAP authentication
+ii  ldap-auth-config                   0.5.3                                 all          Config package for LDAP authentication
+ii  ldap-utils                         2.4.31-1+nmu2ubuntu8.3                amd64        OpenLDAP utilities
+ii  libaprutil1-ldap:amd64             1.5.3-1                               amd64        Apache Portable Runtime Utility Library - LDAP Driver
+ii  libldap-2.4-2:amd64                2.4.31-1+nmu2ubuntu8.3                amd64        OpenLDAP libraries
+ii  libldap2-dev:amd64                 2.4.31-1+nmu2ubuntu8.3                amd64        OpenLDAP development libraries
+ii  libnet-ldap-perl                   1:0.5800-1                            all          client interface to LDAP servers
+ii  libnss-ldap:amd64                  264-2.2ubuntu4.14.04.2                amd64        NSS module for using LDAP as a naming service
+ii  libpam-ldap:amd64                  184-8.5ubuntu3                        amd64        Pluggable Authentication Module for LDAP
+ii  python-ldap                        2.4.22-0.1~cloud0                     amd64        LDAP interface module for Python
+ii  python-ldappool                    1.0-1ubuntu1~cloud0                   all          connection pool for python-ldap
+ii  python-ldaptor                     0.0.43+debian1-7                      all          pure-Python library for LDAP operations
+```
+
+- Một số lệnh cài đặt như sau:
+```sh
+apt-get install libnet-ldap-perl
+apt-get install python-dev libldap2-dev libsasl2-dev libssl-dev
+apt-get -y install libnss-ldap libpam-ldap ldap-utils
+apt-get install python-ldap
+apt-get install python-ldaptor
+apt-get install python-ldappool
+```
+
 - Cấu hình identity sử dụng LDAP bên ngoài, cần chỉnh sửa cấu hình trong file `/etc/keystone.conf` như sau:
 ```sh
+root@controller1:/etc/keystone# cat keystone.conf|egrep -v "^$|^#"
+[DEFAULT]
+debug = True
+log_dir = /var/log/keystone
+admin_token = tan124
+[assignment]
+driver = sql
+[cache]
+memcache_servers = localhost:11211
+backend = oslo_cache.memcache_pool
+enabled = True
+[database]
+connection = mysql+pymysql://keystone:tan124@10.10.10.13/keystone
 [identity]
-driver = keystone.identity.backends.ldap.Identity
-
+default_domain_id = 7a08cab061a8450d868a7ce0399856ad
+driver = ldap
 [ldap]
-url = ldap://localhost
-user = dc=admin,dc=vnptdata,dc=vn
-password = tan124
-suffix = dc=vnptdata,dc=vn
-user_tree_dn = ou=Users,dc=vnptdata,dc=vn
-user_objectclass = inetOrgPerson
-user_id_attribute = cn
-user_mail_attribute = mail
+user_domain_id_attribute = businessCategory
 tenant_tree_dn = ou=Projects,dc=vnptdata,dc=vn
-tenant_objectclass = groupOfNames
-tenant_id_attribute = cn
 tenant_desc_attribute = description
-use_dumb_member = True
-role_tree_dn = ou=Roles,dc=vnptdata, dc=vn
-role_objectclass = organizationalRole
-role_id_attribute = cn
-role_member_attribute = roleOccupant
-
-user_allow_create = False
-user_allow_update = False
-user_allow_delete = False
-
-tenant_allow_create = False
-tenant_allow_update = False
-tenant_allow_delete = False
-
-role_allow_create = False
-role_allow_update = False
-role_allow_delete = False
+tenant_domain_id_attribute = businessCategory
+tenant_attribute_ignore = enabled
+url = ldap://vnptdata.vn
+user = cn=admin,dc=vnptdata,dc=vn
+password = tan124
+suffix = cn=vnptdata,cn=vn
+use_dumb_member = true
+user_tree_dn = ou=Users,dc=vnptdata,dc=vn
+user_attribute_ignore = default_project_id,enabled,email,tenants
+[resource]
+driver = sql
+[role]
+driver = sql
+[token]
+provider = fernet
+driver = sql
+[extra_headers]
+Distribution = Ubuntu
 ```
+
+- Trong cấu hình của keystone, ta chỉ định một domain mặc định trong quá trình sử dụng bằng biến `default_domain_id`
 
 - Ngoài ra cần kích hoạt tính năng `authlogin_nsswitch_use_ldap` cho selinux
 ```sh
 setsebool -P authlogin_nsswitch_use_ldap on
-```
-
-- Chỉ sử dụng LDAP cho xác thực, còn gán quyền cho người dùng vẫn sử dụng SQL
-```sh
-[assignment]
-driver = keystone.assignment.backends.sql.Assignment
 ```
 
 # Tham khảo
