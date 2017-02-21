@@ -10,7 +10,145 @@
 
 ## Cấu hình local.conf
 
-- Ta thực hiện thiết lập một số tham số để chuẩn bị cho script cài đặt.
+- Cập nhật và nâng cấp HĐH
+```sh
+apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && init 6
+```
+
+- Tạo user stack
+```sh
+apt-get -y install sudo git
+
+adduser stack
+
+echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+```
+
+- Chuyển sang tài khoản devstack
+```sh
+su - stack
+```
+
+- Tải gói và cài đặt
+```sh
+Tải gói mới nhất: 
+
+ git clone https://github.com/openstack-dev/devstack.git
+
+Hoặc chỉ định gói:
+ git clone -b stable/mitaka https://github.com/openstack-dev/devstack.git
+```
+
+- Tạo tập tin `local.conf` để thiết lập các tham số cấu hình với nội dung sau
+```sh
+stack@devstack1:~/devstack$ cat local.conf 
+
+[[local|localrc]]
+DEST=/opt/stack
+
+# Logging
+LOGFILE=$DEST/logs/stack.sh.log
+VERBOSE=True
+SCREEN_LOGDIR=$DEST/logs/screen
+OFFLINE=False
+
+# Controller NODE IP
+HOST_IP=172.16.68.133
+
+# Credentials
+ADMIN_PASSWORD=openstack
+MYSQL_PASSWORD=$ADMIN_PASSWORD
+RABBIT_PASSWORD=$ADMIN_PASSWORD
+SERVICE_PASSWORD=$ADMIN_PASSWORD
+SERVICE_TOKEN=$ADMIN_PASSWORD
+
+MYSQL_HOST=$HOST_IP
+RABBIT_HOST=$HOST_IP
+CINDER_SERVICE_HOST=$HOST_IP
+GLANCE_HOSTPORT=$HOST_IP:9292
+
+##########################
+# Khai bao cac project
+##########################
+ENABLED_SERVICES=key,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc,n-xvnc,n-cauth,horizon,mysql,rabbit,ldap,g-api,g-reg
+
+IDENTITY_API_VERSION=3
+
+## Keystone su dung LDAP
+KEYSTONE_IDENTITY_BACKEND=ldap
+KEYSTONE_CLEAR_LDAP=yes
+LDAP_PASSWORD=9632
+
+##  SWIFT Service
+# enable_service s-proxy
+# enable_service s-object
+# enable_service s-container
+# enable_service s-account
+
+## Khia bao tuy chon cho SWIFT
+# SWIFT_REPLICAS=1
+# SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
+
+##  CINDER Service
+enable_service c-api
+enable_service c-sch
+enable_service c-bak
+enable_service c-vol
+
+##  CINDER Service
+## Khia bao tuy chon cho CINDER
+VOLUME_GROUP="stack-volumes"
+VOLUME_NAME_PREFIX="volume-"
+
+## NEUTRON Service
+enable_service q-svc
+enable_service q-agt
+enable_service q-dhcp
+enable_service q-meta
+enable_service q-l3
+
+## Khai bao cac tham so cho neutron
+# ml2
+Q_PLUGIN=ml2
+Q_AGENT=openvswitch
+
+# vxlan
+Q_ML2_TENANT_NETWORK_TYPE=vxlan
+
+# Networking
+FLOATING_RANGE=172.16.68.0/24
+Q_FLOATING_ALLOCATION_POOL=start=172.16.68.30,end=172.16.68.50
+PUBLIC_NETWORK_GATEWAY=172.16.68.1
+
+# Khai bao dai mang private
+FIXED_RANGE=192.168.10.0/24
+NETWORK_GATEWAY=192.168.10.1
+
+PUBLIC_INTERFACE=eth1
+
+Q_USE_PROVIDERNET_FOR_PUBLIC=True
+Q_L3_ENABLED=True
+Q_USE_SECGROUP=True
+OVS_PHYSICAL_BRIDGE=br-ex
+PUBLIC_BRIDGE=br-ex
+OVS_BRIDGE_MAPPINGS=public:br-ex
+
+Q_ML2_PLUGIN_PATH_MTU=1454
+
+# Setup phien ban IP se su dung
+IP_VERSION=4
+
+# Khong can su dung tempest
+disable_service tempest
+disable_service n-net
+```
+
+- Chạy script để tiến hành cài đặt
+```sh
+stack@devstack1:~/devstack$ ./stack.sh
+```
+
+**Note**: Rất hên xui nhé. nhớ rửa tay trước khi chạy. :D Lỗi chỉ chui ra sao khi script chạy dc khoảng 1h30p.
 
 ## Kết quả
 
@@ -158,7 +296,7 @@ modifyTimestamp: 20170126202135Z
 
 ==> Phía trên là thông tin của user thực hiện bằng câu lệnh openstack. thông tin xử lý bởi OpenStack và ghi vào MySQL cùng LDAP.
 
-# Thêm User thủ công
+## Thêm User thủ công vào LDAP và gán quyền trong OpenStack
 
 - Bây giờ ta thử thực hiện tạo username trên LDAP, sau đó gán assignment và role một cách thủ công.
 
@@ -210,13 +348,19 @@ INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`,
 
 **Note**: Chỉ thực hiện thêm user vào LDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
 
-# Cài đặt bằng script
+# Cài đặt OpenStack bằng script và sử dụng LDAP external
 
 Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó cấu hình cho keystone sử dụng LDAP.
 
+- Cài đặt OpenStack bằng hướng dẫn [sau](https://github.com/congto/OpenStack-Mitaka-Scripts/tree/master/OPS-Mitaka-OVS-Ubuntu)
+
+- Việc xây dựng LDAP tree không có khó khăn gì. Đầu tiên ta cài đặt LDAP như bình thường theo hướng dẫn 
+[sau](https://github.com/TrongTan124/ghichep-LDAP/blob/master/docs/TanNT-LDAP-OpenLDAP.md)
+
 ## Cấu hình LDAP tree trên LDAP server
 
-- Trước tiên cần cài đặt và cấu hình LDAP. Dưới đây là cấu hình LDAP tree mà tôi dựng cho hệ thống OpenStack sử dụng. password đăng nhập của user tannt là tan@123++
+- Trước tiên cần cài đặt và cấu hình LDAP. Dưới đây là cấu hình LDAP tree mà tôi dựng cho hệ thống OpenStack sử dụng. 
+Password đăng nhập của user tannt là tan@123++
 ```sh
 root@ldapserver:~# slapcat
 dn: dc=vnptdata,dc=vn
@@ -387,10 +531,7 @@ modifiersName: cn=admin,dc=vnptdata,dc=vn
 modifyTimestamp: 20170220103608Z
 ```
 
-- Việc xây dựng LDAP tree không có khó khăn gì. Đầu tiên ta cài đặt LDAP như bình thường theo hướng dẫn 
-[sau](https://github.com/TrongTan124/ghichep-LDAP/blob/master/docs/TanNT-LDAP-OpenLDAP.md)
-
-- Tiếp đến tạo tập tin cấu trúc
+- Để xây dựng được cấu trúc LDAP như trên, sau khi cài đặt LDAP xong, ta tạo tập tin cấu trúc
 ```sh
 root@ldapserver:~# cat openstack.ldif 
 dn: ou=Groups,dc=vnptdata,dc=vn
@@ -415,12 +556,12 @@ ou: _member_
 cn: 9fe2ff9ee4384b1894a90878d3e92bab
 ```
 
-- Thực hiện import case vào LDAP
+- Thực hiện import cấu trúc vào LDAP tree
 ```sh
 ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f openstack.ldif
 ```
 
-- Thực hiện thêm các user của project OpenStack vào LDAP, password là tan124 được thiết lập bằng ldapadmin, method mã hóa SHA1
+- Thực hiện thêm các user của project OpenStack vào LDAP, password là tan124 được thiết lập bằng ldapadmin, method mã hóa SHA1. Tạo tập tin user project
 ```sh
 root@ldapserver:~# cat user2.ldif 
 dn: cn=c4f656354aa1437ba17d1275cfa84773,ou=Users,dc=vnptdata,dc=vn
