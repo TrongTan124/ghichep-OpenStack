@@ -476,7 +476,27 @@ ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f newuser.ldif
 
 - Mật khẩu người dùng mới có thể thay đổi bằng công cụ [ldapadmin](http://www.ldapadmin.org/)
 
-- User mới thêm vào LDAP tree, cần được gán vào role và project cụ thể mới có thể sử dụng được. lệnh insert vào database keystone
+- User mới thêm vào LDAP tree, cần được gán vào role và project cụ thể mới có thể sử dụng được. 
+Thông tin về project_id và role_id lấy từ lệnh của OpenStack
+```sh
+root@controller1:/etc/keystone# openstack project list;
++----------------------------------+---------+
+| ID                               | Name    |
++----------------------------------+---------+
+| 275c91cdf760484d90f86ea0c1458334 | demo    |
+| b0ddb1b01ba94969b4f4bace011fa1b0 | admin   |
+| bf8cfb4b8a5f4940bce3d980fa3d6d41 | service |
++----------------------------------+---------+
+root@controller1:/etc/keystone# openstack role list;
++----------------------------------+-------+
+| ID                               | Name  |
++----------------------------------+-------+
+| 5bde76879ca54795a48c68026b4a4dc7 | admin |
+| f31331e443d34968a97f7d39bb771a38 | user  |
++----------------------------------+-------+
+```
+
+-  lệnh gán assignment cho user mới vào database keystone.
 ```sh
 INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) 
 VALUES ('UserProject', 'tannt', 'b0ddb1b01ba94969b4f4bace011fa1b0', '5bde76879ca54795a48c68026b4a4dc7', '0');
