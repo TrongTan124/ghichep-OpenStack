@@ -577,10 +577,5 @@ Distribution = Ubuntu
 
 - Trong cấu hình của keystone, ta chỉ định một domain mặc định trong quá trình sử dụng bằng biến `default_domain_id`
 
-- Ngoài ra cần kích hoạt tính năng `authlogin_nsswitch_use_ldap` cho selinux
-```sh
-setsebool -P authlogin_nsswitch_use_ldap on
-```
-
 # Tham khảo
 - [http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/](http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/)
