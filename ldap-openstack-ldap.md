@@ -8,8 +8,6 @@
 
 # Cài đặt bằng devstack
 
-## Cấu hình local.conf
-
 - Cập nhật và nâng cấp HĐH
 ```sh
 apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && init 6
