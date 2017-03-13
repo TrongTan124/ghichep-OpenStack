@@ -357,7 +357,94 @@ Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó
 
 ## Cấu hình LDAP tree trên LDAP server
 
-- Trước tiên cần cài đặt và cấu hình LDAP. Dưới đây là cấu hình LDAP tree mà tôi dựng cho hệ thống OpenStack sử dụng. 
+- Trước tiên cần cài đặt và cấu hình LDAP. 
+
+- Để xây dựng được cấu trúc LDAP tree, sau khi cài đặt LDAP xong, ta tạo tập tin cấu trúc như dưới. lưu ý là cn của `ou=Roles` _member_ mặc định
+`9fe2ff9ee4384b1894a90878d3e92bab`:
+```sh
+root@ldapserver:~# cat openstack.ldif 
+dn: ou=Groups,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Groups
+
+dn: ou=Users,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Users
+
+dn: ou=Roles,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Roles
+
+dn: ou=Projects,dc=vnptdata,dc=vn
+objectClass: organizationalUnit
+ou: Projects
+
+dn: cn=9fe2ff9ee4384b1894a90878d3e92bab,ou=Roles,dc=vnptdata,dc=vn
+objectClass: organizationalRole
+ou: _member_
+cn: 9fe2ff9ee4384b1894a90878d3e92bab
+```
+
+- Thực hiện import cấu trúc vào LDAP tree
+```sh
+ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f openstack.ldif
+```
+
+- Thực hiện thêm các user của project OpenStack vào LDAP, password là tan124 được thiết lập bằng ldapadmin, method mã hóa SHA1. Tạo tập tin user project
+```sh
+root@ldapserver:~# cat user2.ldif 
+dn: cn=c4f656354aa1437ba17d1275cfa84773,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+userPassword:: b3BlbnN0YWNr
+sn: admin
+cn: c4f656354aa1437ba17d1275cfa84773
+
+dn: cn=3ae9bd7d69c84c2787649f2e9119c243,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+sn: demo
+cn: 3ae9bd7d69c84c2787649f2e9119c243
+
+dn: cn=a37554325f454af58a5a133ab734ccb7,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+cn: a37554325f454af58a5a133ab734ccb7
+sn: nova
+
+dn: cn=3d733c4239f440c6b12e67f523c56d2d,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+userPassword:: b3BlbnN0YWNr
+cn: 3d733c4239f440c6b12e67f523c56d2d
+sn: glance
+
+dn: cn=2a22bf794cdc45d2b1408d73b58f3307,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+userPassword:: b3BlbnN0YWNr
+cn: 2a22bf794cdc45d2b1408d73b58f3307
+sn: neutron
+```
+
+- Tạo tập tin người dùng mới như sau:
+```sh
+root@ldapserver:~# cat newuser.ldif
+dn: cn=tannt,ou=Users,dc=vnptdata,dc=vn
+objectClass: person
+objectClass: inetOrgPerson
+description: tannt openstack user account
+cn: tannt
+userPassword:: dGFuQDEyMysr
+sn: tannt
+```
+
+- Thực hiện thêm người dùng mới vào LDAP tree. nhớ nhập password của LDAP
+```sh
+ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f newuser.ldif
+```
+
+- Dưới đây là cấu hình LDAP tree mà tôi dựng cho hệ thống OpenStack sử dụng. 
 Password đăng nhập của user tannt là tan@123++
 ```sh
 root@ldapserver:~# slapcat
@@ -529,117 +616,7 @@ modifiersName: cn=admin,dc=vnptdata,dc=vn
 modifyTimestamp: 20170220103608Z
 ```
 
-- Để xây dựng được cấu trúc LDAP như trên, sau khi cài đặt LDAP xong, ta tạo tập tin cấu trúc
-```sh
-root@ldapserver:~# cat openstack.ldif 
-dn: ou=Groups,dc=vnptdata,dc=vn
-objectClass: organizationalUnit
-ou: Groups
-
-dn: ou=Users,dc=vnptdata,dc=vn
-objectClass: organizationalUnit
-ou: Users
-
-dn: ou=Roles,dc=vnptdata,dc=vn
-objectClass: organizationalUnit
-ou: Roles
-
-dn: ou=Projects,dc=vnptdata,dc=vn
-objectClass: organizationalUnit
-ou: Projects
-
-dn: cn=9fe2ff9ee4384b1894a90878d3e92bab,ou=Roles,dc=vnptdata,dc=vn
-objectClass: organizationalRole
-ou: _member_
-cn: 9fe2ff9ee4384b1894a90878d3e92bab
-```
-
-- Thực hiện import cấu trúc vào LDAP tree
-```sh
-ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f openstack.ldif
-```
-
-- Thực hiện thêm các user của project OpenStack vào LDAP, password là tan124 được thiết lập bằng ldapadmin, method mã hóa SHA1. Tạo tập tin user project
-```sh
-root@ldapserver:~# cat user2.ldif 
-dn: cn=c4f656354aa1437ba17d1275cfa84773,ou=Users,dc=vnptdata,dc=vn
-objectClass: person
-objectClass: inetOrgPerson
-userPassword:: b3BlbnN0YWNr
-sn: admin
-cn: c4f656354aa1437ba17d1275cfa84773
-
-dn: cn=3ae9bd7d69c84c2787649f2e9119c243,ou=Users,dc=vnptdata,dc=vn
-objectClass: person
-objectClass: inetOrgPerson
-sn: demo
-cn: 3ae9bd7d69c84c2787649f2e9119c243
-
-dn: cn=a37554325f454af58a5a133ab734ccb7,ou=Users,dc=vnptdata,dc=vn
-objectClass: person
-objectClass: inetOrgPerson
-cn: a37554325f454af58a5a133ab734ccb7
-sn: nova
-
-dn: cn=3d733c4239f440c6b12e67f523c56d2d,ou=Users,dc=vnptdata,dc=vn
-objectClass: person
-objectClass: inetOrgPerson
-userPassword:: b3BlbnN0YWNr
-cn: 3d733c4239f440c6b12e67f523c56d2d
-sn: glance
-
-dn: cn=2a22bf794cdc45d2b1408d73b58f3307,ou=Users,dc=vnptdata,dc=vn
-objectClass: person
-objectClass: inetOrgPerson
-userPassword:: b3BlbnN0YWNr
-cn: 2a22bf794cdc45d2b1408d73b58f3307
-sn: neutron
-```
-
-- Tạo tập tin người dùng mới như sau:
-```sh
-root@ldapserver:~# cat newuser.ldif
-dn: cn=tannt,ou=Users,dc=vnptdata,dc=vn
-objectClass: person
-objectClass: inetOrgPerson
-description: tannt openstack user account
-cn: tannt
-userPassword:: dGFuQDEyMysr
-sn: tannt
-```
-
-- Thực hiện thêm người dùng mới vào LDAP tree. nhớ nhập password của LDAP
-```sh
-ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f newuser.ldif
-```
-
 - Mật khẩu người dùng mới có thể thay đổi bằng công cụ [ldapadmin](http://www.ldapadmin.org/)
-
-- User mới thêm vào LDAP tree, cần được gán vào role và project cụ thể mới có thể sử dụng được. 
-Thông tin về project_id và role_id lấy từ lệnh của OpenStack
-```sh
-root@controller1:/etc/keystone# openstack project list;
-+----------------------------------+---------+
-| ID                               | Name    |
-+----------------------------------+---------+
-| 275c91cdf760484d90f86ea0c1458334 | demo    |
-| b0ddb1b01ba94969b4f4bace011fa1b0 | admin   |
-| bf8cfb4b8a5f4940bce3d980fa3d6d41 | service |
-+----------------------------------+---------+
-root@controller1:/etc/keystone# openstack role list;
-+----------------------------------+-------+
-| ID                               | Name  |
-+----------------------------------+-------+
-| 5bde76879ca54795a48c68026b4a4dc7 | admin |
-| f31331e443d34968a97f7d39bb771a38 | user  |
-+----------------------------------+-------+
-```
-
--  lệnh gán assignment cho user mới vào database keystone.
-```sh
-INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) 
-VALUES ('UserProject', 'tannt', 'b0ddb1b01ba94969b4f4bace011fa1b0', '5bde76879ca54795a48c68026b4a4dc7', '0');
-```
 
 ## Chỉnh sửa cấu hình keystone
 
@@ -699,7 +676,7 @@ tenant_attribute_ignore = enabled
 url = ldap://vnptdata.vn
 user = cn=admin,dc=vnptdata,dc=vn
 password = tan124
-suffix = cn=vnptdata,cn=vn
+suffix = dc=vnptdata,dc=vn
 use_dumb_member = true
 user_tree_dn = ou=Users,dc=vnptdata,dc=vn
 user_attribute_ignore = default_project_id,enabled,email,tenants
@@ -716,5 +693,294 @@ Distribution = Ubuntu
 
 - Trong cấu hình của keystone, ta chỉ định một domain mặc định trong quá trình sử dụng bằng biến `default_domain_id`
 
+- User mới thêm vào LDAP tree, cần được gán vào role và project cụ thể mới có thể sử dụng được. 
+Thông tin về project_id và role_id lấy từ lệnh của OpenStack
+```sh
+root@controller1:/etc/keystone# openstack project list;
++----------------------------------+---------+
+| ID                               | Name    |
++----------------------------------+---------+
+| 275c91cdf760484d90f86ea0c1458334 | demo    |
+| b0ddb1b01ba94969b4f4bace011fa1b0 | admin   |
+| bf8cfb4b8a5f4940bce3d980fa3d6d41 | service |
++----------------------------------+---------+
+root@controller1:/etc/keystone# openstack role list;
++----------------------------------+-------+
+| ID                               | Name  |
++----------------------------------+-------+
+| 5bde76879ca54795a48c68026b4a4dc7 | admin |
+| f31331e443d34968a97f7d39bb771a38 | user  |
++----------------------------------+-------+
+```
+
+-  lệnh gán assignment cho user mới vào database keystone.
+```sh
+INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) 
+VALUES ('UserProject', 'tannt', 'b0ddb1b01ba94969b4f4bace011fa1b0', '5bde76879ca54795a48c68026b4a4dc7', '0');
+```
+
+# TLS for LDAP
+
+## Server
+
+Trong phần này, tôi sẽ cấu hình LDAP sử dụng tls để mã hóa đường truyền.
+
+Đầu tiên, trên LDAP server ta sử dụng openssl gen key cho việc mã hóa cũng như import vào LDAP tree
+
+- Nếu LDAP server chưa có openssl thì cài gói sau, nhưng hầu hết các distro đều cài mặc định openssl.
+```sh
+apt-get install openssl
+```
+
+- Ta thêm đường dẫn sau vào PATH của hệ điều hành, để có thể sử dụng script CA.sh gen key
+```sh
+export PATH=$PATH:/usr/lib/ssl/misc
+```
+
+- Tùy chỉnh lại các thông tin cấu hình trong file `/usr/lib/ssl/openssl.cnf` như sau
+```sh
+...
+[ req ]
+default_bits    = 2048
+...
+[ req_distinguished_name ]
+countryName_default		= VN
+stateOrProvinceName_default	= HaNoi
+0.organizationName_default	= VNPT DATA
+...
+```
+
+- Tạo thư mục để lưu các khóa
+```sh
+mkdir ~/ca && cd ~/ca
+```
+
+- Bây giờ ta tạo một file CA mới như sau:
+```
+ldap1:~/ca# CA.sh -newca
+CA certificate filename (or enter to create)
+
+Making CA certificate ...
+Generating a 2048 bit RSA private key
+............+++
+........+++
+writing new private key to './demoCA/private/./cakey.pem'
+Enter PEM pass phrase: **************
+Verifying - Enter PEM pass phrase: **************
+...
+Country Name (2 letter code) [UA]:VN
+State or Province Name (full name) [LV]:HN
+Locality Name (eg, city) []:HaNoi
+Organization Name (eg, company) [XYZ Co]:VNPT DATA
+Organizational Unit Name (eg, section) []:
+Common Name (eg, YOUR name) []:vnptdata.vn
+Email Address []:nguyentrongtan@vnpt.vn
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:123456
+An optional company name []:VNPT DATA
+Using configuration from /usr/lib/ssl/openssl.cnf
+Enter pass phrase for ./demoCA/private/./cakey.pem: *****
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+...
+Write out database with 1 new entries
+Data Base Updated
+```
+
+- Kết quả của lệnh trên sẽ tạo ra một tập tin certificate tên là `cacert.pem` trong thư mục `~/ca/demoCA`. Ta gán lại quyền đọc cho thư mục gen key như sau:
+```sh
+chmod -R go-rwx ~/ca
+```
+
+- Sau khi tạo được tập tin certificate như trên, ta phải thực hiện tiếp 02 bước sau:
+	- create certificate request
+	- sign request by certificate authority. bước này sử dụng certificate `cacert.pem` vừa tạo được ở trên
+
+- Certificate Request
+```sh
+ldap1:~/ca# openssl req -new -nodes -keyout newreq.pem -out newreq.pem
+Generating a 2048 bit RSA private key
+.....................+++
+....................................+++
+writing new private key to 'newreq.pem'
+...
+Country Name (2 letter code) [UA]: VN
+State or Province Name (full name) [LV]:HN
+Locality Name (eg, city) []:HaNoi
+Organization Name (eg, company) [XYZ Co]:VNPT DATA
+Organizational Unit Name (eg, section) []:
+Common Name (eg, YOUR name) []:vnptdata.vn
+Email Address []:nguyentrongtan@vnpt
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:123456
+An optional company name []:VNPT DATA
+```
+
+- sign request
+```sh
+ldap1:~/ca# /usr/lib/ssl/misc/CA.sh -sign
+Using configuration from /usr/lib/ssl/openssl.cnf
+Enter pass phrase for ./demoCA/private/cakey.pem: 123456
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+...       
+Certificate is to be certified until XXX (365 days)
+Sign the certificate? [y/n]:y
+
+1 out of 1 certificate requests certified, commit? [y/n]y
+Write out database with 1 new entries
+Data Base Updated
+Certificate:
+    ...
+Signed certificate is in newcert.pem
+```
+
+- Sau 02 bước trên, chúng ta đã tạo ra được 02 tập tin: `newreq.pem` và `newcert.pem`. Chúng ta có thể đổi tên thành ldap-key.pem và ldap-cert.pem để 
+sử dụng. hoặc có thể kết hợp 02 tập tin thành một như sau:
+```sh
+cat newreq.pem newcert.pem > new.pem
+```
+
+- Sau khi tạo xong key, bây giờ tới bước gắn key vào LDAP server và cấu hình CA cho client kết nối tới.
+
+- Trên LDAP server, chúng ta cài đặt CA certificate như sau:
+```sh
+cp ~/ca/demoCA/cacert.pem /etc/ssl/certs/
+chmod go+r /etc/ssl/certs/cacert.pem
+```
+
+- Copy ldap key and certificate files to /etc/ldap/ssl
+```sh
+mkdir /etc/ldap/ssl/
+cp ~/ca/new*.pem /etc/ldap/ssl/
+```
+
+- Secure certificates:
+```sh
+ldap1:~# chown -R root:openldap /etc/ldap/ssl
+ldap1:~# chmod -R o-rwx /etc/ldap/ssl
+```
+
+- Chỉnh sửa tập tin cấu hình `/etc/default/slapd` cho phép LDAP sử dụng kết nối bảo mật
+```sh
+LAPD_SERVICES="ldap://127.0.0.1:389/ ldaps:/// ldapi:///"
+```
+
+- Tạo một tập tin cấu hình cho LDAP `tls-config.ldif` nội dung sau:
+```sh
+dn: cn=config
+add: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/ssl/certs/cacert.pem
+-
+add: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ldap/ssl/newcert.pem
+-
+add: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ldap/ssl/newreq.pem
+```
+
+- Apply it:
+```sh
+ldapmodify -QY EXTERNAL -H ldapi:/// -f tls-config.ldif
+```
+
+- Restart slapd:
+```sh
+/etc/init.d/slapd restart
+```
+
+- Ensure started:
+```sh
+netstat -tunlp | grep slapd
+tcp        0      0 0.0.0.0:636             0.0.0.0:*               LISTEN      2462/slapd      
+tcp        0      0 127.0.0.1:389           0.0.0.0:*               LISTEN      2462/slapd  
+```
+
+## Client
+
+Ta gửi file CA certificate `cacert.pem` từ Server sang client.
+```sh
+root@controller1:/etc/keystone/ssl/certs# ll
+-rw-r--r-- 1 keystone keystone 4448 Mar  7 18:46 cacert.pem
+```
+
+Trên client, tức controller, ta thực hiện chỉnh sửa lại cấu hình cho keystone sao cho giống với cấu hình sau:
+```sh
+...
+[ldap]
+user_domain_id_attribute = businessCategory
+tenant_tree_dn = ou=Projects,dc=vnptdata,dc=vn
+tenant_desc_attribute = description
+tenant_domain_id_attribute = businessCategory
+tenant_attribute_ignore = enabled
+url = ldaps://vnptdata.vn:636
+user = cn=admin,dc=vnptdata,dc=vn
+password = tan124
+suffix = dc=vnptdata,dc=vn
+use_dumb_member = true
+user_tree_dn = ou=Users,dc=vnptdata,dc=vn
+user_attribute_ignore = default_project_id,enabled,email,tenants
+tls_cacertfile = "/etc/keystone/ssl/certs/cacert.pem"
+tls_cacertdir = "/etc/keystone/ssl/certs/"
+use_tls = false
+tls_req_cert = demand
+
+...
+```
+
+Ở đây, ta cấu hình tương tự như trường hợp chưa sử dụng tls, chỉ tập trung vào 05 dòng sau:
+```sh
+url = ldaps://vnptdata.vn:636
+tls_cacertfile = "/etc/keystone/ssl/certs/cacert.pem"
+tls_cacertdir = "/etc/keystone/ssl/certs/"
+use_tls = false
+tls_req_cert = demand
+```
+
+- Khởi động lại apache2 để apply cấu hình
+```sh
+# /etc/init.d/apache2 restart
+```
+
+- bắt gói tin trên LDAP server để kiểm tra kết nối
+```sh
+root@ldapserver:~/ca# tcpdump -ne -i any host 172.16.68.13
+```
+
+- bật debug và tail log trên controller
+```sh
+[DEFAULT]
+debug = True
+log_dir = /var/log/keystone
+```
+```sh
+root@controller1:/var/log/keystone# tail -f keystone-wsgi-admin.log
+```
+
+- Kiểm tra lại xem keystone đã hoạt động đúng chưa bằng cách thông thường là sử dụng openstackclient trên controller:
+```sh
+# source ~/admin-openrc
+root@controller1:/etc/keystone/ssl/certs# openstack user list
++----------------------------------+---------+
+| ID                               | Name    |
++----------------------------------+---------+
+| c4f656354aa1437ba17d1275cfa84773 | admin   |
+| 3ae9bd7d69c84c2787649f2e9119c243 | demo    |
+| a37554325f454af58a5a133ab734ccb7 | nova    |
+| 3d733c4239f440c6b12e67f523c56d2d | glance  |
+| 2a22bf794cdc45d2b1408d73b58f3307 | neutron |
+| tannt                            | tannt   |
++----------------------------------+---------+
+```
+
 # Tham khảo
 - [http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/](http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/)
+- [https://mindref.blogspot.com/2010/12/openssl-ca.html](https://mindref.blogspot.com/2010/12/openssl-ca.html)
+- [https://mindref.blogspot.com/2010/12/openssl-create-certificates.html](https://mindref.blogspot.com/2010/12/openssl-create-certificates.html)
+- [https://mindref.blogspot.com/2010/12/debian-openldap-ssl-tls-encryption.html](https://mindref.blogspot.com/2010/12/debian-openldap-ssl-tls-encryption.html)
