@@ -12,11 +12,11 @@ Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó
 
 - Cài đặt OpenStack bằng hướng dẫn [sau](https://github.com/congto/OpenStack-Mitaka-Scripts/tree/master/OPS-Mitaka-OVS-Ubuntu)
 
-- Việc xây dựng LDAP tree không có khó khăn gì. Đầu tiên ta cài đặt OpenLDAP như bình thường theo hướng dẫn 
+- Việc xây dựng OpenLDAP tree không có khó khăn gì. Đầu tiên ta cài đặt OpenLDAP như bình thường theo hướng dẫn 
 [sau](https://github.com/TrongTan124/ghichep-LDAP/blob/master/docs/TanNT-LDAP-OpenLDAP.md)
 
-## Cài đặt LDAP Server
-----
+## Cài đặt OpenLDAP Server
+
 - Thực hiện cài đặt openldap, trong quá trình cài đặt cần nhập password cho admin entry
 ```sh
 # apt-get -y install slapd ldap-utils
@@ -39,7 +39,7 @@ ldap://vnptdata.vn
 dc=vnptdata,dc=vn
 ldapversion: 3
 Make local root Database admin: No
-Does the LDAP database require login? No
+Does the OpenLDAP database require login? No
 Local crypt to use when changing passwords: md5
 ```
 
@@ -65,11 +65,11 @@ Move old database? Yes
 Allow LDAPv2 protocol? No
 ```
 
-## Cấu hình LDAP tree trên LDAP server
+## Cấu hình OpenLDAP tree trên OpenLDAP server
 
 - Trước tiên cần cài đặt và cấu hình LDAP. 
 
-- Để xây dựng được cấu trúc LDAP tree, sau khi cài đặt LDAP xong, ta tạo tập tin cấu trúc như dưới. lưu ý là cn của `ou=Roles` _member_ mặc định
+- Để xây dựng được cấu trúc OpenLDAP tree, sau khi cài đặt OpenLDAP xong, ta tạo tập tin cấu trúc như dưới. lưu ý là cn của `ou=Roles` _member_ mặc định
 `9fe2ff9ee4384b1894a90878d3e92bab`:
 ```sh
 root@ldapserver:~# cat openstack.ldif 
@@ -95,7 +95,7 @@ ou: _member_
 cn: 9fe2ff9ee4384b1894a90878d3e92bab
 ```
 
-- Thực hiện import cấu trúc vào LDAP tree
+- Thực hiện import cấu trúc vào OpenLDAP tree
 ```sh
 ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f openstack.ldif
 ```
@@ -137,6 +137,11 @@ cn: 2a22bf794cdc45d2b1408d73b58f3307
 sn: neutron
 ```
 
+- Thực hiện import fine user2.ldif vào OpenLDAP tree
+```sh
+ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f user2.ldif
+```
+
 - Tạo tập tin người dùng mới như sau:
 ```sh
 root@ldapserver:~# cat newuser.ldif
@@ -149,12 +154,12 @@ userPassword:: dGFuQDEyMysr
 sn: tannt
 ```
 
-- Thực hiện thêm người dùng mới vào LDAP tree. nhớ nhập password của LDAP
+- Thực hiện thêm người dùng mới vào OpenLDAP tree. nhớ nhập password của LDAP
 ```sh
 ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f newuser.ldif
 ```
 
-- Dưới đây là cấu hình LDAP tree mà tôi dựng cho hệ thống OpenStack sử dụng. 
+- Dưới đây là cấu hình OpenLDAP tree mà tôi dựng cho hệ thống OpenStack sử dụng. 
 Password đăng nhập của user tannt là tan@123++
 ```sh
 root@ldapserver:~# slapcat
@@ -176,7 +181,7 @@ dn: cn=admin,dc=vnptdata,dc=vn
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
 cn: admin
-description: LDAP administrator
+description: OpenLDAP administrator
 userPassword:: e1NTSEF9MDdGakc4Q1oweHBIUkFpSHY1Sm1yQVFqWnZlZnl1cEQ=
 structuralObjectClass: organizationalRole
 entryUUID: c1f56716-756f-1036-8fca-fbb896cd667f
@@ -334,19 +339,19 @@ modifyTimestamp: 20170220103608Z
 Cái này cần thử nghiệm lại để loại bớt gói không cần thiết.
 ```sh
 root@controller1:/etc/keystone# dpkg -l | grep ldap
-ii  erlang-eldap                       1:16.b.3-dfsg-1ubuntu2.1              amd64        Erlang/OTP LDAP library
-ii  ldap-auth-client                   0.5.3                                 all          meta-package for LDAP authentication
-ii  ldap-auth-config                   0.5.3                                 all          Config package for LDAP authentication
+ii  erlang-eldap                       1:16.b.3-dfsg-1ubuntu2.1              amd64        Erlang/OTP OpenLDAP library
+ii  ldap-auth-client                   0.5.3                                 all          meta-package for OpenLDAP authentication
+ii  ldap-auth-config                   0.5.3                                 all          Config package for OpenLDAP authentication
 ii  ldap-utils                         2.4.31-1+nmu2ubuntu8.3                amd64        OpenLDAP utilities
-ii  libaprutil1-ldap:amd64             1.5.3-1                               amd64        Apache Portable Runtime Utility Library - LDAP Driver
+ii  libaprutil1-ldap:amd64             1.5.3-1                               amd64        Apache Portable Runtime Utility Library - OpenLDAP Driver
 ii  libldap-2.4-2:amd64                2.4.31-1+nmu2ubuntu8.3                amd64        OpenLDAP libraries
 ii  libldap2-dev:amd64                 2.4.31-1+nmu2ubuntu8.3                amd64        OpenLDAP development libraries
-ii  libnet-ldap-perl                   1:0.5800-1                            all          client interface to LDAP servers
-ii  libnss-ldap:amd64                  264-2.2ubuntu4.14.04.2                amd64        NSS module for using LDAP as a naming service
+ii  libnet-ldap-perl                   1:0.5800-1                            all          client interface to OpenLDAP servers
+ii  libnss-ldap:amd64                  264-2.2ubuntu4.14.04.2                amd64        NSS module for using OpenLDAP as a naming service
 ii  libpam-ldap:amd64                  184-8.5ubuntu3                        amd64        Pluggable Authentication Module for LDAP
-ii  python-ldap                        2.4.22-0.1~cloud0                     amd64        LDAP interface module for Python
+ii  python-ldap                        2.4.22-0.1~cloud0                     amd64        OpenLDAP interface module for Python
 ii  python-ldappool                    1.0-1ubuntu1~cloud0                   all          connection pool for python-ldap
-ii  python-ldaptor                     0.0.43+debian1-7                      all          pure-Python library for LDAP operations
+ii  python-ldaptor                     0.0.43+debian1-7                      all          pure-Python library for OpenLDAP operations
 ```
 
 - Một số lệnh cài đặt như sau:
@@ -359,7 +364,7 @@ apt-get install python-ldaptor
 apt-get install python-ldappool
 ```
 
-- Cấu hình identity sử dụng LDAP bên ngoài, cần chỉnh sửa cấu hình trong file `/etc/keystone.conf` như sau:
+- Cấu hình identity sử dụng OpenLDAP bên ngoài, cần chỉnh sửa cấu hình trong file `/etc/keystone.conf` như sau:
 ```sh
 root@controller1:/etc/keystone# cat keystone.conf|egrep -v "^$|^#"
 [DEFAULT]
@@ -403,7 +408,13 @@ Distribution = Ubuntu
 
 - Trong cấu hình của keystone, ta chỉ định một domain mặc định trong quá trình sử dụng bằng biến `default_domain_id`
 
-- User mới thêm vào LDAP tree, cần được gán vào role và project cụ thể mới có thể sử dụng được. 
+## Thêm, xóa user người dùng sau khi chuyển đổi backend OpenLDAP cho identity.
+
+### Cách 1
+
+Thêm người dùng bằng cách thêm thông tin vào OpenLDAP trước, sau đó gán quyền cho người dùng vào project cụ thể trong OpenStack
+
+- User mới thêm vào OpenLDAP tree, cần được gán vào role và project cụ thể mới có thể sử dụng được. 
 Thông tin về project_id và role_id lấy từ lệnh của OpenStack
 ```sh
 root@controller1:/etc/keystone# openstack project list;
@@ -423,7 +434,18 @@ root@controller1:/etc/keystone# openstack role list;
 +----------------------------------+-------+
 ```
 
--  lệnh gán assignment cho user mới vào database keystone.
+- Gán quyền bằng lệnh từ openstack client cho user tannt vừa thêm vào project admin và role admin
+```sh
+openstack role add --project admin --user tannt admin
+```
+
+- Sử dụng openstack client có thể tham khảo tại [đây](https://docs.openstack.org/mitaka/install-guide-ubuntu/keystone-users.html)
+
+### Cách 2
+
+Ta thêm trực tiếp project và role vào cho người dùng tại database backend cho assigment.
+
+-  lệnh gán assignment cho user mới vào database keystone. các thông tin target_ip là project, role_id là role lấy được từ lệnh của openstack client trên
 ```sh
 INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) 
 VALUES ('UserProject', 'tannt', 'b0ddb1b01ba94969b4f4bace011fa1b0', '5bde76879ca54795a48c68026b4a4dc7', '0');
@@ -433,11 +455,11 @@ VALUES ('UserProject', 'tannt', 'b0ddb1b01ba94969b4f4bace011fa1b0', '5bde76879ca
 
 ## Server
 
-Trong phần này, tôi sẽ cấu hình LDAP sử dụng tls để mã hóa đường truyền.
+Trong phần này, tôi sẽ cấu hình OpenLDAP sử dụng tls để mã hóa đường truyền.
 
-Đầu tiên, trên LDAP server ta sử dụng openssl gen key cho việc mã hóa cũng như import vào LDAP tree
+Đầu tiên, trên OpenLDAP server ta sử dụng openssl gen key cho việc mã hóa cũng như import vào OpenLDAP tree
 
-- Nếu LDAP server chưa có openssl thì cài gói sau, nhưng hầu hết các distro đều cài mặc định openssl.
+- Nếu OpenLDAP server chưa có openssl thì cài gói sau, nhưng hầu hết các distro đều cài mặc định openssl.
 ```sh
 apt-get install openssl
 ```
@@ -557,15 +579,15 @@ sử dụng. hoặc có thể kết hợp 02 tập tin thành một như sau:
 cat newreq.pem newcert.pem > new.pem
 ```
 
-- Sau khi tạo xong key, bây giờ tới bước gắn key vào LDAP server và cấu hình CA cho client kết nối tới.
+- Sau khi tạo xong key, bây giờ tới bước gắn key vào OpenLDAP server và cấu hình CA cho client kết nối tới.
 
-- Trên LDAP server, chúng ta cài đặt CA certificate như sau:
+- Trên OpenLDAP server, chúng ta cài đặt CA certificate như sau:
 ```sh
 cp ~/ca/demoCA/cacert.pem /etc/ssl/certs/
 chmod go+r /etc/ssl/certs/cacert.pem
 ```
 
-- Copy ldap key and certificate files to /etc/ldap/ssl
+- Copy OpenLDAP key and certificate files to /etc/ldap/ssl
 ```sh
 mkdir /etc/ldap/ssl/
 cp ~/ca/new*.pem /etc/ldap/ssl/
@@ -577,12 +599,12 @@ ldap1:~# chown -R root:openldap /etc/ldap/ssl
 ldap1:~# chmod -R o-rwx /etc/ldap/ssl
 ```
 
-- Chỉnh sửa tập tin cấu hình `/etc/default/slapd` cho phép LDAP sử dụng kết nối bảo mật
+- Chỉnh sửa tập tin cấu hình `/etc/default/slapd` cho phép OpenLDAP sử dụng kết nối bảo mật
 ```sh
 LAPD_SERVICES="ldap://127.0.0.1:389/ ldaps:/// ldapi:///"
 ```
 
-- Tạo một tập tin cấu hình cho LDAP `tls-config.ldif` nội dung sau:
+- Tạo một tập tin cấu hình cho OpenLDAP `tls-config.ldif` nội dung sau:
 ```sh
 dn: cn=config
 add: olcTLSCACertificateFile
@@ -658,7 +680,7 @@ tls_req_cert = demand
 # /etc/init.d/apache2 restart
 ```
 
-- bắt gói tin trên LDAP server để kiểm tra kết nối
+- bắt gói tin trên OpenLDAP server để kiểm tra kết nối
 ```sh
 root@ldapserver:~/ca# tcpdump -ne -i any host 172.16.68.13
 ```
@@ -957,7 +979,7 @@ f931ad962bf444458fa5d39c7d3c8aff	tannt_project	{}		tannt test project		1			defau
 id									extra											enabled	default_project_id	created_at			last_active_at
 f8afdf4455b94bd6ba20bdeef05ba732	{"description": "tannt openstack user account"}	\N		\N					2017-01-26 20:32:55	\N
 ```
-	- Thông tin trong LDAP tree
+	- Thông tin trong OpenLDAP tree
 ```sh
 dn: cn=f8afdf4455b94bd6ba20bdeef05ba732,ou=Users,dc=openstack,dc=org
 objectClass: person
@@ -977,7 +999,7 @@ modifyTimestamp: 20170126202135Z
 
 ==> Phía trên là thông tin của user thực hiện bằng câu lệnh openstack. thông tin xử lý bởi OpenStack và ghi vào MySQL cùng LDAP.
 
-## Thêm User thủ công vào LDAP và gán quyền trong OpenStack
+## Thêm User thủ công vào OpenLDAP và gán quyền trong OpenStack
 
 - Bây giờ ta thử thực hiện tạo username trên LDAP, sau đó gán assignment và role một cách thủ công.
 
@@ -992,7 +1014,7 @@ userPassword:: dGFuQDEyMysr
 sn: hangnt
 ```
 
-- Chạy lệnh sau để thêm user vào ldap, passwd LDAP tree khi cái bằng devstack là 9632
+- Chạy lệnh sau để thêm user vào ldap, passwd OpenLDAP tree khi cái bằng devstack là 9632
 ```sh
 ldapadd -x -D cn=Manager,dc=openstack,dc=org -W -f usernew.ldif
 ```
@@ -1027,7 +1049,7 @@ modifyTimestamp: 20170126235030Z
 INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) VALUES ('UserProject', 'hangnt', 'f931ad962bf444458fa5d39c7d3c8aff', 'ae7661eaf25f4b45ab3f1120d6b6601c', '0'); 
 ```
 
-**Note**: Chỉ thực hiện thêm user vào LDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
+**Note**: Chỉ thực hiện thêm user vào OpenLDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
 
 # Tham khảo
 - [http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/](http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/)
