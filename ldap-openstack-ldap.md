@@ -41,40 +41,40 @@ Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó
 
 - Nhập vào domain
 
-<img src="../Images/OpenLDAP/steptwo.png">
+<img src="/Images/OpenLDAP/steptwo.png">
 
 - Nhập vào Tên tổ chức
 
-<img src="../Images/OpenLDAP/stepthree.png">
+<img src="/Images/OpenLDAP/stepthree.png">
 
 - Nhập admin password
 
-<img src="../Images/OpenLDAP/stepfour.png">
+<img src="/Images/OpenLDAP/stepfour.png">
 
 - Nhập admin password confirm
 
-<img src="../Images/OpenLDAP/stepfive.png">
+<img src="/Images/OpenLDAP/stepfive.png">
 
 -  Chọn HDB
 
-<img src="../Images/OpenLDAP/stepsix.png">
+<img src="/Images/OpenLDAP/stepsix.png">
 
 - Chọn Yes
 
-<img src="../Images/OpenLDAP/stepseven.png">
+<img src="/Images/OpenLDAP/stepseven.png">
 
 - Chọn Yes
 
-<img src="../Images/OpenLDAP/stepeight.png">
+<img src="/Images/OpenLDAP/stepeight.png">
 
 - Chọn No
 
-<img src="../Images/OpenLDAP/stepnine.png">
+<img src="/Images/OpenLDAP/stepnine.png">
 
 
 - Sau khi xong ta có thể dùng lệnh `slapcat` để kiểm tra lại các thông tin
 
-<img src="../Images/OpenLDAP/info.png">
+<img src="/Images/OpenLDAP/info.png">
 
 - Tạo OU People chứa các user và OU Groups chứa các nhóm
 
@@ -99,7 +99,7 @@ ou: Groups
 
 - Nhập password Admin
 
-<img src="../Images/OpenLDAP/add.png">
+<img src="/Images/OpenLDAP/add.png">
 
 
 ####Cấu hình chặn anon user query LDAP Server
