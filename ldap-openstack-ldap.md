@@ -441,15 +441,19 @@ openstack role add --project admin --user tannt admin
 
 - Sử dụng openstack client có thể tham khảo tại [đây](https://docs.openstack.org/mitaka/install-guide-ubuntu/keystone-users.html)
 
-### Cách 2
-
-Ta thêm trực tiếp project và role vào cho người dùng tại database backend cho assigment.
+Ngoài ra, không sử dụng openstack client, ta có thể thêm trực tiếp project và role vào cho người dùng tại database backend cho assigment.
 
 -  lệnh gán assignment cho user mới vào database keystone. các thông tin target_ip là project, role_id là role lấy được từ lệnh của openstack client trên
 ```sh
 INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) 
 VALUES ('UserProject', 'tannt', 'b0ddb1b01ba94969b4f4bace011fa1b0', '5bde76879ca54795a48c68026b4a4dc7', '0');
 ```
+
+### Cách 2
+
+Sử dụng horizon để tạo thông tin người dùng, trong quá trình tạo này sẽ gán luôn project, role cho người dùng mới. 
+Không phải thực hiện gán quyền như cách 1 cho user. Thông tin người dùng mới được tại sẽ lưu trực tiếp vào OpenLDAP. 
+Nhưng ID của người dùng sẽ sinh ngẫu nhiên và ghi vào trong OpenLDAP
 
 # TLS for LDAP
 
@@ -711,7 +715,7 @@ root@controller1:/etc/keystone/ssl/certs# openstack user list
 +----------------------------------+---------+
 ```
 
-# Cài đặt bằng devstack
+# Cài đặt OpenStack sử dụng LDAP bằng devstack
 
 - Cập nhật và nâng cấp HĐH
 ```sh
