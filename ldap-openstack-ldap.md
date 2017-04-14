@@ -67,12 +67,11 @@ Allow LDAPv2 protocol? No
 
 ## Cấu hình OpenLDAP tree trên OpenLDAP server
 
-- Trước tiên cần cài đặt và cấu hình LDAP. 
+- Sau khi cài đặt xong OpenLDAP tree xong, ta bắt đầu tạo ra cấu trúc sẽ sử dụng.
 
-- Để xây dựng được cấu trúc OpenLDAP tree, sau khi cài đặt OpenLDAP xong, ta tạo tập tin cấu trúc như dưới. lưu ý là cn của `ou=Roles` _member_ mặc định
+- Để xây dựng được cấu trúc OpenLDAP tree, sau khi cài đặt OpenLDAP xong, ta tạo tập tin cấu trúc `vi openstack.ldif` như dưới. lưu ý là cn của `ou=Roles` _member_ mặc định
 `9fe2ff9ee4384b1894a90878d3e92bab`:
 ```sh
-root@ldapserver:~# cat openstack.ldif 
 dn: ou=Groups,dc=vnptdata,dc=vn
 objectClass: organizationalUnit
 ou: Groups
@@ -100,9 +99,8 @@ cn: 9fe2ff9ee4384b1894a90878d3e92bab
 ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f openstack.ldif
 ```
 
-- Thực hiện thêm các user của project OpenStack vào LDAP, password là tan124 được thiết lập bằng ldapadmin, method mã hóa SHA1. Tạo tập tin user project
+- Thực hiện thêm các user của project OpenStack vào LDAP, password là tan124 được thiết lập bằng ldapadmin, method mã hóa SHA1. Tạo tập tin `vi user2.ldif`
 ```sh
-root@ldapserver:~# cat user2.ldif 
 dn: cn=c4f656354aa1437ba17d1275cfa84773,ou=Users,dc=vnptdata,dc=vn
 objectClass: person
 objectClass: inetOrgPerson
@@ -142,9 +140,8 @@ sn: neutron
 ldapadd -x -D cn=admin,dc=vnptdata,dc=vn -W -f user2.ldif
 ```
 
-- Tạo tập tin người dùng mới như sau:
+- Tạo tập tin người dùng mới `vi newuser.ldif` như sau:
 ```sh
-root@ldapserver:~# cat newuser.ldif
 dn: cn=tannt,ou=Users,dc=vnptdata,dc=vn
 objectClass: person
 objectClass: inetOrgPerson
