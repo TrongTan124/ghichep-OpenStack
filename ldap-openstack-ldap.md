@@ -15,120 +15,55 @@ Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó
 - Việc xây dựng LDAP tree không có khó khăn gì. Đầu tiên ta cài đặt OpenLDAP như bình thường theo hướng dẫn 
 [sau](https://github.com/TrongTan124/ghichep-LDAP/blob/master/docs/TanNT-LDAP-OpenLDAP.md)
 
-####Cài đặt OpenLDAP
-
-- Chuẩn bị
-
-  - Ubuntu Server 14.04
-
-- Update Repo
-
-`sudo apt-get update && apt-get upgrade -y`
-
-- Cài đặt OpenLDAP
-
-`sudo apt-get install -y slapd ldap-utils`
-
-- ở bước cài đặt này OpenLDAP Sẽ hỏi password admin của LDAP Server. Ta có thể bỏ qua hoặc nhập vào
-
-- Sau khi cài đặt xong ta cấu hình lại LDAP
-
-`sudo dpkg-reconfigure slapd`
-
-- Chọn No
-
-<img src="../Images/OpenLDAP/stepone.png">
-
-- Nhập vào domain
-
-<img src="/Images/OpenLDAP/steptwo.png">
-
-- Nhập vào Tên tổ chức
-
-<img src="/Images/OpenLDAP/stepthree.png">
-
-- Nhập admin password
-
-<img src="/Images/OpenLDAP/stepfour.png">
-
-- Nhập admin password confirm
-
-<img src="/Images/OpenLDAP/stepfive.png">
-
--  Chọn HDB
-
-<img src="/Images/OpenLDAP/stepsix.png">
-
-- Chọn Yes
-
-<img src="/Images/OpenLDAP/stepseven.png">
-
-- Chọn Yes
-
-<img src="/Images/OpenLDAP/stepeight.png">
-
-- Chọn No
-
-<img src="/Images/OpenLDAP/stepnine.png">
-
-
-- Sau khi xong ta có thể dùng lệnh `slapcat` để kiểm tra lại các thông tin
-
-<img src="/Images/OpenLDAP/info.png">
-
-- Tạo OU People chứa các user và OU Groups chứa các nhóm
-
-- Sử dụng file ldif có nội dung như sau
-
-```
-dn: ou=People,dc=vnpt,dc=vn
-objectClass: organizationalUnit
-ou: People
-
-dn: ou=Groups,dc=vnpt,dc=vn
-objectClass: organizationalUnit
-ou: Groups
-
+## Cài đặt LDAP Server
+----
+- Thực hiện cài đặt openldap, trong quá trình cài đặt cần nhập password cho admin entry
+```sh
+# apt-get -y install slapd ldap-utils
 ```
 
-- Lưu với tên base.ldif
-
-- Add vào LDAP Server
-
-`ldapadd -x -D cn=admin,dc=vnpt,dc=vn -W -f base.ldif`
-
-- Nhập password Admin
-
-<img src="/Images/OpenLDAP/add.png">
-
-
-####Cấu hình chặn anon user query LDAP Server
-
-- Tạo một file ldif có nội dung như sau
-
-`vi /usr/share/slapd/ldap_disable_bind_anon.ldif`
-
+- Kiểm tra kết quả cài đặt
+```sh
+# slapcat
 ```
-dn: cn=config
-changetype: modify
-add: olcDisallows
-olcDisallows: bind_anon
-
-dn: cn=config
-changetype: modify
-add: olcRequires
-olcRequires: authc
-
-dn: olcDatabase={-1}frontend,cn=config
-changetype: modify
-add: olcRequires
-olcRequires: authc
-
+	Câu lệnh trên sẽ show ra kết quả một cây thư mục mặc định.
+	
+- Thực hiện cài đặt gói cấu hình bằng lệnh
+```sh
+# apt-get install libnss-ldap -y
 ```
 
-- Add vào LDAP Server
+Trong quá trình cài đặt gói trên, sẽ yêu cầu thiết lập cấu hình, thực hiện điều chỉnh như sau:
+```sh
+ldap://vnptdata.vn
+dc=vnptdata,dc=vn
+ldapversion: 3
+Make local root Database admin: No
+Does the LDAP database require login? No
+Local crypt to use when changing passwords: md5
+```
 
-`ldapadd -Y EXTERNAL -H ldapi:/// -f /usr/share/slapd/ldap_disable_bind_anon.ldif`
+- Có thể thực hiện tùy chỉnh lại cấu hình bằng lệnh hoặc sửa file `vi /etc/ldap.conf`
+```sh
+# dpkg-reconfigure ldap-auth-config
+```
+
+- Để thay đổi các cài đặt của LDAP, sử dụng lệnh
+```sh
+dpkg-reconfigure slapd
+```
+
+- Khi chạy lệnh trên sẽ cho phép bạn tùy chỉnh lại cài đặt trên cây thư mục, bạn chọn như sau
+```sh
+Omit OpenLDAP server configuration? No
+DNS domain name? f you have an actual domain name on this server, you can use that. In this article, we will call it example.vnptdata.vn
+Organization name? this is up to you. We will use example in this guide. 
+Administrator password? Use the password you configured during installation
+Database backend to use? HDB
+Remove the database when slapd is purged? No
+Move old database? Yes
+Allow LDAPv2 protocol? No
+```
 
 ## Cấu hình LDAP tree trên LDAP server
 
