@@ -1,359 +1,134 @@
 ﻿# Chuẩn bị
 
-- Thực hiện thử nghiệm dựng Openstack mitaka sử dụng LDAP cho thành phần identity của keystone.
+- Thực hiện thử nghiệm dựng Openstack mitaka sử dụng OpenLDAP cho thành phần identity của keystone.
 - Tôi cài đặt bằng 02 cách: 
-	- Cài đặt bằng script, và sử dụng một hệ thống LDAP tách biệt
-	- Cài đặt bằng devstack, có cài thêm LDAP trên node nội tại luôn.
+	- Cài đặt bằng script, và sử dụng một hệ thống OpenLDAP tách biệt
+	- Cài đặt bằng devstack, có cài thêm OpenLDAP trên node nội tại luôn.
 - Hệ thống máy chủ thực hiện cài đặt chạy trên vmware, các máy chủ đều có 02 interface
 
-# Cài đặt bằng devstack
+# Cài đặt OpenStack bằng script và sử dụng OpenLDAP external
 
-- Cập nhật và nâng cấp HĐH
-```sh
-apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && init 6
-```
-
-- Tạo user stack
-```sh
-apt-get -y install sudo git
-
-adduser stack
-
-echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-```
-
-- Chuyển sang tài khoản devstack
-```sh
-su - stack
-```
-
-- Tải gói và cài đặt
-```sh
-Tải gói mới nhất: 
-
- git clone https://github.com/openstack-dev/devstack.git
-
-Hoặc chỉ định gói:
- git clone -b stable/mitaka https://github.com/openstack-dev/devstack.git
-```
-
-- Tạo tập tin `local.conf` để thiết lập các tham số cấu hình với nội dung sau
-```sh
-stack@devstack1:~/devstack$ cat local.conf 
-
-[[local|localrc]]
-DEST=/opt/stack
-
-# Logging
-LOGFILE=$DEST/logs/stack.sh.log
-VERBOSE=True
-SCREEN_LOGDIR=$DEST/logs/screen
-OFFLINE=False
-
-# Controller NODE IP
-HOST_IP=172.16.68.133
-
-# Credentials
-ADMIN_PASSWORD=openstack
-MYSQL_PASSWORD=$ADMIN_PASSWORD
-RABBIT_PASSWORD=$ADMIN_PASSWORD
-SERVICE_PASSWORD=$ADMIN_PASSWORD
-SERVICE_TOKEN=$ADMIN_PASSWORD
-
-MYSQL_HOST=$HOST_IP
-RABBIT_HOST=$HOST_IP
-CINDER_SERVICE_HOST=$HOST_IP
-GLANCE_HOSTPORT=$HOST_IP:9292
-
-##########################
-# Khai bao cac project
-##########################
-ENABLED_SERVICES=key,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc,n-xvnc,n-cauth,horizon,mysql,rabbit,ldap,g-api,g-reg
-
-IDENTITY_API_VERSION=3
-
-## Keystone su dung LDAP
-KEYSTONE_IDENTITY_BACKEND=ldap
-KEYSTONE_CLEAR_LDAP=yes
-LDAP_PASSWORD=9632
-
-##  SWIFT Service
-# enable_service s-proxy
-# enable_service s-object
-# enable_service s-container
-# enable_service s-account
-
-## Khia bao tuy chon cho SWIFT
-# SWIFT_REPLICAS=1
-# SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
-
-##  CINDER Service
-enable_service c-api
-enable_service c-sch
-enable_service c-bak
-enable_service c-vol
-
-##  CINDER Service
-## Khia bao tuy chon cho CINDER
-VOLUME_GROUP="stack-volumes"
-VOLUME_NAME_PREFIX="volume-"
-
-## NEUTRON Service
-enable_service q-svc
-enable_service q-agt
-enable_service q-dhcp
-enable_service q-meta
-enable_service q-l3
-
-## Khai bao cac tham so cho neutron
-# ml2
-Q_PLUGIN=ml2
-Q_AGENT=openvswitch
-
-# vxlan
-Q_ML2_TENANT_NETWORK_TYPE=vxlan
-
-# Networking
-FLOATING_RANGE=172.16.68.0/24
-Q_FLOATING_ALLOCATION_POOL=start=172.16.68.30,end=172.16.68.50
-PUBLIC_NETWORK_GATEWAY=172.16.68.1
-
-# Khai bao dai mang private
-FIXED_RANGE=192.168.10.0/24
-NETWORK_GATEWAY=192.168.10.1
-
-PUBLIC_INTERFACE=eth1
-
-Q_USE_PROVIDERNET_FOR_PUBLIC=True
-Q_L3_ENABLED=True
-Q_USE_SECGROUP=True
-OVS_PHYSICAL_BRIDGE=br-ex
-PUBLIC_BRIDGE=br-ex
-OVS_BRIDGE_MAPPINGS=public:br-ex
-
-Q_ML2_PLUGIN_PATH_MTU=1454
-
-# Setup phien ban IP se su dung
-IP_VERSION=4
-
-# Khong can su dung tempest
-disable_service tempest
-disable_service n-net
-```
-
-- Chạy script để tiến hành cài đặt
-```sh
-stack@devstack1:~/devstack$ ./stack.sh
-```
-
-**Note**: Rất hên xui nhé. nhớ rửa tay trước khi chạy. :D Lỗi chỉ chui ra sao khi script chạy dc khoảng 1h30p.
-
-## Kết quả
-
-Sau khi cài đặt xong devstack với cấu hình local.conf có LDAP, ta sẽ có một hệ thống OpenStack All in One, tức là mọi thứ được cài trên 01 máy tính duy nhất.
-Ta kiểm tra lại hệ thống OpenStack vừa dựng bằng các lệnh:
-
-- Kiểm tra cây thư mục LDAP, kết quả là một cây thư mục hoàn chỉnh của OpenStack gồm Projects, Roles, UserGroups, Users
-```sh
-# slapcat 
-```
-
-![ldap-tree](/Images/ldap-tree.png)
-
-- Kiểm tra lại OpenStack bằng các lênh:
-```sh
-openstack user list
-openstack token issue
-openstack project list
-openstack group list
-openstack role list
-openstack domain list
-```
-
-*Lưu ý*: cần export các biến môi trường để thực hiện chạy các lệnh trên, tạo tập tin biến môi trường với nội dung sau:
-```sh
-export OS_IDENTITY_API_VERSION=3
-export OS_AUTH_URL=http://172.16.68.133:5000/v3
-export OS_USERNAME=admin
-export OS_PROJECT_NAME=admin
-export OS_USER_DOMAIN_NAME=Default
-export OS_PASSWORD=openstack
-export OS_PROJECT_DOMAIN_NAME=Default
-```
-
-sau đó sử dụng lệnh `source openrc` để export các biến này vào phiên shell đang làm việc.
-
-- Hiện tại ta có một hệ thống OpenStack với project keystone chạy trên 02 backend. mặc định là SQL, còn identity sử dụng LDAP.
-Có thể xem cấu hình trong keystone để biết rõ hơn.
-```sh
-root@devstack1:/opt/stack# cat /etc/keystone/keystone.conf |egrep -v "^#|^$"
-[DEFAULT]
-max_token_size = 16384
-logging_exception_prefix = %(asctime)s.%(msecs)03d %(process)d TRACE %(name)s %(instance)s
-debug = True
-admin_endpoint = http://172.16.68.133/identity_v2_admin
-public_endpoint = http://172.16.68.133/identity
-transport_url = rabbit://stackrabbit:openstack@172.16.68.133:5672/
-member_role_name = _member_
-member_role_id = 9fe2ff9ee4384b1894a90878d3e92bab
-[assignment]
-driver = sql
-[cache]
-memcache_servers = localhost:11211
-backend = oslo_cache.memcache_pool
-enabled = True
-[credential]
-key_repository = /etc/keystone/credential-keys/
-[database]
-connection = mysql+pymysql://root:openstack@172.16.68.133/keystone?charset=utf8
-[fernet_tokens]
-key_repository = /etc/keystone/fernet-keys/
-[identity]
-driver = ldap
-[ldap]
-user_tree_dn = ou=Users,dc=openstack,dc=org
-user_domain_id_attribute = businessCategory
-tenant_tree_dn = ou=Projects,dc=openstack,dc=org
-tenant_desc_attribute = description
-tenant_domain_id_attribute = businessCategory
-tenant_attribute_ignore = enabled
-user_attribute_ignore = enabled,email,tenants,default_project_id
-use_dumb_member = True
-suffix = dc=openstack,dc=org
-user = cn=Manager,dc=openstack,dc=org
-password = 9632
-[paste_deploy]
-config_file = /etc/keystone/keystone-paste.ini
-[resource]
-admin_project_name = admin
-admin_project_domain_name = Default
-driver = sql
-[role]
-driver = sql
-[token]
-driver = sql
-```
-
-- Ta thực hiện tạo một người dùng trong OpenStack để kiểm tra thông tin người dùng trong keystone được lưu trữ như nào. Thực hiện chạy các lệnh sau:
-```sh
-openstack project create tannt_project --domain default --description "tannt test project"
-openstack user create tannt --email tannt@openstack.com --domain default --description "tannt openstack user account" --password tan@123++
-openstack role add Member --project tannt_project --project-domain default --user tannt --user-domain default
-```
-
-Người dùng đươc tạo trong một domain mặc định cùng với role mặc định. 03 lệnh trên là: tạo project, tạo người dùng, gán role cho người dùng.
-
-- Một người dùng mới được tạo ra, sẽ có các sự kiện sau:
-	- Gán người dùng vào LDAP
-	- Gán role người dùng trong bảng `assignment` của MySQL
-	- Gán thông tin người dùng vào bảng `nonlocal_user` trong MySQL
-	- Gán project mới tạo vào bảng `project` trong MySQL
-	- Thêm tên người dùng vào bảng `user` trong MySQL
-
-- Khi người dùng thực hiện đăng nhập vào horizon sẽ sinh ra một token, và token này được ghi vào bảng `token` trong MySQL. 
-Check bằng lệnh *SELECT * FROM `token` WHERE user_id = 'f8afdf4455b94bd6ba20bdeef05ba732';* Token có thời gian mặc định là 1 tiếng, sau đó sẽ phải gen lại.
-
-- Kiểm tra cấu trúc lưu trữ user vừa được tạo phía trên trong database MySQL
-	- bảng assignment lưu trữ: 
-```sh
-type		actor_id							target_id							role_id								inherited
-UserProject	f8afdf4455b94bd6ba20bdeef05ba732	f931ad962bf444458fa5d39c7d3c8aff	ae7661eaf25f4b45ab3f1120d6b6601c	0
-```
-	- bảng nonlocal_user:
-```sh
-domain_id	name	user_id
-default		tannt	f8afdf4455b94bd6ba20bdeef05ba732
-```
-	- Bảng project:
-```sh
-id									name			extra	description				enabled		domain_id	parent_id	is_domain
-f931ad962bf444458fa5d39c7d3c8aff	tannt_project	{}		tannt test project		1			default		default		0
-```
-	- Bảng user
-```sh
-id									extra											enabled	default_project_id	created_at			last_active_at
-f8afdf4455b94bd6ba20bdeef05ba732	{"description": "tannt openstack user account"}	\N		\N					2017-01-26 20:32:55	\N
-```
-	- Thông tin trong LDAP tree
-```sh
-dn: cn=f8afdf4455b94bd6ba20bdeef05ba732,ou=Users,dc=openstack,dc=org
-objectClass: person
-objectClass: inetOrgPerson
-description: tannt openstack user account
-cn: f8afdf4455b94bd6ba20bdeef05ba732
-userPassword:: dGFuQDEyMysr
-sn: tannt
-structuralObjectClass: inetOrgPerson
-entryUUID: c725f7b2-7850-1036-8fa0-ed18e1693809
-creatorsName: cn=Manager,dc=openstack,dc=org
-createTimestamp: 20170126202135Z
-entryCSN: 20170126202135.119130Z#000000#000#000000
-modifiersName: cn=Manager,dc=openstack,dc=org
-modifyTimestamp: 20170126202135Z
-```
-
-==> Phía trên là thông tin của user thực hiện bằng câu lệnh openstack. thông tin xử lý bởi OpenStack và ghi vào MySQL cùng LDAP.
-
-## Thêm User thủ công vào LDAP và gán quyền trong OpenStack
-
-- Bây giờ ta thử thực hiện tạo username trên LDAP, sau đó gán assignment và role một cách thủ công.
-
-- Tạo tập tin usernew.ldif với nội dung sau:
-```sh
-dn: cn=hangnt,ou=Users,dc=openstack,dc=org
-objectClass: person
-objectClass: inetOrgPerson
-description: hangnt openstack user account
-cn: hangnt
-userPassword:: dGFuQDEyMysr
-sn: hangnt
-```
-
-- Chạy lệnh sau để thêm user vào ldap, passwd LDAP tree khi cái bằng devstack là 9632
-```sh
-ldapadd -x -D cn=Manager,dc=openstack,dc=org -W -f usernew.ldif
-```
-
-- Lệnh xóa user trong trường hợp tạo sai thông tin:
-```sh
-ldapdelete -x -W -D 'cn=Manager,dc=openstack,dc=org' "cn=hangnt,ou=Users,dc=openstack,dc=org"
-```
-
-- Kiểm tra thông tin username vừa tạo:
-```sh
-# slapcat
-...
-dn: cn=hangnt,ou=Users,dc=openstack,dc=org
-objectClass: person
-objectClass: inetOrgPerson
-description: hangnt openstack user account
-cn: hangnt
-userPassword:: dGFuQDEyMysr
-sn: hangnt
-structuralObjectClass: inetOrgPerson
-entryUUID: f6dfd938-786d-1036-8fa1-ed18e1693809
-creatorsName: cn=Manager,dc=openstack,dc=org
-createTimestamp: 20170126235030Z
-entryCSN: 20170126235030.588724Z#000000#000#000000
-modifiersName: cn=Manager,dc=openstack,dc=org
-modifyTimestamp: 20170126235030Z
-```
-
-- Thêm thông tin vào bảng assignment cho user vừa tạo, gán user này với project tannt và role member ứng với user tannt ở trên.
-```sh
-INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) VALUES ('UserProject', 'hangnt', 'f931ad962bf444458fa5d39c7d3c8aff', 'ae7661eaf25f4b45ab3f1120d6b6601c', '0'); 
-```
-
-**Note**: Chỉ thực hiện thêm user vào LDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
-
-# Cài đặt OpenStack bằng script và sử dụng LDAP external
-
-Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó cấu hình cho keystone sử dụng LDAP.
+Trong phần này tôi sẽ thực hiện cài OpenStack bằng script, sau đó cấu hình cho keystone sử dụng OpenLDAP.
 
 - Cài đặt OpenStack bằng hướng dẫn [sau](https://github.com/congto/OpenStack-Mitaka-Scripts/tree/master/OPS-Mitaka-OVS-Ubuntu)
 
-- Việc xây dựng LDAP tree không có khó khăn gì. Đầu tiên ta cài đặt LDAP như bình thường theo hướng dẫn 
+- Việc xây dựng LDAP tree không có khó khăn gì. Đầu tiên ta cài đặt OpenLDAP như bình thường theo hướng dẫn 
 [sau](https://github.com/TrongTan124/ghichep-LDAP/blob/master/docs/TanNT-LDAP-OpenLDAP.md)
+
+####Cài đặt OpenLDAP
+
+- Chuẩn bị
+
+  - Ubuntu Server 14.04
+
+- Update Repo
+
+`sudo apt-get update && apt-get upgrade -y`
+
+- Cài đặt OpenLDAP
+
+`sudo apt-get install -y slapd ldap-utils`
+
+- ở bước cài đặt này OpenLDAP Sẽ hỏi password admin của LDAP Server. Ta có thể bỏ qua hoặc nhập vào
+
+- Sau khi cài đặt xong ta cấu hình lại LDAP
+
+`sudo dpkg-reconfigure slapd`
+
+- Chọn No
+
+<img src="../Images/OpenLDAP/stepone.png">
+
+- Nhập vào domain
+
+<img src="../Images/OpenLDAP/steptwo.png">
+
+- Nhập vào Tên tổ chức
+
+<img src="../Images/OpenLDAP/stepthree.png">
+
+- Nhập admin password
+
+<img src="../Images/OpenLDAP/stepfour.png">
+
+- Nhập admin password confirm
+
+<img src="../Images/OpenLDAP/stepfive.png">
+
+-  Chọn HDB
+
+<img src="../Images/OpenLDAP/stepsix.png">
+
+- Chọn Yes
+
+<img src="../Images/OpenLDAP/stepseven.png">
+
+- Chọn Yes
+
+<img src="../Images/OpenLDAP/stepeight.png">
+
+- Chọn No
+
+<img src="../Images/OpenLDAP/stepnine.png">
+
+
+- Sau khi xong ta có thể dùng lệnh `slapcat` để kiểm tra lại các thông tin
+
+<img src="../Images/OpenLDAP/info.png">
+
+- Tạo OU People chứa các user và OU Groups chứa các nhóm
+
+- Sử dụng file ldif có nội dung như sau
+
+```
+dn: ou=People,dc=vnpt,dc=vn
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=vnpt,dc=vn
+objectClass: organizationalUnit
+ou: Groups
+
+```
+
+- Lưu với tên base.ldif
+
+- Add vào LDAP Server
+
+`ldapadd -x -D cn=admin,dc=vnpt,dc=vn -W -f base.ldif`
+
+- Nhập password Admin
+
+<img src="../Images/OpenLDAP/add.png">
+
+
+####Cấu hình chặn anon user query LDAP Server
+
+- Tạo một file ldif có nội dung như sau
+
+`vi /usr/share/slapd/ldap_disable_bind_anon.ldif`
+
+```
+dn: cn=config
+changetype: modify
+add: olcDisallows
+olcDisallows: bind_anon
+
+dn: cn=config
+changetype: modify
+add: olcRequires
+olcRequires: authc
+
+dn: olcDatabase={-1}frontend,cn=config
+changetype: modify
+add: olcRequires
+olcRequires: authc
+
+```
+
+- Add vào LDAP Server
+
+`ldapadd -Y EXTERNAL -H ldapi:/// -f /usr/share/slapd/ldap_disable_bind_anon.ldif`
 
 ## Cấu hình LDAP tree trên LDAP server
 
@@ -978,6 +753,346 @@ root@controller1:/etc/keystone/ssl/certs# openstack user list
 | tannt                            | tannt   |
 +----------------------------------+---------+
 ```
+
+# Cài đặt bằng devstack
+
+- Cập nhật và nâng cấp HĐH
+```sh
+apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && init 6
+```
+
+- Tạo user stack
+```sh
+apt-get -y install sudo git
+
+adduser stack
+
+echo "stack ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+```
+
+- Chuyển sang tài khoản devstack
+```sh
+su - stack
+```
+
+- Tải gói và cài đặt
+```sh
+Tải gói mới nhất: 
+
+ git clone https://github.com/openstack-dev/devstack.git
+
+Hoặc chỉ định gói:
+ git clone -b stable/mitaka https://github.com/openstack-dev/devstack.git
+```
+
+- Tạo tập tin `local.conf` để thiết lập các tham số cấu hình với nội dung sau
+```sh
+stack@devstack1:~/devstack$ cat local.conf 
+
+[[local|localrc]]
+DEST=/opt/stack
+
+# Logging
+LOGFILE=$DEST/logs/stack.sh.log
+VERBOSE=True
+SCREEN_LOGDIR=$DEST/logs/screen
+OFFLINE=False
+
+# Controller NODE IP
+HOST_IP=172.16.68.133
+
+# Credentials
+ADMIN_PASSWORD=openstack
+MYSQL_PASSWORD=$ADMIN_PASSWORD
+RABBIT_PASSWORD=$ADMIN_PASSWORD
+SERVICE_PASSWORD=$ADMIN_PASSWORD
+SERVICE_TOKEN=$ADMIN_PASSWORD
+
+MYSQL_HOST=$HOST_IP
+RABBIT_HOST=$HOST_IP
+CINDER_SERVICE_HOST=$HOST_IP
+GLANCE_HOSTPORT=$HOST_IP:9292
+
+##########################
+# Khai bao cac project
+##########################
+ENABLED_SERVICES=key,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-novnc,n-xvnc,n-cauth,horizon,mysql,rabbit,ldap,g-api,g-reg
+
+IDENTITY_API_VERSION=3
+
+## Keystone su dung LDAP
+KEYSTONE_IDENTITY_BACKEND=ldap
+KEYSTONE_CLEAR_LDAP=yes
+LDAP_PASSWORD=9632
+
+##  SWIFT Service
+# enable_service s-proxy
+# enable_service s-object
+# enable_service s-container
+# enable_service s-account
+
+## Khia bao tuy chon cho SWIFT
+# SWIFT_REPLICAS=1
+# SWIFT_HASH=66a3d6b56c1f479c8b4e70ab5c2000f5
+
+##  CINDER Service
+enable_service c-api
+enable_service c-sch
+enable_service c-bak
+enable_service c-vol
+
+##  CINDER Service
+## Khia bao tuy chon cho CINDER
+VOLUME_GROUP="stack-volumes"
+VOLUME_NAME_PREFIX="volume-"
+
+## NEUTRON Service
+enable_service q-svc
+enable_service q-agt
+enable_service q-dhcp
+enable_service q-meta
+enable_service q-l3
+
+## Khai bao cac tham so cho neutron
+# ml2
+Q_PLUGIN=ml2
+Q_AGENT=openvswitch
+
+# vxlan
+Q_ML2_TENANT_NETWORK_TYPE=vxlan
+
+# Networking
+FLOATING_RANGE=172.16.68.0/24
+Q_FLOATING_ALLOCATION_POOL=start=172.16.68.30,end=172.16.68.50
+PUBLIC_NETWORK_GATEWAY=172.16.68.1
+
+# Khai bao dai mang private
+FIXED_RANGE=192.168.10.0/24
+NETWORK_GATEWAY=192.168.10.1
+
+PUBLIC_INTERFACE=eth1
+
+Q_USE_PROVIDERNET_FOR_PUBLIC=True
+Q_L3_ENABLED=True
+Q_USE_SECGROUP=True
+OVS_PHYSICAL_BRIDGE=br-ex
+PUBLIC_BRIDGE=br-ex
+OVS_BRIDGE_MAPPINGS=public:br-ex
+
+Q_ML2_PLUGIN_PATH_MTU=1454
+
+# Setup phien ban IP se su dung
+IP_VERSION=4
+
+# Khong can su dung tempest
+disable_service tempest
+disable_service n-net
+```
+
+- Chạy script để tiến hành cài đặt
+```sh
+stack@devstack1:~/devstack$ ./stack.sh
+```
+
+**Note**: Rất hên xui nhé. nhớ rửa tay trước khi chạy. :D Lỗi chỉ chui ra sao khi script chạy dc khoảng 1h30p.
+
+## Kết quả
+
+Sau khi cài đặt xong devstack với cấu hình local.conf có LDAP, ta sẽ có một hệ thống OpenStack All in One, tức là mọi thứ được cài trên 01 máy tính duy nhất.
+Ta kiểm tra lại hệ thống OpenStack vừa dựng bằng các lệnh:
+
+- Kiểm tra cây thư mục LDAP, kết quả là một cây thư mục hoàn chỉnh của OpenStack gồm Projects, Roles, UserGroups, Users
+```sh
+# slapcat 
+```
+
+![ldap-tree](/Images/ldap-tree.png)
+
+- Kiểm tra lại OpenStack bằng các lênh:
+```sh
+openstack user list
+openstack token issue
+openstack project list
+openstack group list
+openstack role list
+openstack domain list
+```
+
+*Lưu ý*: cần export các biến môi trường để thực hiện chạy các lệnh trên, tạo tập tin biến môi trường với nội dung sau:
+```sh
+export OS_IDENTITY_API_VERSION=3
+export OS_AUTH_URL=http://172.16.68.133:5000/v3
+export OS_USERNAME=admin
+export OS_PROJECT_NAME=admin
+export OS_USER_DOMAIN_NAME=Default
+export OS_PASSWORD=openstack
+export OS_PROJECT_DOMAIN_NAME=Default
+```
+
+sau đó sử dụng lệnh `source openrc` để export các biến này vào phiên shell đang làm việc.
+
+- Hiện tại ta có một hệ thống OpenStack với project keystone chạy trên 02 backend. mặc định là SQL, còn identity sử dụng LDAP.
+Có thể xem cấu hình trong keystone để biết rõ hơn.
+```sh
+root@devstack1:/opt/stack# cat /etc/keystone/keystone.conf |egrep -v "^#|^$"
+[DEFAULT]
+max_token_size = 16384
+logging_exception_prefix = %(asctime)s.%(msecs)03d %(process)d TRACE %(name)s %(instance)s
+debug = True
+admin_endpoint = http://172.16.68.133/identity_v2_admin
+public_endpoint = http://172.16.68.133/identity
+transport_url = rabbit://stackrabbit:openstack@172.16.68.133:5672/
+member_role_name = _member_
+member_role_id = 9fe2ff9ee4384b1894a90878d3e92bab
+[assignment]
+driver = sql
+[cache]
+memcache_servers = localhost:11211
+backend = oslo_cache.memcache_pool
+enabled = True
+[credential]
+key_repository = /etc/keystone/credential-keys/
+[database]
+connection = mysql+pymysql://root:openstack@172.16.68.133/keystone?charset=utf8
+[fernet_tokens]
+key_repository = /etc/keystone/fernet-keys/
+[identity]
+driver = ldap
+[ldap]
+user_tree_dn = ou=Users,dc=openstack,dc=org
+user_domain_id_attribute = businessCategory
+tenant_tree_dn = ou=Projects,dc=openstack,dc=org
+tenant_desc_attribute = description
+tenant_domain_id_attribute = businessCategory
+tenant_attribute_ignore = enabled
+user_attribute_ignore = enabled,email,tenants,default_project_id
+use_dumb_member = True
+suffix = dc=openstack,dc=org
+user = cn=Manager,dc=openstack,dc=org
+password = 9632
+[paste_deploy]
+config_file = /etc/keystone/keystone-paste.ini
+[resource]
+admin_project_name = admin
+admin_project_domain_name = Default
+driver = sql
+[role]
+driver = sql
+[token]
+driver = sql
+```
+
+- Ta thực hiện tạo một người dùng trong OpenStack để kiểm tra thông tin người dùng trong keystone được lưu trữ như nào. Thực hiện chạy các lệnh sau:
+```sh
+openstack project create tannt_project --domain default --description "tannt test project"
+openstack user create tannt --email tannt@openstack.com --domain default --description "tannt openstack user account" --password tan@123++
+openstack role add Member --project tannt_project --project-domain default --user tannt --user-domain default
+```
+
+Người dùng đươc tạo trong một domain mặc định cùng với role mặc định. 03 lệnh trên là: tạo project, tạo người dùng, gán role cho người dùng.
+
+- Một người dùng mới được tạo ra, sẽ có các sự kiện sau:
+	- Gán người dùng vào LDAP
+	- Gán role người dùng trong bảng `assignment` của MySQL
+	- Gán thông tin người dùng vào bảng `nonlocal_user` trong MySQL
+	- Gán project mới tạo vào bảng `project` trong MySQL
+	- Thêm tên người dùng vào bảng `user` trong MySQL
+
+- Khi người dùng thực hiện đăng nhập vào horizon sẽ sinh ra một token, và token này được ghi vào bảng `token` trong MySQL. 
+Check bằng lệnh *SELECT * FROM `token` WHERE user_id = 'f8afdf4455b94bd6ba20bdeef05ba732';* Token có thời gian mặc định là 1 tiếng, sau đó sẽ phải gen lại.
+
+- Kiểm tra cấu trúc lưu trữ user vừa được tạo phía trên trong database MySQL
+	- bảng assignment lưu trữ: 
+```sh
+type		actor_id							target_id							role_id								inherited
+UserProject	f8afdf4455b94bd6ba20bdeef05ba732	f931ad962bf444458fa5d39c7d3c8aff	ae7661eaf25f4b45ab3f1120d6b6601c	0
+```
+	- bảng nonlocal_user:
+```sh
+domain_id	name	user_id
+default		tannt	f8afdf4455b94bd6ba20bdeef05ba732
+```
+	- Bảng project:
+```sh
+id									name			extra	description				enabled		domain_id	parent_id	is_domain
+f931ad962bf444458fa5d39c7d3c8aff	tannt_project	{}		tannt test project		1			default		default		0
+```
+	- Bảng user
+```sh
+id									extra											enabled	default_project_id	created_at			last_active_at
+f8afdf4455b94bd6ba20bdeef05ba732	{"description": "tannt openstack user account"}	\N		\N					2017-01-26 20:32:55	\N
+```
+	- Thông tin trong LDAP tree
+```sh
+dn: cn=f8afdf4455b94bd6ba20bdeef05ba732,ou=Users,dc=openstack,dc=org
+objectClass: person
+objectClass: inetOrgPerson
+description: tannt openstack user account
+cn: f8afdf4455b94bd6ba20bdeef05ba732
+userPassword:: dGFuQDEyMysr
+sn: tannt
+structuralObjectClass: inetOrgPerson
+entryUUID: c725f7b2-7850-1036-8fa0-ed18e1693809
+creatorsName: cn=Manager,dc=openstack,dc=org
+createTimestamp: 20170126202135Z
+entryCSN: 20170126202135.119130Z#000000#000#000000
+modifiersName: cn=Manager,dc=openstack,dc=org
+modifyTimestamp: 20170126202135Z
+```
+
+==> Phía trên là thông tin của user thực hiện bằng câu lệnh openstack. thông tin xử lý bởi OpenStack và ghi vào MySQL cùng LDAP.
+
+## Thêm User thủ công vào LDAP và gán quyền trong OpenStack
+
+- Bây giờ ta thử thực hiện tạo username trên LDAP, sau đó gán assignment và role một cách thủ công.
+
+- Tạo tập tin usernew.ldif với nội dung sau:
+```sh
+dn: cn=hangnt,ou=Users,dc=openstack,dc=org
+objectClass: person
+objectClass: inetOrgPerson
+description: hangnt openstack user account
+cn: hangnt
+userPassword:: dGFuQDEyMysr
+sn: hangnt
+```
+
+- Chạy lệnh sau để thêm user vào ldap, passwd LDAP tree khi cái bằng devstack là 9632
+```sh
+ldapadd -x -D cn=Manager,dc=openstack,dc=org -W -f usernew.ldif
+```
+
+- Lệnh xóa user trong trường hợp tạo sai thông tin:
+```sh
+ldapdelete -x -W -D 'cn=Manager,dc=openstack,dc=org' "cn=hangnt,ou=Users,dc=openstack,dc=org"
+```
+
+- Kiểm tra thông tin username vừa tạo:
+```sh
+# slapcat
+...
+dn: cn=hangnt,ou=Users,dc=openstack,dc=org
+objectClass: person
+objectClass: inetOrgPerson
+description: hangnt openstack user account
+cn: hangnt
+userPassword:: dGFuQDEyMysr
+sn: hangnt
+structuralObjectClass: inetOrgPerson
+entryUUID: f6dfd938-786d-1036-8fa1-ed18e1693809
+creatorsName: cn=Manager,dc=openstack,dc=org
+createTimestamp: 20170126235030Z
+entryCSN: 20170126235030.588724Z#000000#000#000000
+modifiersName: cn=Manager,dc=openstack,dc=org
+modifyTimestamp: 20170126235030Z
+```
+
+- Thêm thông tin vào bảng assignment cho user vừa tạo, gán user này với project tannt và role member ứng với user tannt ở trên.
+```sh
+INSERT INTO `keystone`.`assignment` (`type`, `actor_id`, `target_id`, `role_id`, `inherited`) VALUES ('UserProject', 'hangnt', 'f931ad962bf444458fa5d39c7d3c8aff', 'ae7661eaf25f4b45ab3f1120d6b6601c', '0'); 
+```
+
+**Note**: Chỉ thực hiện thêm user vào LDAP tree và gán role, project cho username vào bảng assignment trong MySQL.
 
 # Tham khảo
 - [http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/](http://www.ibm.com/developerworks/cloud/library/cl-ldap-keystone/)
