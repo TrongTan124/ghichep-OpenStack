@@ -103,7 +103,7 @@ wget https://raw.githubusercontent.com/openstack/octavia/stable/pike/devstack/co
 
 Cho script quyền thực thi
 ```sh
-chmod + x new-octavia-devstack.sh
+chmod +x new-octavia-devstack.sh
 ```
 
 Chạy lệnh sau để bắt đầu cài đặt
@@ -113,9 +113,11 @@ Chạy lệnh sau để bắt đầu cài đặt
 
 Quá trình cài đặt mất khoảng 1h30p. Vì cài đặt từ source nên sẽ bao gồm cả bước biên dịch và cài đặt.
 
+**Note**: Trong quá trình cài đặt devstack Octavia trê bản OpenStack ocata sẽ bị lỗi và ko thể tiếp tục được nữa. Nguyên nhân chưa rõ.
+
 **Bước 4**:
 
-Việc cài đặt vẫn thiếu horizon, nên bạn cần cài đặt thêm gói horizon nếu muốn thao tác và xem qua web.
+Việc cài đặt vẫn thiếu project horizon, nên bạn cần cài đặt thêm gói horizon nếu muốn thao tác và xem qua web.
 
 Từ user `stack`, ta chạy lệnh sau:
 ```sh
@@ -151,13 +153,87 @@ sudo service apache2 reload
 
 ### Package
 
-## Cấu hình
+Cài đặt OpenStack theo hướng dẫn [sau]()
 
-### Devstack
+Cài đặt Neutron LBaaS v2 bằng lệnh:
+```sh
+apt-get install -y neutron-lbaasv2-agent
+```
 
-Cài đặt bằng devstack đã cấu hình sẵn, chỉ việc đăng nhập và sử dụng. Việc cài đặt là all-in-one - tất cả các gói được cài đặt trên một máy chủ.
+Chỉnh sửa lại các tập tin cấu hình của Neutron liên quan tới LBaaS. 
 
-### Package
+Trước tiên chỉnh sửa file `/etc/default/neutron-server`, thêm nội dung sau vào cuối file
+```sh
+DAEMON_ARGS="$DAEMON_ARGS --config-file=/etc/neutron/neutron_lbaas.conf --config-file=/etc/neutron/services_lbaas.conf"
+```
+
+Tiếp theo, mở file `/etc/neutron/neutron.conf` và thêm vào plugin lbaas vào dòng có `service_plugins`
+```sh
+service_plugins = router,neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2
+```
+
+Tiếp tục chỉnh sửa file `/etc/neutron/neutron_lbaas.conf` với các nội dung tương ứng sau
+```sh
+[service_providers]
+service_provider = service_provider = LOADBALANCERV2:Octavia:neutron_lbaas.drivers.octavia.driver.OctaviaDriver:default
+
+
+[service_auth]
+auth_url = http://controller:35357/v3
+admin_user = octavia
+admin_tenant_name = admin
+admin_password = tan124
+admin_user_domain = default
+admin_project_domain = default
+region = RegionOne
+auth_version = 3
+```
+
+Cần thực hiện cài đặt octavia. Đầu tiên ta khởi tạo database trên node controller
+```sh
+mysql> CREATE DATABASE octavia;
+mysql> GRANT ALL PRIVILEGES ON octavia.* TO 'octavia'@'localhost' IDENTIFIED BY 'tan124';
+mysql> GRANT ALL PRIVILEGES ON octavia.* TO 'octavia'@'%' IDENTIFIED BY 'tan124';
+mysql> flush privileges;
+```
+
+Tiếp theo ta khởi tạo endpoint cho octavia
+```sh
+openstack user create --domain default --password tan124 octavia
+openstack role add --project service --user octavia admin
+openstack service create --name octavia --description "OpenStack Load Balancer" load-balancer
+openstack endpoint create load-balancer public http://controller:9876/ --region RegionOne 
+openstack endpoint create load-balancer admin http://controller:9876/ --region RegionOne 
+openstack endpoint create load-balancer internal http://controller:9876/ --region RegionOne
+```
+
+Từ máy cài đặt octavia bản pike thông qua devstack, ta export image amphora bằng lệnh
+```sh
+openstack image save amphora-x64-haproxy --file /tmp/amphora-x64-haproxy.qcow2
+```
+
+Sau đó chuyển sang máy chủ controller và import bằng lệnh:
+```sh
+openstack image create "amphora-x64-haproxy" --file amphora-x64-haproxy.qcow2 --disk-format qcow2 --container-format bare --public
+```
+
+**Cách 1**:
+
+Cài đặt từ pip, vì octavia chưa được đóng gói thành package. 
+
+```sh
+apt-get install -y python-pip
+
+pip install -y octavia 
+```
+
+**Cách 2**:
+
+Tải git về và cài từ source
+```sh
+wget https://pypi.python.org/packages/31/83/845e8e2930735811d19ff189bc61ae0330385b216039461725c202f4c663/octavia-1.0.0.0rc2-py2.py3-none-any.whl#md5=ad04b06d6af88ed1148ce3a081c1c2bb  
+pip install octavia-1.0.0.0rc2-py2.py3-none-any.whl  
+```
 
 ## Sử dụng
 
@@ -165,6 +241,11 @@ Cài đặt bằng devstack đã cấu hình sẵn, chỉ việc đăng nhập v
 
 Đăng nhập vào máy chủ và chuyển sang user `stack` hoặc đăng nhập vào horizon với user/password là `admin/secretadmin`
 
+### Package
+
+
+
 ## Tham khảo
 
 - [https://docs.openstack.org/octavia/pike/reference/introduction.html](https://docs.openstack.org/octavia/pike/reference/introduction.html)
+- [http://blog.csdn.net/zhaihaifei/article/details/77482684](http://blog.csdn.net/zhaihaifei/article/details/77482684)
