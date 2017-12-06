@@ -70,6 +70,18 @@ Trong Octavia v0.8 Việc tham chiếu amphorae là một máy ảo Ubuntu chạ
 - **network**: Octavia không thể thực hiện được nó mà không cần thao tác môi trường mạng. Amphorae được kết nối một giao diện mạng trên "load balancer network", và chúng cũng 
 có thể cắm trực tiếp vào các tenant network của các pool member, tùy thuộc vào cách dịch vụ cân bằng tải được triển khai bởi người sử dụng.
 
+### LBaaS v2 Concept
+
+Đây là mô hình cân bằng tải sử dụng LBaaS v2 với drive HAProxy 
+
+![octavia3](../Images/octavia3.png)
+
+- **Load balancer** LB sử một một port trong neutron network và được gán địa chỉ IP từ subnet tương ứng.
+- **Listener** LB có thể listen nhiều request trên nhiều port. Mỗi một port được chỉ định bởi 1 listener
+- **Pool** Lưu danh sách các member và phân phối yêu cầu
+- **Member** Các máy chủ phục vụ lưu lượng truy cập phía sau một LB. mỗi member được chỉ định bởi IP và port mà nó phục vụ
+- **Health monitor** Khi member bị offline theo thời gian, lưu lượng sẽ phải chuyển hướng ra khỏi member không đáp ưng . Health monitor được kết hợp với các pool.
+
 ### Workflow
 
 Sử dụng octavia để làm cân bằng tải sẽ giúp cho bạn linh hoạt hơn trong việc thiết kế hạ tầng mạng. Vì LBaaS v2 có một hạn chế là khởi tạo IP VIP phải cùng network với VM. đồng thời, 
@@ -83,3 +95,4 @@ Mô hình kết nối khi sử dụng octavia như sau.
 
 - [https://docs.openstack.org/octavia/pike/reference/introduction.html](https://docs.openstack.org/octavia/pike/reference/introduction.html)
 - [http://blog.csdn.net/zhaihaifei/article/details/77482684](http://blog.csdn.net/zhaihaifei/article/details/77482684)
+- [https://lingxiankong.github.io/2017-09-13-octavia.html](https://lingxiankong.github.io/2017-09-13-octavia.html)

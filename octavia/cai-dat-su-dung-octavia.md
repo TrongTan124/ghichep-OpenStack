@@ -111,7 +111,7 @@ service_provider = service_provider = LOADBALANCERV2:Octavia:neutron_lbaas.drive
 [service_auth]
 auth_url = http://controller:35357/v3
 admin_user = octavia
-admin_tenant_name = admin
+admin_tenant_name = service
 admin_password = tan124
 admin_user_domain = default
 admin_project_domain = default
