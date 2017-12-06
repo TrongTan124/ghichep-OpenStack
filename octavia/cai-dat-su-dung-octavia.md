@@ -771,6 +771,15 @@ root@octavia:~# curl 172.24.4.8
 Welcome to 10.0.0.7
 ```
 
+Muốn đăng nhập vào `amphorae` ta làm như sau: Vào namespace của network lbaas và login vào ip của amphorae
+```sh
+root@octavia:~# ip netns exec qdhcp-c997274d-76a5-41c3-812a-34030ea4074c /bin/bash
+
+root@octavia:~# ssh -i /etc/octavia/.ssh/octavia_ssh_key -l ubuntu 192.168.0.5
+```
+
+IP của amphorae xem bằng lệnh `openstack server list |grep amphora`
+
 ### Package
 
 
