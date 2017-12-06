@@ -9,14 +9,13 @@ OpenStack bản Liberty, Octavia đã trở thành ứng dụng tham chiếu cho
 Octavia thực hiện việc cung cấp dịch vụ cân bằng tải bằng cách quản lý các VM, container, hoặc BM - gọi chung là amphorae - tùy yêu cầu. Tính năng mở rộng theo yêu cầu và 
 theo chiều ngang này giúp phân biệt Octavia với các giải pháp cân bằng tải khác, làm cho Octavia phù hợp với "Cloud".
 
-### Trường hợp Octavia phù hợp với hệ sinh thái OpenStack
+### Octavia trong hệ sinh thái OpenStack
 
-Cân bằng tải cần thiết để kích hoạt khả năng mở rộng và khả năng phân phối đơn giản, tự động. Đổi lại, quy mô phân phối và cung cấp ứng dụng phải được coi là các 
-tính năng quan trọng của bất kỳ cloud nào.
+Cân bằng tải cần thiết để tăng cường khả năng mở rộng và khả năng phân phối một cách đơn giản, tự động..
 
-Do đó, chúng tôi coi Octavia là thiết yếu như Nova, Neutron, Glance hay bất kỳ một dự án "cốt lõi" nào khác cho phép các tính năng thiết yếu của một OpenStack cloud.
+Do đó, chúng tôi coi Octavia là cần thiết như Nova, Neutron, Glance hay bất kỳ một dự án "cốt lõi" nào khác cho phép các tính năng cần thiết của một OpenStack cloud.
 
-Để hoàn thành vai trò của mình, Octavia sử dụng các dự án OpenStack khác:
+Để hoàn thành vai trò của mình, Octavia kết hợp cùng các dự án OpenStack khác:
 
 - **Nova**: Quản lý vòng đời của các amphora và quay vòng tính toán các nguồn lực theo yêu cầu
 - **Neutron**: Cung cấp kết nối mạng giữa amphora, môi trường tenant và mạng bên ngoài.
@@ -40,7 +39,7 @@ Thời gian tới, Octavia sẽ thay thế Neutron LBaaS như một giải pháp
 "cắm vào" Neutron LBaaS sẽ thay thế vào Octavia. Đối với người dùng cuối, quá trình chuyển đổi này tương đối liền mạch vì Octavia hỗ trợ Neutron LBaaS v2 API và nó có một 
 giao diện CLI tương tự.
 
-### Ký hiệu Octavia
+### Quy ước Octavia
 
 Trước khi tiếp tục bài giới thiệu, vui lòng lưu ý sau:
 
