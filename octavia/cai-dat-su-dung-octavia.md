@@ -6,7 +6,7 @@ Thực hiện cài đặt bằng devstack rất đơn giản.
 
 **Bước 1**:
 
-Chuẩn bị một máy chủ cài có cấu hình 6 vCPU, 8GB RAM, 60GB HDD, 02 interface (public + private). Cài đặt hệ điều hành Ubuntu 16.04 64bits.
+Chuẩn bị một máy chủ cài có cấu hình 4 vCPU, 8GB RAM, 60GB HDD, 02 interface (public + private). Cài đặt hệ điều hành Ubuntu 16.04 64bits.
 
 Máy có kết nối internet, và đã cài đặt sẵn các gói `wget, git`
 ```sh
@@ -41,9 +41,9 @@ Chạy lệnh sau để bắt đầu cài đặt
 
 Quá trình cài đặt mất khoảng 1h30p. Vì cài đặt từ source nên sẽ bao gồm cả bước biên dịch và cài đặt.
 
-**Note**: Trong quá trình cài đặt devstack Octavia trê bản OpenStack ocata sẽ bị lỗi và ko thể tiếp tục được nữa. Nguyên nhân chưa rõ.
+**Note**: Trong quá trình cài đặt devstack Octavia trên bản OpenStack ocata sẽ bị lỗi và ko thể tiếp tục được nữa. Nguyên nhân chưa rõ.
 
-**Bước 4**:
+**Bước 4** (Tùy chọn, nhưng tốt nhất là thao tác lệnh)
 
 Việc cài đặt vẫn thiếu project horizon, nên bạn cần cài đặt thêm gói horizon nếu muốn thao tác và xem qua web.
 
@@ -78,6 +78,8 @@ Thực hiện khởi động lại `apache2` để bắt đầu sử dụng `hor
 ```sh
 sudo service apache2 reload
 ```
+
+**Note**: Khi cài đặt xong devstack, bạn cứ để vậy mà lab tiếp, ko nên khởi động lại. vì một số cấu hình chưa được thiết lập persitent, nên lúc restart sẽ mất.
 
 ### Package
 
@@ -455,6 +457,319 @@ pip install octavia-1.0.0.0rc2-py2.py3-none-any.whl
 ### Devstack
 
 Đăng nhập vào máy chủ và chuyển sang user `stack` hoặc đăng nhập vào horizon với user/password là `admin/secretadmin`
+
+Kiểm tra network có sẵn:
+```sh
+stack@octavia:~$ openstack network list
++--------------------------------------+-------------+----------------------------------------------------------------------------+
+| ID                                   | Name        | Subnets                                                                    |
++--------------------------------------+-------------+----------------------------------------------------------------------------+
+| 4a670e93-6ee6-40e0-8aca-ade492fd19fe | private     | aa7ef577-903c-4c3f-8d65-3d2ca287f23e, c4030a99-5f52-4585-a0c7-88e69207fbd5 |
+| a53c2a9a-b78b-4f94-a2ed-4770b4d88e61 | public      | a88a651f-4597-4256-8d56-1c47f17e216d, c1d197bf-fab1-4a76-bbc1-4288f58f5455 |
+| c997274d-76a5-41c3-812a-34030ea4074c | lb-mgmt-net | c83ec1e7-26e7-4a68-bcd8-5afccb2f450a                                       |
++--------------------------------------+-------------+----------------------------------------------------------------------------+
+```
+
+Kiểm tra subnet
+```sh
+stack@octavia:~$ openstack subnet list
++--------------------------------------+---------------------+--------------------------------------+----------------+
+| ID                                   | Name                | Network                              | Subnet         |
++--------------------------------------+---------------------+--------------------------------------+----------------+
+| a88a651f-4597-4256-8d56-1c47f17e216d | public-subnet       | a53c2a9a-b78b-4f94-a2ed-4770b4d88e61 | 172.24.4.0/24  |
+| aa7ef577-903c-4c3f-8d65-3d2ca287f23e | ipv6-private-subnet | 4a670e93-6ee6-40e0-8aca-ade492fd19fe | fd::/64        |
+| c1d197bf-fab1-4a76-bbc1-4288f58f5455 | ipv6-public-subnet  | a53c2a9a-b78b-4f94-a2ed-4770b4d88e61 | 2001:db8::/64  |
+| c4030a99-5f52-4585-a0c7-88e69207fbd5 | private-subnet      | 4a670e93-6ee6-40e0-8aca-ade492fd19fe | 10.0.0.0/26    |
+| c83ec1e7-26e7-4a68-bcd8-5afccb2f450a | lb-mgmt-subnet      | c997274d-76a5-41c3-812a-34030ea4074c | 192.168.0.0/24 |
++--------------------------------------+---------------------+--------------------------------------+----------------+
+```
+
+Kiểm tra image có sẵn
+```sh
+stack@octavia:~$ openstack image list
++--------------------------------------+--------------------------+--------+
+| ID                                   | Name                     | Status |
++--------------------------------------+--------------------------+--------+
+| 0ea428d6-79f1-4dae-8074-e30e2327af7f | amphora-x64-haproxy      | active |
+| 9513b94f-7f66-49ce-abd3-becc337c3393 | cirros-0.3.5-x86_64-disk | active |
++--------------------------------------+--------------------------+--------+
+```
+
+Kiểm tra flavor:
+```sh
+stack@octavia:~$ openstack flavor list
++----+-----------+-------+------+-----------+-------+-----------+
+| ID | Name      |   RAM | Disk | Ephemeral | VCPUs | Is Public |
++----+-----------+-------+------+-----------+-------+-----------+
+| 1  | m1.tiny   |   512 |    1 |         0 |     1 | True      |
+| 2  | m1.small  |  2048 |   20 |         0 |     1 | True      |
+| 3  | m1.medium |  4096 |   40 |         0 |     2 | True      |
+| 4  | m1.large  |  8192 |   80 |         0 |     4 | True      |
+| 5  | m1.xlarge | 16384 |  160 |         0 |     8 | True      |
+| c1 | cirros256 |   256 |    0 |         0 |     1 | True      |
+| d1 | ds512M    |   512 |    5 |         0 |     1 | True      |
+| d2 | ds1G      |  1024 |   10 |         0 |     1 | True      |
+| d3 | ds2G      |  2048 |   10 |         0 |     2 | True      |
+| d4 | ds4G      |  4096 |   20 |         0 |     4 | True      |
++----+-----------+-------+------+-----------+-------+-----------+
+```
+
+Kiểm tra security group:
+```sh
+stack@octavia:~$ openstack security group list
++--------------------------------------+-----------------------+------------------------+----------------------------------+
+| ID                                   | Name                  | Description            | Project                          |
++--------------------------------------+-----------------------+------------------------+----------------------------------+
+| 0f7ff915-1f5b-4e9f-ba3c-df98331189fc | default               | Default security group |                                  |
+| 45f57417-43e0-4129-b70c-a6b16c6641ed | lb-health-mgr-sec-grp | lb-health-mgr-sec-grp  | 0ffd326fe312492186393af399a420d3 |
+| b2247ea9-6e47-4cb2-b368-7f1d81f21261 | default               | Default security group | 0ffd326fe312492186393af399a420d3 |
+| cace481e-0e22-4f8c-b73c-957286617e8a | lb-mgmt-sec-grp       | lb-mgmt-sec-grp        | 0ffd326fe312492186393af399a420d3 |
+| d398e73c-dd2d-4630-af99-e357bff919f2 | default               | Default security group | 24f0efc8a213492fa96b402842197d39 |
++--------------------------------------+-----------------------+------------------------+----------------------------------+
+```
+
+Kiểm tra project list để lấy id của project admin
+```sh
+stack@octavia:~$ openstack project list
++----------------------------------+--------------------+
+| ID                               | Name               |
++----------------------------------+--------------------+
+| 03281dafc8b44de4bcfef930bcbebb13 | invisible_to_admin |
+| 0ffd326fe312492186393af399a420d3 | admin              |
+| 24f0efc8a213492fa96b402842197d39 | demo               |
+| 40ae0004f4904213983acd602275c6a2 | service            |
+| 7f7df16dc8924ac582d80d27556ebc10 | project_a          |
+| bc14bb36162c450fab11fa9567546f1f | alt_demo           |
+| dba5fe36ef4744d8a1ced872580675dc | project_b          |
++----------------------------------+--------------------+
+```
+
+Tạo 02 VM `cirros` với flavor `m1.tiny`, trên tenant admin, được lấy ip của network `private`:
+```sh
+openstack server create --flavor m1.tiny --image 9513b94f-7f66-49ce-abd3-becc337c3393 \
+  --nic net-id=4a670e93-6ee6-40e0-8aca-ade492fd19fe --security-group b2247ea9-6e47-4cb2-b368-7f1d81f21261 \
+  web1
+  
+openstack server create --flavor m1.tiny --image 9513b94f-7f66-49ce-abd3-becc337c3393 \
+  --nic net-id=4a670e93-6ee6-40e0-8aca-ade492fd19fe --security-group b2247ea9-6e47-4cb2-b368-7f1d81f21261 \
+  web2
+```
+
+Add thêm rule cho phép ssh và ping tới 02 VM
+```sh
+neutron security-group-rule-create \
+--direction ingress \
+--protocol tcp \
+--port-range-min 22 \
+--port-range-max 22 \
+--remote-ip-prefix 0.0.0.0/0 \
+b2247ea9-6e47-4cb2-b368-7f1d81f21261
+
+neutron security-group-rule-create \
+--direction ingress \
+--protocol icmp \
+b2247ea9-6e47-4cb2-b368-7f1d81f21261
+```
+
+Kiểm tra thông tin 02 VM vừa tạo 
+```sh
+stack@octavia:~$ openstack server list |grep web
+| 1c810a96-f1ed-49d5-a659-3e1cc6b0bf10 | web2                                         | ACTIVE | private=fd::f816:3eff:fe6c:d42f, 10.0.0.13 | cirros-0.3.5-x86_64-disk | m1.tiny |
+| edd3c83f-ffb8-457b-a8f6-a5f9eb2be6a9 | web1                                         | ACTIVE | private=fd::f816:3eff:fe9c:8c4, 10.0.0.7   | cirros-0.3.5-x86_64-disk | m1.tiny |
+```
+
+Bạn nên chờ khoảng 30p sau khi cài đặt xong để devstack để mọi thứ được đồng bộ hoàn toàn. Sau đó tạo một load balancer `lb4` lấy IP VIP từ network `public`
+```sh
+stack@octavia:~$ neutron lbaas-loadbalancer-create --name lb4 public-subnet
+neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
+Created a new loadbalancer:
++---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| admin_state_up      | True                                 |
+| description         |                                      |
+| id                  | 8dad6396-b2b1-4f0b-b2a3-629b37143c99 |
+| listeners           |                                      |
+| name                | lb4                                  |
+| operating_status    | OFFLINE                              |
+| pools               |                                      |
+| provider            | octavia                              |
+| provisioning_status | PENDING_CREATE                       |
+| tenant_id           | 0ffd326fe312492186393af399a420d3     |
+| vip_address         | 172.24.4.8                           |
+| vip_port_id         | 0dc4ace5-49aa-4ae8-a87b-c37aa3896538 |
+| vip_subnet_id       | a88a651f-4597-4256-8d56-1c47f17e216d |
++---------------------+--------------------------------------+
+```
+
+Kiểm tra LB vừa tạo
+```sh
+stack@octavia:~$ neutron lbaas-loadbalancer-list
+```
+
+Xem thông tin chi tiết hơn bằng lệnh
+```sh
+stack@octavia:~$ neutron lbaas-loadbalancer-show 8dad6396-b2b1-4f0b-b2a3-629b37143c99
+neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
++---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| admin_state_up      | True                                 |
+| description         |                                      |
+| id                  | 8dad6396-b2b1-4f0b-b2a3-629b37143c99 |
+| listeners           |                                      |
+| name                | lb4                                  |
+| operating_status    | ONLINE                               |
+| pools               |                                      |
+| provider            | octavia                              |
+| provisioning_status | ACTIVE                               |
+| tenant_id           | 0ffd326fe312492186393af399a420d3     |
+| vip_address         | 172.24.4.8                           |
+| vip_port_id         | 0dc4ace5-49aa-4ae8-a87b-c37aa3896538 |
+| vip_subnet_id       | a88a651f-4597-4256-8d56-1c47f17e216d |
++---------------------+--------------------------------------+
+```
+
+Trạng thái `PENDING_CREATE` là đang khởi tạo, khi nào chuyển sang `ACTIVE` ta mới chạy được các lệnh thao tác tiếp theo. Quá trình khởi tạo mất khoảng 10p tùy cấu hình máy
+
+Tạo một security group `web` để mở rule cho các kết nối tới `amphorae`
+```sh
+neutron security-group-create web
+```
+
+Mở port 80 và icmp cho security group vừa tạo
+```sh
+neutron security-group-rule-create \
+--direction ingress \
+--protocol tcp \
+--port-range-min 80 \
+--port-range-max 80 \
+--remote-ip-prefix 0.0.0.0/0 \
+web
+
+neutron security-group-rule-create \
+--direction ingress \
+--protocol icmp \
+web
+```
+
+Kiểm tra lại thông tin security group `web`:
+```sh
+stack@octavia:~$ openstack security group list | grep web
+| 127213ee-cce1-434e-b540-aeb3f154bc5e | web                                     |                        | 0ffd326fe312492186393af399a420d3 |
+```
+
+Thêm port VIP của LB `lb4` vào trong security group `web`:
+```sh
+stack@octavia:~$ neutron port-update --security-group web 0dc4ace5-49aa-4ae8-a87b-c37aa3896538
+neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
+Updated port: 0dc4ace5-49aa-4ae8-a87b-c37aa3896538
+```
+
+Tạo một listener cho LB `lb4`:
+```sh
+stack@octavia:~$ neutron lbaas-listener-create --name lb4-http --loadbalancer lb4 --protocol HTTP --protocol-port 80
+neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
+Created a new listener:
++---------------------------+------------------------------------------------+
+| Field                     | Value                                          |
++---------------------------+------------------------------------------------+
+| admin_state_up            | True                                           |
+| connection_limit          | -1                                             |
+| default_pool_id           |                                                |
+| default_tls_container_ref |                                                |
+| description               |                                                |
+| id                        | 1070d595-eb91-497b-a7f2-7059af8350fe           |
+| loadbalancers             | {"id": "8dad6396-b2b1-4f0b-b2a3-629b37143c99"} |
+| name                      | lb4-http                                       |
+| protocol                  | HTTP                                           |
+| protocol_port             | 80                                             |
+| sni_container_refs        |                                                |
+| tenant_id                 | 0ffd326fe312492186393af399a420d3               |
++---------------------------+------------------------------------------------+
+```
+
+Tạo một pool cho listener trên
+```sh
+stack@octavia:~$ neutron lbaas-pool-create \
+> --name lb4-pool-http \
+> --lb-algorithm ROUND_ROBIN \
+> --listener lb4-http \
+> --protocol HTTP
+neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
+Created a new pool:
++---------------------+------------------------------------------------+
+| Field               | Value                                          |
++---------------------+------------------------------------------------+
+| admin_state_up      | True                                           |
+| description         |                                                |
+| healthmonitor_id    |                                                |
+| id                  | 4b00911c-7ac6-499d-814e-05a432d002bb           |
+| lb_algorithm        | ROUND_ROBIN                                    |
+| listeners           | {"id": "1070d595-eb91-497b-a7f2-7059af8350fe"} |
+| loadbalancers       | {"id": "8dad6396-b2b1-4f0b-b2a3-629b37143c99"} |
+| members             |                                                |
+| name                | lb4-pool-http                                  |
+| protocol            | HTTP                                           |
+| session_persistence |                                                |
+| tenant_id           | 0ffd326fe312492186393af399a420d3               |
++---------------------+------------------------------------------------+
+```
+
+Thêm member cho pool, lưu ý là chờ add member đầu tiên xong thì mới tiếp tục add member tiếp theo, ko sẽ bị lỗi vì pool đang ở trạng thái `PENDING_UPDATE`
+```sh
+neutron lbaas-member-create \
+--subnet private-subnet \
+--address 10.0.0.7 \
+--protocol-port 80 \
+lb4-pool-http
+
+neutron lbaas-member-create \
+--subnet private-subnet \
+--address 10.0.0.13 \
+--protocol-port 80 \
+lb4-pool-http
+```
+
+Tạo webserver cho cirros bằng cách sau. Đầu tiên tìm namespace cấp phát ip private cho VM, và chuyển vào mode `/bin/bash` của namespace
+```sh
+root@octavia:~# ip netns exec qdhcp-4a670e93-6ee6-40e0-8aca-ade492fd19fe ip a
+
+root@octavia:~# ip netns exec qdhcp-4a670e93-6ee6-40e0-8aca-ade492fd19fe /bin/bash
+
+root@octavia:~# ssh cirros@10.0.0.7
+```
+
+Nhập password là `cubswin:)` để login, và từ bash của cirros, chạy lệnh `sudo -i` để chuyển sang root. Sau đó tạo scipt `` với nội dung sau:
+```sh
+#!/bin/sh
+
+MYIP=$(/sbin/ifconfig eth0|grep 'inet addr'|awk -F: '{print $2}'| awk '{print $1}');
+OUTPUT_STR="Welcome to $MYIP\r"
+OUTPUT_LEN=${#OUTPUT_STR}
+
+while true; do
+    echo -e "HTTP/1.0 200 OK\r\nContent-Length: ${OUTPUT_LEN}\r\n\r\n${OUTPUT_STR}" | sudo nc -l -p 80
+done
+```
+
+Cho phép quyền run và chạy backgroup script này
+```sh
+# chmod +x webserver.sh 
+# ./webserver.sh &
+```
+
+Bạn vào trong namespace của router và tiến hành kiểm tra hoạt động của LB
+```sh
+root@octavia:~# ip netns exec qdhcp-c997274d-76a5-41c3-812a-34030ea4074c ip a
+
+root@octavia:~# ip netns exec qrouter-51a56311-e520-42e4-bb03-5535d21644c0 /bin/bash
+
+root@octavia:~# curl 172.24.4.8
+Welcome to 10.0.0.13
+root@octavia:~# curl 172.24.4.8
+Welcome to 10.0.0.7
+```
 
 ### Package
 
