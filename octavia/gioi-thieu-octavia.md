@@ -64,7 +64,7 @@ Trong Octavia v0.8 Việc tham chiếu amphorae là một máy ảo Ubuntu chạ
 - **controller**: Controller là "bộ não" của Octavia. Nó bao gồm 4 thành phần nhỏ, đó là các deamon riêng biệt. Chúng có thể được chạy trên các hạ tầng back-end riêng biệt nếu muốn.
     - **API Controller**: Như tên gọi, phần này sử dụng API của Octavia. Cần phải có các yêu cầu API, thực hiện việc xử lý đơn giản và chuyển yêu cầu tới Controller Worker thông qua Oslo.
     - **Controller Worker**: Thành phần này sẽ nhận các lệnh API đã được xử lý từ API controller và thực hiện các hành động cần thiết để hoàn thành yêu cầu API.
-    - **Health Manager**: Phần này theo dõi từng amphorae để đảm bảo chúng hoạt động và tốt. Nó xử lý sự cố chuyển đổi dự phòng nếu amphorae bị lỗi bất ngờ.3
+    - **Health Manager**: Phần này theo dõi từng amphorae để đảm bảo chúng hoạt động tốt. Nó xử lý sự cố chuyển đổi dự phòng nếu amphorae bị lỗi bất ngờ.
     - **Housekeeping Manager**: Phần này sẽ dọn dẹp các bản ghi cơ sở dữ liệu lỗi (xóa), quản lý amphora và quản lý vòng quay chứng chỉ amphora.
 - **network**: Octavia không thể thực hiện được nó mà không cần thao tác môi trường mạng. Amphorae được kết nối một giao diện mạng trên "load balancer network", và chúng cũng 
 có thể cắm trực tiếp vào các tenant network của các pool member, tùy thuộc vào cách dịch vụ cân bằng tải được triển khai bởi người sử dụng.
@@ -81,7 +81,7 @@ có thể cắm trực tiếp vào các tenant network của các pool member, t
 - **Member** Các máy chủ phục vụ lưu lượng truy cập phía sau một LB. mỗi member được chỉ định bởi IP và port mà nó phục vụ
 - **Health monitor** Khi member bị offline theo thời gian, lưu lượng sẽ phải chuyển hướng ra khỏi member không đáp ưng . Health monitor được kết hợp với các pool.
 
-### Workflow
+### Workflow Octavia
 
 Sử dụng octavia để làm cân bằng tải sẽ giúp cho bạn linh hoạt hơn trong việc thiết kế hạ tầng mạng. Vì LBaaS v2 có một hạn chế là khởi tạo IP VIP phải cùng network với VM. đồng thời, 
 VM phải có route default về network sẽ kết nối tới LB.
@@ -90,8 +90,27 @@ Mô hình kết nối khi sử dụng octavia như sau.
 
 ![octavia2](../Images/octavia2.png)
 
+### Octavia controller
+
+Octavia bao gồm các thành phần sau:
+
+- Amphora Driver
+- Queue Consumer
+- Certificate Library
+- Compute Driver
+- Controller Worker
+- Health Manager
+- Housekeeping Manager
+- Network Driver
+- Services Proxy
+
+Hình dưới là mối tương tác giữa các thành phần của Octavia với các project trong OpenStack
+
+![octavia4](../Images/octavia4.png)
+
 ## Tham khảo
 
 - [https://docs.openstack.org/octavia/pike/reference/introduction.html](https://docs.openstack.org/octavia/pike/reference/introduction.html)
 - [http://blog.csdn.net/zhaihaifei/article/details/77482684](http://blog.csdn.net/zhaihaifei/article/details/77482684)
 - [https://lingxiankong.github.io/2017-09-13-octavia.html](https://lingxiankong.github.io/2017-09-13-octavia.html)
+- [https://docs.openstack.org/octavia/latest/contributor/specs/version0.5/controller.html](https://docs.openstack.org/octavia/latest/contributor/specs/version0.5/controller.html)
