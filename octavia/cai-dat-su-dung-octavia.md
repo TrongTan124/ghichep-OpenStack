@@ -780,6 +780,16 @@ root@octavia:~# ssh -i /etc/octavia/.ssh/octavia_ssh_key -l ubuntu 192.168.0.5
 
 IP của amphorae xem bằng lệnh `openstack server list |grep amphora`
 
+- Tất cả các ip không thuộc dải network dành riêng cho octavia quản trị `amphorae` thì đều được cho vào trong namespace có tên `amphora-haproxy` bên trong `amphorae`.
+- Khi đăng nhập vào trong `amphorae`, ta có thể kiểm tra các thông tin bằng tập lệnh sau:
+```sh
+curl --insecure https://localhost:9443/0.5/listeners
+curl --insecure https://localhost:9443/0.5/info
+curl --insecure https://localhost:9443/0.5/details
+```
+
+- Một số thao tác lệnh cơ bản với LB tại [đây](https://docs.openstack.org/octavia/pike/user/guides/basic-cookbook.html)
+
 ### Package
 
 

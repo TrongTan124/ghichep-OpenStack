@@ -81,7 +81,7 @@ có thể cắm trực tiếp vào các tenant network của các pool member, t
 - **Member** Các máy chủ phục vụ lưu lượng truy cập phía sau một LB. mỗi member được chỉ định bởi IP và port mà nó phục vụ
 - **Health monitor** Khi member bị offline theo thời gian, lưu lượng sẽ phải chuyển hướng ra khỏi member không đáp ưng . Health monitor được kết hợp với các pool.
 
-### Workflow Octavia
+### Logic diagram Octavia
 
 Sử dụng octavia để làm cân bằng tải sẽ giúp cho bạn linh hoạt hơn trong việc thiết kế hạ tầng mạng. Vì LBaaS v2 có một hạn chế là khởi tạo IP VIP phải cùng network với VM. đồng thời, 
 VM phải có route default về network sẽ kết nối tới LB.
