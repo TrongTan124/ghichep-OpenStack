@@ -114,3 +114,4 @@ Hình dưới là mối tương tác giữa các thành phần của Octavia v�
 - [http://blog.csdn.net/zhaihaifei/article/details/77482684](http://blog.csdn.net/zhaihaifei/article/details/77482684)
 - [https://lingxiankong.github.io/2017-09-13-octavia.html](https://lingxiankong.github.io/2017-09-13-octavia.html)
 - [https://docs.openstack.org/octavia/latest/contributor/specs/version0.5/controller.html](https://docs.openstack.org/octavia/latest/contributor/specs/version0.5/controller.html)
+- [https://docs.google.com/presentation/d/1AqmF3BnKLLu1W1n-XT5MSfVYrGue1JIwKSvjbWgGA6s/edit#slide=id.p4](https://docs.google.com/presentation/d/1AqmF3BnKLLu1W1n-XT5MSfVYrGue1JIwKSvjbWgGA6s/edit#slide=id.p4)

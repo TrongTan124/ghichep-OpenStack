@@ -6,6 +6,12 @@ Key Manager service (barbican) cung cấp nơi lưu trữ an toàn, cung cấp v
 
 Key Manager service bao gồm các thành phần sau: `barbican-api service` chịu trách nhiệm xử lý yêu cầu của người dùng cuối thông qua API
 
+## kiến trúc
+
+Kiến trúc của Barbican
+
+![barbican1](../Images/barbican1.gif)
+
 ## Cài đặt và cấu hình
 
 ### Chuẩn bị
