@@ -792,7 +792,7 @@ curl --insecure https://localhost:9443/0.5/details
 - Bạn không cần mở port 80 trên các backend, các LB vẫn có thể gọi tới được do security group có 4 rule default, 1 trong 4 rule này cho phép mọi kết nối đi vào nếu từ port 
 có cấu hình cùng security default.
 
-![![octavia5](../Images/octavia5.png)]
+![octavia5](../Images/octavia5.png)
 
 - Một số thao tác lệnh cơ bản với LB tại [đây](https://docs.openstack.org/octavia/pike/user/guides/basic-cookbook.html)
 
