@@ -8,9 +8,15 @@ Key Manager service bao gồm các thành phần sau: `barbican-api service` ch�
 
 ## kiến trúc
 
-Kiến trúc của Barbican
+Kiến trúc tổng quan của Barbican
+
+![barbican-overall-architecture](../Images/barbican-overall-architecture.gif)
+
+Tương tác giữa các thành phần trong Barbican
 
 ![barbican1](../Images/barbican1.gif)
+
+
 
 ## Cài đặt và cấu hình
 
@@ -113,7 +119,10 @@ Bạn khởi động lại server Key Manager.
 service openstack-barbican-api restart
 ```
 
+**Note**: Nếu bạn sử dụng firewall thì phải mở port 9311 trên node controller.
+
 ## Tham khảo
 
 - [https://docs.openstack.org/barbican/pike/install/](https://docs.openstack.org/barbican/pike/install/)
 - [https://docs.openstack.org/barbican/pike/index.html](https://docs.openstack.org/barbican/pike/index.html)
+- [https://docs.openstack.org/barbican/pike/contributor/architecture.html](https://docs.openstack.org/barbican/pike/contributor/architecture.html)

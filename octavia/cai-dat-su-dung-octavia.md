@@ -555,7 +555,7 @@ openstack server create --flavor m1.tiny --image 9513b94f-7f66-49ce-abd3-becc337
   web2
 ```
 
-Add thêm rule cho phép ssh và ping tới 02 VM
+Add thêm rule cho phép ssh, http và ping tới 02 VM
 ```sh
 neutron security-group-rule-create \
 --direction ingress \
@@ -692,10 +692,10 @@ Created a new listener:
 Tạo một pool cho listener trên
 ```sh
 stack@octavia:~$ neutron lbaas-pool-create \
-> --name lb4-pool-http \
-> --lb-algorithm ROUND_ROBIN \
-> --listener lb4-http \
-> --protocol HTTP
+--name lb4-pool-http \
+--lb-algorithm ROUND_ROBIN \
+--listener lb4-http \
+--protocol HTTP
 neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
 Created a new pool:
 +---------------------+------------------------------------------------+
@@ -740,7 +740,7 @@ root@octavia:~# ip netns exec qdhcp-4a670e93-6ee6-40e0-8aca-ade492fd19fe /bin/ba
 root@octavia:~# ssh cirros@10.0.0.7
 ```
 
-Nhập password là `cubswin:)` để login, và từ bash của cirros, chạy lệnh `sudo -i` để chuyển sang root. Sau đó tạo scipt `` với nội dung sau:
+Nhập password là `cubswin:)` để login, và từ bash của cirros, chạy lệnh `sudo -i` để chuyển sang root. Sau đó tạo scipt `webserver.sh` với nội dung sau:
 ```sh
 #!/bin/sh
 
@@ -787,6 +787,12 @@ curl --insecure https://localhost:9443/0.5/listeners
 curl --insecure https://localhost:9443/0.5/info
 curl --insecure https://localhost:9443/0.5/details
 ```
+**Note**:
+- Cũng chưa rõ tại sao lần khởi tạo LB đầu tiên đều error.
+- Bạn không cần mở port 80 trên các backend, các LB vẫn có thể gọi tới được do security group có 4 rule default, 1 trong 4 rule này cho phép mọi kết nối đi vào nếu từ port 
+có cấu hình cùng security default.
+
+![![octavia5](../Images/octavia5.png)]
 
 - Một số thao tác lệnh cơ bản với LB tại [đây](https://docs.openstack.org/octavia/pike/user/guides/basic-cookbook.html)
 
