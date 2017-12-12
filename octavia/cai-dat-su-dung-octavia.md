@@ -691,11 +691,7 @@ Created a new listener:
 
 Tạo một pool cho listener trên
 ```sh
-stack@octavia:~$ neutron lbaas-pool-create \
---name lb4-pool-http \
---lb-algorithm ROUND_ROBIN \
---listener lb4-http \
---protocol HTTP
+stack@octavia:~$ neutron lbaas-pool-create --name lb4-pool-http --lb-algorithm ROUND_ROBIN --listener lb4-http --protocol HTTP
 neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
 Created a new pool:
 +---------------------+------------------------------------------------+
@@ -718,17 +714,9 @@ Created a new pool:
 
 Thêm member cho pool, lưu ý là chờ add member đầu tiên xong thì mới tiếp tục add member tiếp theo, ko sẽ bị lỗi vì pool đang ở trạng thái `PENDING_UPDATE`
 ```sh
-neutron lbaas-member-create \
---subnet private-subnet \
---address 10.0.0.7 \
---protocol-port 80 \
-lb4-pool-http
+neutron lbaas-member-create --subnet private-subnet --address 10.0.0.7 --protocol-port 80 lb4-pool-http
 
-neutron lbaas-member-create \
---subnet private-subnet \
---address 10.0.0.13 \
---protocol-port 80 \
-lb4-pool-http
+neutron lbaas-member-create --subnet private-subnet --address 10.0.0.13 --protocol-port 80 lb4-pool-http
 ```
 
 Tạo webserver cho cirros bằng cách sau. Đầu tiên tìm namespace cấp phát ip private cho VM, và chuyển vào mode `/bin/bash` của namespace
