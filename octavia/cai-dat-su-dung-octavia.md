@@ -784,6 +784,164 @@ có cấu hình cùng security default.
 
 - Một số thao tác lệnh cơ bản với LB tại [đây](https://docs.openstack.org/octavia/pike/user/guides/basic-cookbook.html)
 
+### LAB Octavia với HTTPS
+
+Quá trình lab với HTTPS cũng tương tự như lab với HTTP.
+
+Đầu tiên, bạn cần tạo cert để import vào barbican
+
+B1: Tạo một thư mục chứa các cert
+```sh
+mkdir -p /opt/stack/ca && cd /opt/stack/ca
+```
+
+B2: Tạo một private key bằng lệnh
+```sh
+stack@octavia:~/ca$ openssl genrsa -des3 -out server.key 2048
+Generating RSA private key, 2048 bit long modulus
+.........+++
+...................................................+++
+e is 65537 (0x10001)
+Enter pass phrase for server.key:
+Verifying - Enter pass phrase for server.key:
+```
+
+Việc tạo sẽ bắt bạn nhập password, bạn nhập `123456` để hoàn tất, lát nữa sẽ remove password này đi.
+
+B3: Tạo một `Certificate Signing Requests`, muốn biết CSR là gì thì đọc thêm tại [đây](https://www.digitalocean.com/community/tutorials/openssl-essentials-working-with-ssl-certificates-private-keys-and-csrs)
+```sh
+stack@octavia:~/ca$ openssl req -new -key server.key -out server.csr
+Enter pass phrase for server.key:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:VN
+State or Province Name (full name) [Some-State]:Cau Giay
+Locality Name (eg, city) []:Ha Noi
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:VNPT DATA
+Organizational Unit Name (eg, section) []:SI
+Common Name (e.g. server FQDN or YOUR name) []:172.24.4.10
+Email Address []:nguyentrongtan@vnpt.vn
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:123456
+An optional company name []:VNPT DATA
+```
+
+Tại bước này, bạn phải nhập thông tin thì nhập như trên, lưu ý `Common Name` là IP hoặc domain website bạn muốn gắn cert.
+
+B4: Ta sẽ gỡ password tạo tại B1
+```sh
+stack@octavia:~/ca$ cp server.key server.key.org
+stack@octavia:~/ca$ openssl rsa -in server.key.org -out server.key
+Enter pass phrase for server.key.org:
+writing RSA key
+```
+
+B5: Ta thực hiện tạo một certificate bằng lệnh sau
+```sh
+stack@octavia:~/ca$ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+Signature ok
+subject=/C=VN/ST=Cau Giay/L=Ha Noi/O=VNPT DATA/OU=SI/CN=172.24.4.10/emailAddress=nguyentrongtan@vnpt.vn
+Getting Private key
+```
+
+B6: Chuyển cert định dạng x509 thành định dạng PEM. Bạn có thể tại B5 tạo trực tiếp certificate thành định dạng PEM nếu muốn
+```sh
+stack@octavia:~/ca$ openssl x509 -in server.crt -out server.pem -outform PEM
+```
+
+B7: Từ certificate PEM và private key, ta chuyển sang PKCS7 bằng lệnh
+```sh
+stack@octavia:~/ca$ openssl crl2pkcs7 -nocrl -certfile server.pem -out server.p7b -certfile server.key
+``` 
+
+Lý do tại sao phải chuyển sang PKCS7, vì ta lưu cert trong barbican. bạn đọc thêm tại [đây](https://developer.openstack.org/api-guide/key-manager/containers.html#certificate-containers)
+
+B8: Lưu các cert vào trong barbican bằng lệnh
+```sh
+openstack secret store --name='cert2' --payload-content-type='text/plain' --payload="$(cat server.crt)"
+openstack secret store --name='key2' --payload-content-type='text/plain' --payload="$(cat server.key)"
+openstack secret store --name='intermediates2' --payload-content-type='text/plain' --payload="$(cat server.p7b)"
+openstack secret container create --name='tls_container2' --type='certificate' --secret="certificate=$(openstack secret list | awk '/ cert2 / {print $2}')" --secret="private_key=$(openstack secret list | awk '/ key2 / {print $2}')" --secret="intermediates=$(openstack secret list | awk '/ intermediates2 / {print $2}')"
+```
+
+B9: Phân quyền cho user hoặc tenant có thể sử dụng được cert này. Ta xem ID của user bằng lệnh
+```sh
+stack@octavia:~/ca/add$ openstack user list
+```
+
+Sau khi có ID của user admin, ta cho phép user admin sử đụng dược cert này. Trong trường hợp này, admin có ID là `3012f019b4c84304b4945dd6b6382494`
+```sh
+openstack acl user add -u 3012f019b4c84304b4945dd6b6382494 $(openstack secret list | awk '/ cert2 / {print $2}')
+openstack acl user add -u 3012f019b4c84304b4945dd6b6382494 $(openstack secret list | awk '/ key2 / {print $2}')
+openstack acl user add -u 3012f019b4c84304b4945dd6b6382494 $(openstack secret list | awk '/ intermediates2 / {print $2}')
+openstack acl user add -u 3012f019b4c84304b4945dd6b6382494 $(openstack secret container list | awk '/ tls_container2 / {print $2}')
+```
+
+B10: Thực hiện tạo LB
+```sh
+stack@octavia:~/ca/add$ neutron lbaas-loadbalancer-create --name lb5 public-subnet
+neutron CLI is deprecated and will be removed in the future. Use openstack CLI instead.
+Created a new loadbalancer:
++---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| admin_state_up      | True                                 |
+| description         |                                      |
+| id                  | 891c17e4-bc60-4fec-970e-e3082e8bae41 |
+| listeners           |                                      |
+| name                | lb5                                  |
+| operating_status    | OFFLINE                              |
+| pools               |                                      |
+| provider            | octavia                              |
+| provisioning_status | PENDING_CREATE                       |
+| tenant_id           | 0ffd326fe312492186393af399a420d3     |
+| vip_address         | 172.24.4.16                          |
+| vip_port_id         | b6999d08-5f1e-4dfa-b2e0-bb6e997d7668 |
+| vip_subnet_id       | a88a651f-4597-4256-8d56-1c47f17e216d |
++---------------------+--------------------------------------+
+```
+
+B11: Cập nhật security group cho port VIP của LB vừa tạo. Lưu ý là add thêm port 443 cho security group này.
+```sh
+stack@octavia:~/ca/add$ neutron port-update --security-group web b6999d08-5f1e-4dfa-b2e0-bb6e997d7668
+```
+
+Kiểm tra tình trạng của LB xem đã tạo xong chưa
+```sh
+stack@octavia:~/ca/add$ neutron lbaas-loadbalancer-list
+```
+
+B12: Thực hiện tạo một listener cho LB
+```sh
+stack@octavia:~/ca/add$ neutron lbaas-listener-create --loadbalancer lb5 --protocol-port 443 --protocol TERMINATED_HTTPS --name listener3 --default-tls-container=$(openstack secret container list | awk '/ tls_container2 / {print $2}')
+```
+
+B13: Tạo pool và member cho listener này
+```sh
+neutron lbaas-pool-create --name pool4 --lb-algorithm ROUND_ROBIN --listener listener3 --protocol HTTP
+neutron lbaas-member-create --subnet private-subnet --address  10.0.0.7 --protocol-port 80 pool4
+neutron lbaas-member-create --subnet private-subnet --address  10.0.0.13 --protocol-port 80 pool4
+```
+
+B14: Từ namespace của router trên controller, ta thực hiện test website
+```sh
+root@octavia:~/octavia# ip netns exec qrouter-51a56311-e520-42e4-bb03-5535d21644c0 /bin/bash
+
+root@octavia:~/octavia# curl --insecure https://172.24.4.16
+Welcome to 10.0.0.13
+root@octavia:~/octavia# curl --insecure https://172.24.4.16
+Welcome to 10.0.0.7
+```
+
+DONE
+
 ### Package
 
 
