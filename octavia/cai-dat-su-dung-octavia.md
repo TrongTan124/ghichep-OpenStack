@@ -452,9 +452,9 @@ wget https://pypi.python.org/packages/31/83/845e8e2930735811d19ff189bc61ae033038
 pip install octavia-1.0.0.0rc2-py2.py3-none-any.whl  
 ```
 
-## Sử dụng
+## Sử dụng Devstack
 
-### Devstack
+### Lab Octavia HTTP
 
 Đăng nhập vào máy chủ và chuyển sang user `stack` hoặc đăng nhập vào horizon với user/password là `admin/secretadmin`
 
@@ -942,7 +942,7 @@ Welcome to 10.0.0.7
 
 DONE
 
-### Thực hành octavia failover
+### Thực hành Octavia failover
 
 Ta kiểm tra thông tin port của amphorae bằng lệnh
 ```sh
