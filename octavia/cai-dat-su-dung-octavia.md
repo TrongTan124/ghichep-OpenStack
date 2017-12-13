@@ -942,6 +942,25 @@ Welcome to 10.0.0.7
 
 DONE
 
+### Thực hành octavia failover
+
+Ta kiểm tra thông tin port của amphorae bằng lệnh
+```sh
+openstack server list
+```
+
+Kiểm tra thông tin ID của port 
+```sh
+neutron port-list -- --device-id ID_AMPHORAE
+```
+
+Cập nhật trạng thái của port manage amphorae sang `false`
+```sh
+neutron port-update ID_PORT_LB_MNGT --admin-state-up False
+```
+
+Xem lại amphorae đã được tạo mới, thực hiện vào namespace router để kiểm tra việc cân bằng tải hoạt động.
+
 ### Package
 
 
