@@ -107,7 +107,7 @@ service_plugins = router,neutron_lbaas.services.loadbalancer.plugin.LoadBalancer
 Tiếp tục chỉnh sửa file `/etc/neutron/neutron_lbaas.conf` với các nội dung tương ứng sau
 ```sh
 [service_providers]
-service_provider = service_provider = LOADBALANCERV2:Octavia:neutron_lbaas.drivers.octavia.driver.OctaviaDriver:default
+service_provider = LOADBALANCERV2:Octavia:neutron_lbaas.drivers.octavia.driver.OctaviaDriver:default
 
 
 [service_auth]
@@ -439,9 +439,93 @@ Chỉnh sửa tập tin cấu hình `/usr/local/etc/octavia/octavia.conf`
 amp_image_tag = amphora
 ```
 
+Ngoài ra, bạn phải cập nhật một số thông tin tại thẻ `DEFAULT`, `database`, `keystone_authtoken`, `house_keeping`, `service_auth` như thông tin được cài bởi `devstack`:
+
+```sh
+[DEFAULT]
+transport_url = rabbit://stackrabbit:secretrabbit@172.16.68.57:5672/
+api_handler = queue_producer
+bind_host = 172.16.68.57
+logging_exception_prefix = ERROR %(name)s %(instance)s
+logging_default_format_string = %(color)s%(levelname)s %(name)s [-%(color)s] %(instance)s%(color)s%(me
+logging_context_format_string = %(color)s%(levelname)s %(name)s [%(global_request_id)s %(request_id)s 
+logging_debug_format_suffix = {{(pid=%(process)d) %(funcName)s %(pathname)s:%(lineno)d}}
+[api_settings]
+[database]
+connection = mysql+pymysql://root:secretdatabase@127.0.0.1:3306/octavia
+[health_manager]
+bind_port = 5555
+bind_ip = 192.168.0.11
+controller_ip_port_list = 192.168.0.11:5555
+heartbeat_key =insecure
+[keystone_authtoken]
+memcached_servers = localhost:11211
+signing_dir = 
+cafile = /opt/stack/data/ca-bundle.pem
+project_domain_name = Default
+project_name = service
+user_domain_name = Default
+password = secretservice
+username = octavia
+auth_url = http://172.16.68.57/identity
+auth_type = password
+[certificates]
+ca_private_key_passphrase = foobar
+ca_private_key = /etc/octavia/certs/private/cakey.pem
+ca_certificate = /etc/octavia/certs/ca_01.pem
+[anchor]
+[networking]
+[haproxy_amphora]
+server_ca = /etc/octavia/certs/ca_01.pem
+client_cert = /etc/octavia/certs/client.pem
+base_path = /var/lib/octavia
+base_cert_dir = /var/lib/octavia/certs
+connection_max_retries = 1500
+connection_retry_interval = 1
+rest_request_conn_timeout = 10
+rest_request_read_timeout = 120
+[controller_worker]
+amp_boot_network_list = 0d3b3fe8-2280-4fd4-844b-6c937ded7755
+amp_image_tag = amphora
+amp_secgroup_list = 4dea1592-81a4-4167-b2e3-4d3d49e4fb00
+amp_flavor_id = 832dd2ac-472a-4d13-9aca-f748de5b7c7f
+amp_image_owner_id = c190e5a2a50c4bac813819c7d7b21c90
+amp_ssh_key_name = octavia_ssh_key
+network_driver = allowed_address_pairs_driver
+compute_driver = compute_nova_driver
+amphora_driver = amphora_haproxy_rest_driver
+workers = 2
+amp_active_retries = 100
+amp_active_wait_sec = 2
+ loadbalancer_topology = ACTIVE_STANDBY
+[task_flow]
+[oslo_messaging]
+topic = octavia_prov
+rpc_thread_pool_size = 2
+[house_keeping]
+load_balancer_expiry_age = 3600
+amphora_expiry_age = 3600
+[amphora_agent]
+[keepalived_vrrp]
+[service_auth]
+memcached_servers = 172.16.68.57:11211
+cafile = /opt/stack/data/ca-bundle.pem
+project_domain_name = Default
+project_name = admin
+user_domain_name = Default
+password = secretadmin
+username = admin
+auth_type = password
+auth_url = http://172.16.68.57/identity
+[nova]
+[glance]
+[neutron]
+[quotas]
+```
+
 Cập nhật database octavia
 ```sh
-octavia-db-manage   upgrade head
+/usr/local/bin/octavia-db-manage --config-file /usr/local/etc/octavia/octavia.conf upgrade head
 ```
 
 **Cách 2**:
