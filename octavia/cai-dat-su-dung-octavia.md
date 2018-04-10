@@ -439,6 +439,18 @@ Chỉnh sửa tập tin cấu hình `/usr/local/etc/octavia/octavia.conf`
 amp_image_tag = amphora
 ```
 
+Lưu ý một số cấu hình để octavia-worker có thể kết nối tới rabbitmq
+```sh
+[oslo_messaging]
+topic = octavia_prov
+```
+
+Và để Octavia sử dụng keystone làm thành phần xác thực
+```sh
+[keystone_authtoken]
+auth_type = password
+```
+
 Ngoài ra, bạn phải cập nhật một số thông tin tại thẻ `DEFAULT`, `database`, `keystone_authtoken`, `house_keeping`, `service_auth` như thông tin được cài bởi `devstack`:
 
 ```sh
