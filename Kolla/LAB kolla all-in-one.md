@@ -239,3 +239,4 @@ openstack server create \
 ## Tham khảo
 
 - [https://docs.openstack.org/kolla-ansible/latest/](https://docs.openstack.org/kolla-ansible/latest/)
+- [https://github.com/congto/hdsd-openstack-kolla/blob/master/docs/openstack-pike-kolla-aio.md](https://github.com/congto/hdsd-openstack-kolla/blob/master/docs/openstack-pike-kolla-aio.md)
