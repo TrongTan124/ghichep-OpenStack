@@ -10,14 +10,14 @@
     - eth1: 172.16.68.57/24; GW: 172.16.68.1
     - eth2: 192.168.30.57/24
     
-03 máy chủ controller:
+01 máy chủ controller:
 - CPU: 4 vCPU
 - RAM: 4 GB
 - HDD: 100 GB
 - OS: CentOS 7.5-1804
 - NIC: 03 interface
-    - eth0: 172.16.68.[51,52,53]/24; GW: 172.16.68.1
-    - eth1: 192.168.30.[51,52,53]/24
+    - eth0: 172.16.68.51/24; GW: 172.16.68.1
+    - eth1: 192.168.30.51/24
     
 01 máy chủ compute
 - CPU: 4 vCPU
@@ -95,84 +95,6 @@ nmcli con mod eth0 connection.autoconnect yes
 
 echo "Setup IP eth1"
 nmcli c modify eth1 ipv4.addresses 192.168.30.51/24
-nmcli c modify eth1 ipv4.method manual
-nmcli con mod eth1 connection.autoconnect yes
-
-sudo systemctl disable firewalld
-sudo systemctl stop firewalld
-sudo systemctl disable NetworkManager
-sudo systemctl stop NetworkManager
-sudo systemctl enable network
-sudo systemctl start network
-sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
-sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
-```
-
-- Khởi động lại máy chủ:
-
-```sh
-init 6
-```
-
-### controller2
-
-- Đặt hostname:
-
-```sh
-hostnamectl set-hostname controller2
-```
-
-- Thiết lập IP cho máy chủ
-
-```sh
-echo "Setup IP eth0"
-nmcli c modify eth0 ipv4.addresses 172.16.68.52/24
-nmcli c modify eth0 ipv4.gateway 172.16.68.1
-nmcli c modify eth0 ipv4.dns 8.8.8.8
-nmcli c modify eth0 ipv4.method manual
-nmcli con mod eth0 connection.autoconnect yes
-
-echo "Setup IP eth1"
-nmcli c modify eth1 ipv4.addresses 192.168.30.52/24
-nmcli c modify eth1 ipv4.method manual
-nmcli con mod eth1 connection.autoconnect yes
-
-sudo systemctl disable firewalld
-sudo systemctl stop firewalld
-sudo systemctl disable NetworkManager
-sudo systemctl stop NetworkManager
-sudo systemctl enable network
-sudo systemctl start network
-sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
-sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
-```
-
-- Khởi động lại máy chủ:
-
-```sh
-init 6
-```
-
-### controller3
-
-- Đặt hostname:
-
-```sh
-hostnamectl set-hostname controller3
-```
-
-- Thiết lập IP cho máy chủ
-
-```sh
-echo "Setup IP eth0"
-nmcli c modify eth0 ipv4.addresses 172.16.68.53/24
-nmcli c modify eth0 ipv4.gateway 172.16.68.1
-nmcli c modify eth0 ipv4.dns 8.8.8.8
-nmcli c modify eth0 ipv4.method manual
-nmcli con mod eth0 connection.autoconnect yes
-
-echo "Setup IP eth1"
-nmcli c modify eth1 ipv4.addresses 192.168.30.53/24
 nmcli c modify eth1 ipv4.method manual
 nmcli con mod eth1 connection.autoconnect yes
 
@@ -357,7 +279,7 @@ cp /usr/share/kolla-ansible/ansible/inventory/* .
 kolla-genpwd
 ```
 
-- Chỉnh sửa file `/etc/kolla/globals.yml` để thiết lập các thành phần trong kolla. Tôi sử dụng kolla-ansible để cài OpenStack bản Rocky. Lưu ý thay IP `172.16.68.57` thành IP máy chủ của bạn:
+- Chỉnh sửa file `/etc/kolla/globals.yml` để thiết lập các thành phần trong kolla. Tôi sử dụng kolla-ansible để cài OpenStack bản Rocky. Lưu ý thay IP `172.16.68.50` thành IP máy chủ của bạn. Bạn cần phải thiết lập internal VIP khác với các IP của `controller` và `compute`. Vì VIP này được cấu hình trong HAproxy để làm đại diện cho cụm máy chủ `controller`
 
 ```sh
 sed -i 's/#kolla_base_distro: "centos"/kolla_base_distro: "centos"/g' /etc/kolla/globals.yml
@@ -377,12 +299,8 @@ sed -i 's/#enable_haproxy: "yes"/enable_haproxy: "yes"/g' /etc/kolla/globals.yml
 ```sh
 [control]
 172.16.68.51
-172.16.68.52
-172.16.68.53
 [network]
 172.16.68.51
-172.16.68.52
-172.16.68.53
 [inner-compute]
 [external-compute]
 172.16.68.54
@@ -412,6 +330,14 @@ cd /opt/kolla-ansible/
 kolla-ansible -i multinode bootstrap-servers
 ```
 
+- Kết quả của lệnh trên:
+
+```sh
+172.16.68.51               : ok=38   changed=20   unreachable=0    failed=0   
+172.16.68.54               : ok=38   changed=20   unreachable=0    failed=0   
+localhost                  : ok=2    changed=0    unreachable=0    failed=0
+```
+
 - Chạy tiếp lệnh sau để kiểm tra trước khi deploy
 
 ```sh
@@ -422,8 +348,6 @@ kolla-ansible prechecks -i multinode
 
 ```sh
 172.16.68.51               : ok=90   changed=0    unreachable=0    failed=0   
-172.16.68.52               : ok=81   changed=0    unreachable=0    failed=0   
-172.16.68.53               : ok=81   changed=0    unreachable=0    failed=0   
 172.16.68.54               : ok=24   changed=0    unreachable=0    failed=0   
 localhost                  : ok=10   changed=0    unreachable=0    failed=0
 ```
@@ -434,16 +358,41 @@ localhost                  : ok=10   changed=0    unreachable=0    failed=0
 kolla-ansible deploy -i multinode
 ```
 
+- Lệnh trên sẽ chuyển thành lệnh chạy sau:
+```sh
+ansible-playbook -i multinode -e @/etc/kolla/globals.yml -e @/etc/kolla/passwords.yml -e CONFIG_DIR=/etc/kolla  -e kolla_action=deploy /usr/share/kolla-ansible/ansible/site.yml
+```
+
 - Kết quả sau khi chạy lệnh `deploy` xong:
 
 ```sh
-
+172.16.68.51               : ok=249  changed=154  unreachable=0    failed=0   
+172.16.68.54               : ok=65   changed=43   unreachable=0    failed=0   
+localhost                  : ok=2    changed=0    unreachable=0    failed=0
 ```
 
 - Kiểm tra lại kết quả sau khi cài đặt
 
 ```sh
 kolla-ansible post-deploy
+```
+
+- Kết quả kiểm tra
+
+```sh
+[root@deployserver kolla-ansible]# kolla-ansible post-deploy
+Post-Deploying Playbooks : ansible-playbook -i /usr/share/kolla-ansible/ansible/inventory/all-in-one -e @/etc/kolla/globals.yml -e @/etc/kolla/passwords.yml -e CONFIG_DIR=/etc/kolla  /usr/share/kolla-ansible/ansible/post-deploy.yml 
+
+PLAY [Creating admin openrc file on the deploy node] ******************************************************************************************************************************************
+
+TASK [Gathering Facts] ************************************************************************************************************************************************************************
+ok: [localhost]
+
+TASK [template] *******************************************************************************************************************************************************************************
+changed: [localhost]
+
+PLAY RECAP ************************************************************************************************************************************************************************************
+localhost                  : ok=2    changed=1    unreachable=0    failed=0 
 ```
 
 ## Thiết lập sau khi cài đặt
@@ -454,7 +403,7 @@ kolla-ansible post-deploy
 pip install python-openstackclient
 ```
 
-- Import biến môi trường ở file `/etc/kolla/admin-openrc.sh` để tương tác với hệ thống
+- Sau khi cài đặt xong openstack client, thì sẽ xuất hiện file chứa các biến môi trường `admin-openrc.sh`. Ta thực hiện import biến môi trường để tương tác với hệ thống
 
 ```sh
 source /etc/kolla/admin-openrc.sh
@@ -506,7 +455,7 @@ thì fix bug bằng cách cài đặt bổ sung gói bằng lệnh:
 [root@srv1kolla ~]# pip install -U decorator
 ```
 
-- Chỉnh sửa file `/usr/share/kolla-ansible/init-runonce` để thiết lập external network cho VM trong hệ thống, sử dụng dải IP thuộc eth2 như đã khai báo trong cấu hình `/etc/kolla/globals.yml` trước khi cài đặt, dòng 16, 17, 18
+- Chỉnh sửa file `/usr/share/kolla-ansible/init-runonce` để thiết lập external network cho VM trong hệ thống, sử dụng dải IP thuộc eth1 như đã khai báo trong cấu hình `/etc/kolla/globals.yml` trước khi cài đặt, dòng 16, 17, 18
 
 ```sh
 EXT_NET_CIDR='192.168.30.0/24'
@@ -543,7 +492,7 @@ openstack server create \
 
 - Mật khẩu tài khoản admin để đăng nhập vào OpenStack trong file `/etc/kolla/admin-openrc.sh`
 
-- Link đăng nhập horizon là IP của eth1: `http://172.16.68.57`
+- Link đăng nhập horizon là IP của eth1: `http://172.16.68.50`
 
 - Mật khẩu của các project khác trong OpenStack ở file: `/etc/kolla/passwords.yml`
 
