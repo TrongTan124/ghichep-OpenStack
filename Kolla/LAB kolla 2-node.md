@@ -204,8 +204,9 @@ ssh-keygen -t rsa
 ```sh
 yum install -y epel-release
 yum update -y
-
-yum install -y git wget ansible gcc python-devel python-pip yum-utils byobu net-tools vim
+yum install -y git wget gcc python-devel python-pip libffi-devel openssl-devel libselinux-python yum-utils byobu net-tools vim
+pip install -U pip
+pip install -U ansible
 ```
 
 - Sao lưu key từ node deployment sang các node `controller` và `compute`. Cần nhập password của node deployment
@@ -374,7 +375,7 @@ localhost                  : ok=2    changed=0    unreachable=0    failed=0
 - Kiểm tra lại kết quả sau khi cài đặt
 
 ```sh
-kolla-ansible post-deploy
+kolla-ansible post-deploy -i multinode
 ```
 
 - Kết quả kiểm tra
@@ -501,3 +502,4 @@ openstack server create \
 
 - [https://docs.openstack.org/kolla-ansible/latest/](https://docs.openstack.org/kolla-ansible/latest/)
 - [https://github.com/congto/hdsd-openstack-kolla/blob/master/docs/openstack-pike-kolla-aio.md](https://github.com/congto/hdsd-openstack-kolla/blob/master/docs/openstack-pike-kolla-aio.md)
+- [https://docs.openstack.org/project-deploy-guide/kolla-ansible/rocky/quickstart.html](https://docs.openstack.org/project-deploy-guide/kolla-ansible/rocky/quickstart.html)

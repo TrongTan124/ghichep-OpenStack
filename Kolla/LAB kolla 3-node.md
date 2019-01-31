@@ -238,8 +238,9 @@ init 6
 ```sh
 yum install -y epel-release
 yum update -y
-
-yum install -y git wget ansible gcc python-devel python-pip yum-utils byobu net-tools vim
+yum install -y git wget ansible gcc python-devel python-pip libffi-devel openssl-devel libselinux-python yum-utils byobu net-tools vim
+pip install -U pip
+pip install -U ansible
 ```
 
 - Cài đặt docker:
@@ -282,8 +283,8 @@ ssh-keygen -t rsa
 ```sh
 yum install -y epel-release
 yum update -y
-
-yum install -y git wget ansible gcc python-devel python-pip yum-utils byobu net-tools vim
+yum install -y git wget gcc python-devel python-pip yum-utils byobu net-tools vim
+pip install -U pip
 ```
 
 - Sao lưu key từ node deployment sang các node `controller` và `compute`. Cần nhập password của node deployment
@@ -391,6 +392,8 @@ inner-compute
 external-compute
 [monitoring]
 172.16.68.51
+172.16.68.52
+172.16.68.53
 ```
 
 ## Cài đặt OpenStack
@@ -437,13 +440,19 @@ kolla-ansible deploy -i multinode
 - Kết quả sau khi chạy lệnh `deploy` xong:
 
 ```sh
-
+172.16.68.51               : ok=197  changed=9    unreachable=0    failed=0   
+172.16.68.52               : ok=158  changed=9    unreachable=0    failed=0   
+172.16.68.53               : ok=159  changed=16   unreachable=0    failed=0   
+172.16.68.54               : ok=51   changed=0    unreachable=0    failed=0   
+localhost                  : ok=2    changed=0    unreachable=0    failed=0
 ```
+
+- Việc chạy kolla-ansible để cài đặt bị lỗi một vài lần do lệnh xử lý quá chậm, hết thời gian timeout của lệnh đó. Có thể một phần do môi trường LAB có các máy ảo cấu hình thấp làm cho các tiến trình xử lý lâu.
 
 - Kiểm tra lại kết quả sau khi cài đặt
 
 ```sh
-kolla-ansible post-deploy
+kolla-ansible post-deploy -i multinode
 ```
 
 ## Thiết lập sau khi cài đặt
@@ -506,7 +515,7 @@ thì fix bug bằng cách cài đặt bổ sung gói bằng lệnh:
 [root@srv1kolla ~]# pip install -U decorator
 ```
 
-- Chỉnh sửa file `/usr/share/kolla-ansible/init-runonce` để thiết lập external network cho VM trong hệ thống, sử dụng dải IP thuộc eth2 như đã khai báo trong cấu hình `/etc/kolla/globals.yml` trước khi cài đặt, dòng 16, 17, 18
+- Chỉnh sửa file `/usr/share/kolla-ansible/init-runonce` để thiết lập external network cho VM trong hệ thống, sử dụng dải IP thuộc eth1 như đã khai báo trong cấu hình `/etc/kolla/globals.yml` trước khi cài đặt, dòng 16, 17, 18
 
 ```sh
 EXT_NET_CIDR='192.168.30.0/24'
@@ -543,7 +552,7 @@ openstack server create \
 
 - Mật khẩu tài khoản admin để đăng nhập vào OpenStack trong file `/etc/kolla/admin-openrc.sh`
 
-- Link đăng nhập horizon là IP của eth1: `http://172.16.68.57`
+- Link đăng nhập horizon là IP của eth1: `http://172.16.68.50`
 
 - Mật khẩu của các project khác trong OpenStack ở file: `/etc/kolla/passwords.yml`
 
